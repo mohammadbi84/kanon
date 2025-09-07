@@ -3,7 +3,6 @@
     <title>آموزشگاه ها روی نقشه</title>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     {{-- login btn --}}
@@ -12,7 +11,6 @@
             background-color: transparent !important;
             width: 70px !important;
             /* border: 1px solid black; */
-
         }
 
         .register-btn {
@@ -534,7 +532,6 @@
                     // بررسی آیا این آموزشگاه با عبارت جستجو مطابقت دارد
                     const isSearchMatch = currentSearchTerm &&
                         institute.name.toLowerCase().includes(currentSearchTerm);
-
                     // ایجاد نشانگر
                     const marker = L.marker([institute.lat, institute.lng], {
                         className: isSearchMatch ? 'search-highlight' : '',
@@ -580,7 +577,7 @@
                 }
 
                 // تنظیم زوم بر اساس نتایج
-                if (searchTerm.length > 0) {
+                if (searchTerm.length > 0 || city) {
                     adjustZoomToResults(institutesToShow);
                 }
             }
@@ -599,10 +596,13 @@
                     map.setView([institute.lat, institute.lng], 15);
                     return;
                 }
+                // اگه چند نتیجه بود
+                const group = new L.featureGroup(markers)
+                map.fitBounds(group.getBounds().pad(0.1));
             }
 
             // تابع برای فیلتر کردن آموزشگاه‌ها
-            function filterInstitutes() {
+            function filterInstitutes(cityChange = false) {
                 const searchText = $('#searchInputname').val().toLowerCase();
                 const selectedCity = $('#citySelect').val();
                 const selectedCity2 = $('#selectedIdcity').val().toLowerCase();
@@ -618,6 +618,12 @@
                 $('.reshte-box .form-check-input:checked').each(function() {
                     selectedFields.push($(this).val());
                 });
+
+                // ✅ اگر هیچ جنسیت یا هیچ رشته‌ای انتخاب نشده → هیچ نتیجه‌ای نمایش نده
+                if (selectedGenders.length === 0 || selectedFields.length === 0) {
+                    displayInstitutes([], searchText);
+                    return;
+                }
 
                 // فیلتر کردن آموزشگاه‌ها
                 const filteredInstitutes = institutes.filter(institute => {
@@ -654,7 +660,11 @@
                 });
 
                 // نمایش آموزشگاه‌های فیلتر شده
-                displayInstitutes(filteredInstitutes, searchText);
+                if (cityChange) {
+                    displayInstitutes(filteredInstitutes, searchText, true);
+                } else {
+                    displayInstitutes(filteredInstitutes, searchText);
+                }
             }
 
             // تابع بازنشانی فیلترها
@@ -708,23 +718,23 @@
             }
 
             // رویداد کلیک برای دکمه اعمال فیلترها
-            $('#applyFilters').click(filterInstitutes);
+            $('#applyFilters').click(() => filterInstitutes());
 
             // رویداد کلیک برای دکمه بازنشانی فیلترها
             $('#resetFilters').click(resetFilters);
 
             // رویداد تغییر برای فیلترهای چک‌باکس
-            $('input[type="checkbox"]').change(filterInstitutes);
+            $('input[type="checkbox"]').change(() => filterInstitutes());
 
             // رویداد تایپ برای جستجو
-            $('#searchInputname').on('input', filterInstitutes);
+            $('#searchInputname').on('input', () => filterInstitutes());
 
             // رویداد تغییر برای سلکت‌باکس
-            $('#categorySelect').change(filterInstitutes);
+            $('#categorySelect').change(() => filterInstitutes());
 
             // رویداد تغییر برای انتخاب شهر
-            $('#citySelect').change(filterInstitutes);
-            $('#selectedIdcity').on('input', filterInstitutes);
+            $('#citySelect').change(() => filterInstitutes());
+            $('#selectedIdcity').on('input',  () => filterInstitutes(true));
 
             // نمایش اولیه همه آموزشگاه‌ها
             displayInstitutes(institutes);
