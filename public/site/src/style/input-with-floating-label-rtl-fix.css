@@ -1,0 +1,23 @@
+.form-label-group label {
+    left: unset;
+    right: 0;
+    text-align: right;
+    transform-origin: top right;
+}
+
+.form-label-group.in-border input:not(:placeholder-shown) ~ label,
+.form-label-group.in-border input:focus ~ label,
+.form-label-group.in-border textarea:not(:placeholder-shown) ~ label,
+.form-label-group.in-border textarea:focus ~ label,
+.form-label-group.in-border select ~ label {
+    left: unset;
+    right: calc(var(--input-padding-x) / 10);
+    margin-right: 20px;
+}
+
+.form-label-group.in-border label {
+    right: 1rem;
+}
+
+
+/* use of :dir(rtl) is not supported on older Chrome version (older that v120) */

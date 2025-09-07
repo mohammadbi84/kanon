@@ -1,0 +1,27 @@
+.video-popup-container {
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(12px);
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1001;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.video-popup-container .video {
+    display: block;
+    margin: auto;
+    min-width: 30%;
+    min-height: 30%;
+    max-width: 70%;
+    max-height: 70%;
+    border-radius: 10px;
+    /*background-color: rebeccapurple;*/
+}

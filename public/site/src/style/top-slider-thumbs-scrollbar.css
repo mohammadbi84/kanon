@@ -1,0 +1,50 @@
+.top-slider-thumbs {
+    --track-color: var(--color-blue);
+    --thumb-color: var(--primary-color);
+    --thumb-color-hover: var(--primary-color-hover);
+}
+
+/* Scrollbar width */
+.top-slider-thumbs::-webkit-scrollbar {
+    /*width: 11px;*/
+    width: 4px;
+    height: 100%;
+}
+
+/* Track */
+.top-slider-thumbs::-webkit-scrollbar-track {
+    background: var(--track-color);
+}
+
+/* Handle */
+.top-slider-thumbs::-webkit-scrollbar-thumb {
+    /* must have enough height to work well */
+    /*background: url("/public/icon/vertical-line.svg");*/
+    /*width: 11px !important;*/
+    /*max-height: 67px !important;*/
+    /*background-size: 11px 67px;*/
+    /*background-repeat: no-repeat;*/
+    /*background-position: center;*/
+
+    background: var(--thumb-color);
+    /*border-radius: var(--raduis);*/
+}
+
+/* Handle on hover */
+.top-slider-thumbs::-webkit-scrollbar-thumb:hover {
+    background: var(--thumb-color-hover);
+    cursor: grab;
+}
+
+.top-slider-thumbs::-webkit-scrollbar-thumb:active {
+    cursor: grabbing;
+}
+
+
+/*Firefox compatibility*/
+@-moz-document url-prefix() {
+    .top-slider-thumbs {
+        scrollbar-width: thin; /* Can be "auto", "thin", or "none" */
+        scrollbar-color: var(--thumb-color) var(--track-color); /* Thumb and track color */
+    }
+}

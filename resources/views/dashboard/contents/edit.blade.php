@@ -1,0 +1,275 @@
+@extends('dashboard.layout.master')
+@section('head')
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('/dashboard/plugins/table/datatable/datatables.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('/dashboard/plugins/table/datatable/dt-global_style.css') }}">
+    <!-- END PAGE LEVEL STYLES -->
+
+    <!-- Persian Datepicker CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/persian-datepicker@latest/dist/css/persian-datepicker.min.css" />
+
+    <!-- Animate.css برای افکت‌های انیمیشنی -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <!-- jQuery (در صورتی که قبلاً لود نشده باشد) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Persian Date and Persian Datepicker JS -->
+    <script src="https://unpkg.com/persian-date@latest/dist/persian-date.min.js"></script>
+    <script src="https://unpkg.com/persian-datepicker@latest/dist/js/persian-datepicker.min.js"></script>
+
+    <style>
+        /* استایل‌های سفارشی برای Persian Datepicker */
+        .datepicker-container {
+            font-family: 'Vazir', sans-serif;
+        }
+
+        .datepicker-plot-area {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            padding: 10px;
+            width: 280px;
+        }
+
+        .datepicker-header {
+            padding: 5px 0;
+            text-align: center;
+        }
+
+        .datepicker-title {
+            font-weight: bold;
+        }
+
+        .datepicker-week-days {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 5px;
+        }
+
+        .datepicker-week-day {
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .datepicker-days {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        .datepicker-day {
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 2px;
+        }
+
+        .datepicker-day:hover {
+            background-color: #eee;
+        }
+
+        .datepicker-day-selected {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .datepicker-day-today {
+            border: 1px solid #007bff;
+        }
+
+        .datepicker-day-disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .datepicker-time-view {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+            border-top: 1px solid #eee;
+        }
+
+        .datepicker-time-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .datepicker-time-label,
+        .datepicker-time-separator {
+            margin: 0 5px;
+        }
+
+        .datepicker-time-input {
+            width: 40px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px;
+            font-size: 0.9em;
+        }
+
+        .datepicker-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .datepicker-button:hover {
+            background-color: #0056b3;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 5px;
+        }
+    </style>
+@endsection
+@section('content')
+    <div class="col-xl-12 col-lg-12 col-sm-12  layout-spacing">
+        <div class="widget-content widget-content-area br-6 ">
+            <div class="widget-header">
+                <div class="row">
+                    <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                        <h6>ویرایش مزایا و گواهینامه ها </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8 offset-md-2">
+                <form action="{{ route('contents.update', $content->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    
+                    <div class="form-group">
+                        <label for="content_title">عنوان زیرمجموعه</label>
+                        <input type="text" class="form-control" name="content_title" id="content_title" value="{{ $content->content['title'] ?? '' }}" required>
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="content_text">متن زیرمجموعه</label>
+                        <textarea class="form-control" name="content_text" id="content_text" required>{{ $content->content['text'] ?? '' }}</textarea>
+                    </div>
+            
+                    <button type="submit" class="btn btn-primary mt-3">بروزرسانی</button>
+                </form>
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+   <script>
+    $(document).ready(function() {
+var startDatepicker, endDatepicker;
+
+// تنظیمات تقویم برای تاریخ شروع
+startDatepicker = $("#start_date").pDatepicker({
+    format: 'YYYY/MM/DD HH:mm:ss',  // فرمت دلخواه
+    timePicker: {
+        enabled: true,  // فعال کردن انتخاب زمان
+        second: true   // نمایش ثانیه
+    },
+    initialValue: false, // بدون مقدار اولیه
+    onSelect: function(unix) {
+        // وقتی تاریخی در تقویم شروع انتخاب شد
+        var selectedDate = new persianDate(unix); // تبدیل به آبجکت persianDate
+
+        // تنظیم حداقل تاریخ برای تقویم پایان (تاریخ انتخاب شده در تقویم شروع)
+        endDatepicker.options.minDate = selectedDate.valueOf();
+
+        $("#start_date_error").text(""); // پاک کردن پیغام خطای قبلی (اگر وجود داشت)
+
+        // اگر قبلاً تاریخی در تقویم پایان انتخاب شده، بررسی می‌کنیم که معتبر باشه
+        if (endDatepicker.options.model) {
+            var endDate = new persianDate(endDatepicker.options.model).startOf('day'); // تاریخ پایان رو به ابتدای روز می‌بریم
+            var startDate = selectedDate.startOf('day'); // تاریخ شروع انتخاب شده رو هم به ابتدای روز می‌بریم
+
+            // اگر تاریخ پایان قبل از تاریخ شروع بود
+            if (endDate.valueOf() < startDate.valueOf()) {
+                endDatepicker.options.model = null; // مقدار تقویم پایان رو پاک می‌کنیم
+                $("#end_date_error").text("تاریخ پایان نمی‌تواند قبل از تاریخ شروع باشد."); // پیغام خطا
+            }
+        }
+    }
+});
+
+// تنظیمات تقویم برای تاریخ پایان
+endDatepicker = $("#end_date").pDatepicker({
+    format: 'YYYY/MM/DD HH:mm:ss',
+    timePicker: {
+        enabled: true,
+        second: true
+    },
+    initialValue: false, // بدون مقدار اولیه
+    onSelect: function(unix) {
+        var selectedDate = new persianDate(unix);
+
+        // تنظیم حداکثر تاریخ برای تقویم شروع (تاریخ انتخاب شده در تقویم پایان)
+        startDatepicker.options.maxDate = selectedDate.valueOf();
+
+        $("#end_date_error").text(""); // پاک کردن پیغام خطای قبلی
+
+        // اگر قبلاً تاریخی در تقویم شروع انتخاب شده، بررسی می‌کنیم که معتبر باشه
+        if (startDatepicker.options.model) {
+            var startDate = new persianDate(startDatepicker.options.model).startOf('day');
+            var endDate = selectedDate.startOf('day');
+
+            if (startDate.valueOf() > endDate.valueOf()) {
+                startDatepicker.options.model = null; // مقدار تقویم شروع رو پاک می‌کنیم
+                $("#start_date_error").text("تاریخ شروع نمی‌تواند بعد از تاریخ پایان باشد."); // پیغام خطا
+            }
+        }
+    }
+});
+
+// بستن تقویم‌ها با کلیک بیرون از اون‌ها
+$(document).on("click", function(event) {
+    // اگر روی خود فیلدهای تاریخ یا داخل تقویم کلیک نشده باشه
+    if (!$(event.target).is("#start_date, #end_date") && !$(event.target).closest(".datepicker-plot-area").length) {
+        startDatepicker.hide(); // تقویم شروع رو مخفی می‌کنیم
+        endDatepicker.hide();   // تقویم پایان رو مخفی می‌کنیم
+    }
+});
+
+// پاک کردن پیغام‌های خطا با فوکوس روی فیلدها
+$("#start_date").on("focus", function() {
+    $("#start_date_error").text(""); // پیغام خطای مربوط به فیلد شروع رو پاک می‌کنیم
+});
+$("#end_date").on("focus", function() {
+    $("#end_date_error").text(""); // پیغام خطای مربوط به فیلد پایان رو پاک می‌کنیم
+});
+
+// انیمیشن (اگر هنوز می‌خواهید استفاده کنید)
+  $("#animation_type").change(function() {
+        let animationClass = $(this).val();
+        $("#animatedText").removeClass().addClass('animate__animated animate__' + animationClass);
+        updatePreviewText();
+    });
+
+    // بروزرسانی متن پیش‌نمایش
+    function updatePreviewText() {
+        let userText = $("#title").val();
+        $("#animatedText").text(userText ? userText : "این متن پیش‌نمایش است.");
+    }
+
+    // بروزرسانی پیش‌نمایش هنگام وارد کردن متن
+    $("#title").on('input', updatePreviewText);
+});
+    </script>
+@endsection

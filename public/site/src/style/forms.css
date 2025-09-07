@@ -1,0 +1,28 @@
+.search-bar {
+    position: relative;
+    background: #111F4C;
+    padding: 30px 20px;
+    /*z-index: 900;*/
+    border-radius: 20px;
+
+    -ms-transform: translateY(-50%);
+    transform: translateY(-61%);
+}
+
+.search-bar input,
+.search-bar button,
+.search-bar select,
+.search-bar a {
+    padding: 15px 15px !important;
+    font-size: 14px;
+}
+
+.search-bar button {
+    padding-top: 11px !important;
+
+}
+
+.search-bar select {
+    padding: 15px 30px !important;
+    /*background: ;*/
+}

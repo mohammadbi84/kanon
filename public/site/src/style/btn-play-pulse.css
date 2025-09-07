@@ -1,0 +1,110 @@
+/*main source from: https://codepen.io/GLITCHY99/pen/wVopWz*/
+
+.btn-play.pulse {
+    --pulse-color: #ffffff;
+    /* --pulse-color: #ecc66d; */
+}
+
+.btn-play.pulse {
+    position: relative !important;
+
+    /*if set z-index, ::after & ::before elements will be the same as this button, and show above the button*/
+    z-index: unset !important;
+
+    background-color: black;
+    /*background-image: linear-gradient(to right, #6400a4, #5e07b5, #5411c6, #411bd8, #1225eb);*/
+}
+.btn-play span {
+    font-size: 35px;
+    position: relative;
+    top: 3px;
+}
+.btn-stop span {
+    font-size: 35px;
+    position: relative;
+    top: 3px;
+    right: 2px;
+}
+
+#video-player:hover+#btn-stop-container {
+    display: block !important;
+}
+#btn-stop-container:hover{
+    display: block !important;
+}
+
+
+.btn-play.pulse:hover {
+    /*--pulse-color: var(--primary-color);*/
+
+    /*background-color: var(--primary-color);*/
+    /*color: var(--on-primary-color);*/
+
+    box-shadow: none;
+    border-color: transparent;
+}
+
+.btn-play.pulse::before,
+.btn-play.pulse::after {
+    position: absolute;
+    content: '';
+    bottom: -4px;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    background-color: var(--pulse-color);
+    border-radius: 50%;
+    border: 6px solid var(--pulse-color);
+    margin: 0;
+    opacity: 1;
+    transform-origin: center;
+
+    /*to show under btn-play*/
+    z-index: -1 !important;
+}
+.btn-play.pulse::after{
+    background-color: #ecc66d !important;
+    border: 6px solid #ecc66d !important;
+}
+.btn-play.pulse::before {
+    opacity: 0.8;
+    animation: pulseBefore 3s ease-in-out infinite;
+}
+
+.btn-play.pulse::after {
+    animation: pulseAfter 1s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes pulseBefore {
+    from {
+        /*margin: 0;*/
+        transform: scale(1, 1);
+        opacity: 1;
+    }
+
+    to {
+        /*margin: -30px;*/
+        transform: scale(1.9, 1.9);
+        opacity: 0;
+    }
+}
+
+@keyframes pulseAfter {
+
+    /*this animation from: https://codepen.io/hofmannsven/pen/qJyNoa*/
+    0% {
+        transform: scale(1, 1);
+    }
+
+    25% {
+        transform: scale(1, 1);
+    }
+
+    100% {
+        transform: scale(1.05, 1.05);
+    }
+
+    /*100% {*/
+    /*    transform: scale(1, 1);*/
+    /*}*/
+}

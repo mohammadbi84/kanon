@@ -1,0 +1,26 @@
+:root {
+    --top-ad-height: calc(64px + var(--top-bar-height));
+}
+
+.top-ad-container {
+    height: var(--top-ad-height);
+    padding: 20px;
+    background-color: var(--primary-color);
+    padding-bottom: calc(20px + var(--top-bar-height)) !important;
+    /*box-sizing: content-box;*/
+}
+
+.top-ad-container.close {
+    max-height: 0 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    transition: all 0.2s ease-out;
+}
+
+.top-ad-container .text {
+
+}
+
+.top-ad-container .btn-close {
+    float: left;
+}

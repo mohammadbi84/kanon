@@ -1,0 +1,144 @@
+.auth {
+    --steps-back: RGB(235,166,7);
+    --step-back: transparent;
+    --step-back-active: RGB(198,139,3);
+    --step-back-hover: RGB(198,139,3);
+    --step-divider: rgba(128, 128, 128, 0.5);
+}
+
+
+.auth {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth .card {
+    width: 70%;
+    height: 80%;
+    overflow: hidden;
+}
+
+
+.steps {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: start;
+
+    background-color: var(--steps-back);
+
+    min-height: 100%;
+
+    user-select: none;
+}
+
+.steps .step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 20px;
+    border-bottom: 1px solid var(--step-divider);
+
+    cursor: pointer;
+    background-color: var(--step-back);
+    color: white;
+}
+
+.steps .step:hover,
+.steps .step.active:hover {
+    background-color: var(--step-back-hover);
+}
+
+.steps .step.active {
+    background-color: var(--step-back-active);
+}
+
+.steps .step.active .circle-number,
+.steps .step.active .text {
+    font-weight: var(--text-bold-weight-2) !important;
+}
+
+.steps .step .circle-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #252641;
+    color: white;
+
+    box-shadow: 2px 2px 20px black;
+
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    aspect-ratio: 1/1;
+    box-sizing: border-box;
+}
+
+.steps .step-indicator {
+    position: absolute;
+    z-index: 2;
+    top: -1000px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--step-back-active);
+    font-size: 20px;
+
+    scale: 1 1.5;
+}
+
+
+.panels {
+    height: 100%;
+}
+
+.panels .splide__slide {
+    min-height: 100%;
+}
+
+.panel {
+    padding: 40px;
+    overflow-y: auto;
+}
+
+
+.panel .nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.panel .nav-container .btn-nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: green;
+    /*box-shadow: 2px 2px 20px black;*/
+
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    aspect-ratio: 1/1;
+    box-sizing: border-box;
+}
+
+.panel .nav-container .btn-nav:hover {
+    color: darkgreen;
+}
+
+.panel .nav-container .btn-nav span {
+    font-size: 40px;
+}
+
+.panel .nav-container .btn-nav span::before {
+    margin-top: 14px;
+}
