@@ -118,7 +118,7 @@
             display: none;
             position: absolute;
             left: 10px;
-            top: 50%;
+            top: 47%;
             transform: translateY(-50%);
             cursor: pointer;
             font-weight: bold;
@@ -140,7 +140,7 @@
         .institute-label {
             width: auto !important;
             min-width: 120px;
-            margin-top: 5px !important;
+            margin-top: 14px !important;
         }
     </style>
     <style>
@@ -242,6 +242,7 @@
 
         /* استایل برای مارکرهای نقشه */
         .institute-marker {
+            text-align: center;
             font-weight: bold;
             font-size: 12px;
             font-family: 'Vazir FD';
@@ -262,18 +263,66 @@
             margin-bottom: 10px;
         }
 
+        /* برای مارکر هایلایت شده */
         .search-highlight {
-            background-color: #ffff00 !important;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-            z-index: 1000;
+            animation: pulse 1.5s infinite;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            z-index: 1000 !important;
         }
 
+        /* برای لیبل هایلایت شده */
         .search-highlight-label {
-            background-color: #ffff00 !important;
-            color: #000 !important;
-            border: 2px solid #ff9900 !important;
-            z-index: 1000;
+            margin-top: 14px !important;
+            /* animation: pulse 1.5s infinite; */
+            height: auto !important;
+            min-width: 120px !important;
+            border: 2px solid #ff9800 !important;
+            border-radius: 11px;
+            font-weight: bold;
+            z-index: 1000 !important;
         }
+
+        /* انیمیشن پالس */
+        @keyframes pulse {
+            0% {
+                /* transform: scale(1); */
+                box-shadow: 0 0 5px rgba(255, 215, 0, 0.8);
+            }
+
+            50% {
+                /* transform: scale(1.15); */
+                box-shadow: 0 0 25px rgba(255, 215, 0, 1);
+            }
+
+            100% {
+                /* transform: scale(1); */
+                box-shadow: 0 0 5px rgba(255, 215, 0, 0.8);
+            }
+        }
+
+
+        .marker-animate {
+            animation: markerPulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes markerPulse {
+            0% {
+                /* transform: scale(1); */
+                filter: drop-shadow(0 0 2px #111f4c);
+            }
+
+            50% {
+                /* transform: scale(1.3); */
+                filter: drop-shadow(0 0 10px #111f4c);
+            }
+
+            100% {
+                /* transform: scale(1); */
+                filter: drop-shadow(0 0 2px #111f4c);
+            }
+        }
+
 
         .autocomplete .dropdown {
             /* padding-bottom: 50px; */
@@ -336,6 +385,13 @@
         .reshte-box::-webkit-scrollbar-thumb {
             background-color: #bfbfbf;
             border-radius: 10px;
+        }
+        .swal2-popup{
+            margin-top: 78px;
+            box-shadow: 0px 5px 10px 0px #868686a6 !important;
+        }
+        .swal2-title{
+            font-size: 24px;
         }
     </style>
 @endsection
@@ -415,10 +471,11 @@
                             <div class="autocomplete pe-2 mb-2" id="autocompleteBoxreshte" style="padding-left: 8px">
                                 <input type="text" id="searchInputreshte" name="reshte" oninput="nameinput('reshte')">
                                 <label for="searchInputreshte">جستجوی رشته...</label>
-                                <span class="clear-btn" id="clearBtn_reshte" onclick="clearInput('reshte')">×</span>
+                                <span class="clear-btn" id="clearBtn_reshte" style="left:18px;"
+                                    onclick="clearInput('reshte')">×</span>
                             </div>
                             <div class="p-2 reshte-box" dir="ltr" style="padding-right: 7px !important;">
-                                <div class="form-check mb-2 position-sticky top-0" dir="rtl">
+                                <div class="form-check mb-2 position-sticky top-0 bg-white" dir="rtl">
                                     <input class="form-check-input" type="checkbox" id="selectAllFields" value=""
                                         checked>
                                     <label class="form-check-label text-primary" for="selectAllFields">
@@ -530,8 +587,10 @@
                         iconType = orangeIcon; // برای هر دو
                     }
                     // بررسی آیا این آموزشگاه با عبارت جستجو مطابقت دارد
+
                     const isSearchMatch = currentSearchTerm &&
                         institute.name.toLowerCase().includes(currentSearchTerm);
+
                     // ایجاد نشانگر
                     const marker = L.marker([institute.lat, institute.lng], {
                         className: isSearchMatch ? 'search-highlight' : '',
@@ -546,6 +605,11 @@
                           </div>
                         </div>
                     `);
+                    if (isSearchMatch) {
+                        setTimeout(() => {
+                            marker._icon.classList.add('marker-animate');
+                        }, 100);
+                    }
 
                     // ایجاد برچسب نام آموزشگاه
                     const label = L.marker([institute.lat, institute.lng], {
@@ -564,16 +628,26 @@
 
                 // اگر هیچ نتیجه‌ای پیدا نشد
                 if (institutesToShow.length === 0) {
-                    const noResults = L.marker(map.getCenter(), {
-                        icon: L.divIcon({
-                            className: 'no-results-marker',
-                            html: `<div class="no-results">هیچ آموزشگاهی یافت نشد</div>`,
-                            iconSize: [200, 40],
-                            iconAnchor: [100, 20]
-                        })
-                    }).addTo(map);
+                    Swal.fire({
+                        // position: "top-end",
+                        icon: "error",
+                        text: "هیچ آموزشگاهی با این فیلتر ها پیدا نشد",
+                        showConfirmButton: false,
+                        width: 400,
+                        timer: 2500,
+                        timerProgressBar: true,
+                        heightAuto: false
+                    });
+                    // const noResults = L.marker(map.getCenter(), {
+                    //     icon: L.divIcon({
+                    //         className: 'no-results-marker',
+                    //         html: `<div class="no-results">هیچ آموزشگاهی یافت نشد</div>`,
+                    //         iconSize: [200, 40],
+                    //         iconAnchor: [100, 20]
+                    //     })
+                    // }).addTo(map);
 
-                    markers.push(noResults);
+                    // markers.push(noResults);
                 }
 
                 // تنظیم زوم بر اساس نتایج
@@ -594,6 +668,34 @@
                     // اگر فقط یک نتیجه وجود دارد، روی آن زوم شود
                     const institute = results[0];
                     map.setView([institute.lat, institute.lng], 15);
+
+
+
+
+
+                    // نمایش اطلاعات با SweetAlert
+                    Swal.fire({
+                        title: institute.name,
+                        position: "top-end",
+                        html: `
+                            <div style="text-align: right;">
+                                <p><b>جنسیت:</b> ${getGenderName(institute.gender)}</p>
+                                <p><b>شهر:</b> ${getCityName(institute.city)}</p>
+                                <a href="{{ route('school') }}" class="btn btn-primary w-100" style="margin-top: 10px;">مشاهده پروفایل</a>
+                            </div>
+                        `,
+                        // icon: 'info',
+                        showCloseButton: true,
+                        showConfirmButton: false,
+                        width: '400px',
+                        customClass: {
+                            popup: 'swal2-popup-custom'
+                        },
+                        background: "#ffffffff",
+                        backdrop: `
+                          rgba(0,0,0,0.0)
+                        `
+                    });
                     return;
                 }
                 // اگه چند نتیجه بود
@@ -697,9 +799,9 @@
 
             function getGenderName(gender) {
                 const genders = {
-                    'male': 'پسرانه',
-                    'female': 'دخترانه',
-                    'both': 'هر دو'
+                    'male': 'برادران',
+                    'female': 'خواهران',
+                    'both': 'برادران، خواهران'
                 };
                 return genders[gender] || gender;
             }
@@ -734,17 +836,16 @@
 
             // رویداد تغییر برای انتخاب شهر
             $('#citySelect').change(() => filterInstitutes());
-            $('#selectedIdcity').on('input',  () => filterInstitutes(true));
+            $('#selectedIdcity').on('input', () => filterInstitutes(true));
 
             // نمایش اولیه همه آموزشگاه‌ها
             displayInstitutes(institutes);
 
             $('#searchInputreshte').on('input', function() {
-                var searchText = $(this).val().toLowerCase();
+                var searchText = $(this).val().trim().toLowerCase();
                 $('.reshte-box .form-check').each(function() {
-                    var labelText = $(this).find('label').text().toLowerCase();
-
-                    if (labelText.includes(searchText)) {
+                    var labelText = $(this).find('label').text().trim().toLowerCase();
+                    if (labelText.startsWith(searchText)) {
                         $(this).show();
                     } else {
                         $(this).hide();
@@ -755,6 +856,12 @@
             $('#clearBtn_reshte').on('click', function() {
                 $('#searchInputreshte').val(''); // پاک کردن اینپوت
                 $('.reshte-box .form-check').show(); // نمایش همه گزینه‌ها
+            });
+            $('#clearBtn_name').on('click', function() {
+                filterInstitutes();
+            });
+            $('#clearBtn_city').on('click', function() {
+                filterInstitutes();
             });
             // وقتی "انتخاب همه" تغییر کند
             $('#selectAllFields').on('change', function() {
@@ -809,7 +916,7 @@
             const value = input.value.toLowerCase();
             if (divId == "city") {
                 if (status == 1) {
-                    const filtered = states.filter(item => item.name.toLowerCase().includes(value));
+                    const filtered = states.filter(item => item.title.toLowerCase().startsWith(value));
                     dropdown.innerHTML = filtered.length ?
                         filtered.map(item =>
                             `<div onclick="selectItem('${item.title}', '${item.title}','${divId}')">${item.title}</div>`)
