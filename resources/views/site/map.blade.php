@@ -386,12 +386,27 @@
             background-color: #bfbfbf;
             border-radius: 10px;
         }
-        .swal2-popup{
+
+        .swal2-popup {
             margin-top: 78px;
             box-shadow: 0px 5px 10px 0px #868686a6 !important;
         }
-        .swal2-title{
+
+        .swal2-title {
             font-size: 24px;
+        }
+
+        .swal2-modal {
+            background: #ffc7ce;
+            color: #9c0006;
+        }
+
+        .swal2-timer-progress-bar {
+            background: #5e5e5e;
+        }
+        span.count{
+            font-size: 12px;
+            color: #3b3b3b;
         }
     </style>
 @endsection
@@ -441,7 +456,7 @@
                                 <label class="form-check-label" for="genderMale">
                                     <img src="{{ asset('location-blue.svg') }}" alt="male" width="20"
                                         height="20">
-                                    برادران
+                                    برادران <span class="count" id="countMale">( 0 )</span>
                                 </label>
                             </div>
                             <div class="form-check">
@@ -449,7 +464,7 @@
                                 <label class="form-check-label" for="genderFemale">
                                     <img src="{{ asset('location-pink.svg') }}" alt="male" width="20"
                                         height="20">
-                                    خواهران
+                                    خواهران <span class="count" id="countFemale">( 0 )</span>
                                 </label>
                             </div>
                             <div class="form-check">
@@ -457,7 +472,7 @@
                                 <label class="form-check-label" for="genderBoth">
                                     <img src="{{ asset('location-yellow.svg') }}" alt="male" width="20"
                                         height="20">
-                                    برادران، خواهران
+                                    برادران، خواهران <span class="count" id="countBoth">( 0 )</span>
                                 </label>
                             </div>
                         </div>
@@ -480,7 +495,7 @@
                                         checked>
                                     <label class="form-check-label text-primary" for="selectAllFields">
                                         {{-- <i class="bi bi-check2-square text-primary"></i> --}}
-                                        انتخاب همه
+                                        انتخاب همه <span class="count">({{$groups->count()}})</span>
                                     </label>
                                 </div>
                                 @foreach ($groups as $group)
@@ -488,7 +503,7 @@
                                         <input class="form-check-input field-check" type="checkbox"
                                             value="{{ $group->name }}" id="field{{ $group->name }}" checked>
                                         <label class="form-check-label" for="field{{ $group->name }}">
-                                            {{ $group->name }}
+                                            {{ $group->name }} <span class="field-count count" data-field="{{ $group->name }}">0</span>
                                         </label>
                                     </div>
                                 @endforeach
@@ -523,7 +538,7 @@
     <script>
         $(document).ready(function() {
             // مقداردهی اولیه نقشه
-            const map = L.map('map').setView([31.879293, 54.373840], 15); // مختصات تهران
+            const map = L.map('map').setView([31.879293, 54.373840], 14); // مختصات تهران
             // تعریف آیکون‌ها
             var blueIcon = L.icon({
                 iconUrl: "{{ asset('location-blue.svg') }}", // آیکون آبی
@@ -558,6 +573,7 @@
 
             // داده‌های نمونه برای آموزشگاه‌ها (در حالت واقعی از JSON استفاده می‌شود)
             const institutes = @json($organns);
+            var states = @json($states);
 
             let markers = [];
             let instituteLabels = [];
@@ -630,24 +646,15 @@
                 if (institutesToShow.length === 0) {
                     Swal.fire({
                         // position: "top-end",
-                        icon: "error",
+                        // icon: "error",
                         text: "هیچ آموزشگاهی با این فیلتر ها پیدا نشد",
                         showConfirmButton: false,
                         width: 400,
-                        timer: 2500,
+                        timer: 3000,
                         timerProgressBar: true,
                         heightAuto: false
                     });
-                    // const noResults = L.marker(map.getCenter(), {
-                    //     icon: L.divIcon({
-                    //         className: 'no-results-marker',
-                    //         html: `<div class="no-results">هیچ آموزشگاهی یافت نشد</div>`,
-                    //         iconSize: [200, 40],
-                    //         iconAnchor: [100, 20]
-                    //     })
-                    // }).addTo(map);
 
-                    // markers.push(noResults);
                 }
 
                 // تنظیم زوم بر اساس نتایج
@@ -659,43 +666,25 @@
             // تابع برای تنظیم زوم بر اساس نتایج
             function adjustZoomToResults(results) {
                 if (results.length === 0) {
-                    // اگر نتیجه‌ای وجود ندارد، روی مرکز ایران زوم شود
-                    map.setView([31.879293, 54.373840], 15);
+                    // map.setView([31.879293, 54.373840], 15);
                     return;
                 }
 
                 if (results.length === 1) {
-                    // اگر فقط یک نتیجه وجود دارد، روی آن زوم شود
                     const institute = results[0];
                     map.setView([institute.lat, institute.lng], 15);
 
-
-
-
-
-                    // نمایش اطلاعات با SweetAlert
-                    Swal.fire({
-                        title: institute.name,
-                        position: "top-end",
-                        html: `
-                            <div style="text-align: right;">
-                                <p><b>جنسیت:</b> ${getGenderName(institute.gender)}</p>
-                                <p><b>شهر:</b> ${getCityName(institute.city)}</p>
-                                <a href="{{ route('school') }}" class="btn btn-primary w-100" style="margin-top: 10px;">مشاهده پروفایل</a>
-                            </div>
-                        `,
-                        // icon: 'info',
-                        showCloseButton: true,
-                        showConfirmButton: false,
-                        width: '400px',
-                        customClass: {
-                            popup: 'swal2-popup-custom'
-                        },
-                        background: "#ffffffff",
-                        backdrop: `
-                          rgba(0,0,0,0.0)
-                        `
+                    // پیدا کردن مارکر مرتبط با این آموزشگاه
+                    const marker = markers.find(m => {
+                        const latLng = m.getLatLng();
+                        return latLng.lat === institute.lat && latLng.lng === institute.lng;
                     });
+
+                    if (marker) {
+                        map.setView([institute.lat, institute.lng], 15);
+                        marker.openPopup(); // ✅ باز کردن پاپ‌آپ همون مارکر
+                    }
+
                     return;
                 }
                 // اگه چند نتیجه بود
@@ -761,9 +750,24 @@
                     return true;
                 });
 
+
+                // ✅ اگر شهر انتخاب شده باشد، نقشه به آن برود
+                // if (cityChange) {
+                //     const cityData = states.find(state => state.id == selectedCity);
+                //     if (cityData && cityData.latitude && cityData.longitude) {
+                //         map.setView([cityData.latitude, cityData.longitude], 12);
+                //     }
+                // }
+
+
                 // نمایش آموزشگاه‌های فیلتر شده
                 if (cityChange) {
                     displayInstitutes(filteredInstitutes, searchText, true);
+                    const cityData = states.find(state => state.title == selectedCity2);
+                    // alert(cityData.title);
+                    if (cityData && cityData.latitude && cityData.longitude) {
+                        map.setView([cityData.latitude, cityData.longitude], 12);
+                    }
                 } else {
                     displayInstitutes(filteredInstitutes, searchText);
                 }
@@ -818,6 +822,49 @@
                 };
                 return cities[city] || city;
             }
+
+            // نمایش تعداد هر جنسیت
+            function updateGenderCounts() {
+                let maleCount = 0;
+                let femaleCount = 0;
+                let bothCount = 0;
+
+                institutes.forEach(inst => {
+                    if (inst.gender === 'male') maleCount++;
+                    else if (inst.gender === 'female') femaleCount++;
+                    else if (inst.gender === 'both') bothCount++;
+                });
+
+                $('#countMale').text('( '+maleCount+' )');
+                $('#countFemale').text('( '+femaleCount+' )');
+                $('#countBoth').text('( '+bothCount+' )');
+            }
+            // فراخوانی هنگام لود صفحه
+            updateGenderCounts();
+
+            // نمایش تعداد آموزشگاه های هر رشته
+            function updateFieldCounts() {
+                let fieldCounts = {};
+
+                // شمارش تعداد هر رشته
+                institutes.forEach(inst => {
+                    inst.fields.forEach(field => {
+                        if (!fieldCounts[field]) {
+                            fieldCounts[field] = 0;
+                        }
+                        fieldCounts[field]++;
+                    });
+                });
+
+                // نمایش تعداد در کنار هر رشته
+                $('.field-count').each(function() {
+                    let fieldName = $(this).data('field');
+                    $(this).text('( '+(fieldCounts[fieldName] || 0)+' )');
+                });
+            }
+
+            // اجرا در لود اولیه
+            updateFieldCounts();
 
             // رویداد کلیک برای دکمه اعمال فیلترها
             $('#applyFilters').click(() => filterInstitutes());

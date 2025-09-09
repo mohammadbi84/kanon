@@ -339,71 +339,71 @@ class SiteController extends Controller
     {
         $organns = [
             [
-                'id'=>1,
+                'id' => 1,
                 'lat' => 31.87353,
                 'lng' => 54.34087,
                 'name' => "آموزشگاه  bh jbhb hb bhbhالف (خواهران)",
                 'address' => "یزد، محله آذر یزدی",
                 'gender' => "female",
                 'fields' => ["امور اداری", "بهداشت و ایمنی"],
-                'city'=>'یزد'
+                'city' => 'یزد'
             ],
             [
-                'id'=>6,
+                'id' => 6,
                 'lat' => 31.879196,
                 'lng' => 54.373658,
                 'name' => "دارالفنون فاضل",
                 'address' => "یزد، خیابان کاشانی",
                 'gender' => "both",
                 'fields' => ["فناوری اطلاعات"],
-                'city'=>'یزد'
+                'city' => 'یزد'
             ],
             [
-                'id'=>2,
+                'id' => 2,
                 'lat' => 31.8974,
                 'lng' => 54.3569,
                 'name' => "آموزشگاه ب (برادران)",
                 'address' => "یزد، میدان آزادی",
                 'gender' => "male",
                 'fields' => ["بهداشت و ایمنی"],
-                'city'=>'یزد'
+                'city' => 'یزد'
             ],
             [
-                'id'=>3,
+                'id' => 3,
                 'lat' => 31.8900,
                 'lng' => 54.3600,
                 'name' => "آموزشگاه ج (چند منظوره)",
                 'address' => "یزد، بلوار جمهوری",
                 'gender' => "both",
                 'fields' => ["زیست فناوری"],
-                'city'=>'یزد'
+                'city' => 'یزد'
             ],
             [
-                'id'=>4,
+                'id' => 4,
                 'lat' => 31.8850,
                 'lng' => 54.3650,
                 'name' => "آموزشگاه د (چند منظوره)",
                 'address' => "یزد، نزدیک بلوار جمهوری",
                 'gender' => "both",
                 'fields' => ["فناوری اطلاعات", "زیست فناوری"],
-                'city'=>'یزد'
+                'city' => 'یزد'
             ],
             [
-                'id'=>5,
+                'id' => 5,
                 'lat' => 31.9010,
                 'lng' => 54.3500,
                 'name' => "آموزشگاه ه (خواهران)",
                 'address' => "یزد، خیابان فرخی",
                 'gender' => "female",
                 'fields' => ["فناوری اطلاعات", "مراقبت و زیبایی"],
-                'city'=>'یزد'
+                'city' => 'یزد'
             ]
         ];
         $organs = Organ::where('status', 1)->take(5)->get();
-        $groups = Group::orderBy('name','asc')->get();
-        $states = City::where('active',1)->where('parent',31)->get();
+        $groups = Group::orderBy('name', 'asc')->get();
+        $states = City::orderBy('title', 'asc')->where('active', 1)->where('parent', 31)->get();
 
-        return view('site.map', compact('organns', 'organs','groups','states'));
+        return view('site.map', compact('organns', 'organs', 'groups', 'states'));
     }
     public function school()
     {
