@@ -411,7 +411,8 @@ class SiteController extends Controller
     }
     public function job_index()
     {
-        $groups = Group::orderBy('name', 'asc')->get();
+        $group_organ = HerfeOrgan::pluck('herfe_id');
+        $groups = Group::orderBy('name', 'asc')->whereIn('id',$group_organ)->get();
         return view('site.job_opportunity.categories',compact('groups'));
     }
 }
