@@ -431,7 +431,7 @@
                                 <a class="nav-link" href="#footer">درباره ما</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#footer">فرصت های شغلی</a>
+                                <a class="nav-link" href="{{route('job-opportunity.index')}}">فرصت های شغلی</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#footer">مدرس شوید</a>

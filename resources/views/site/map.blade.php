@@ -404,7 +404,8 @@
         .swal2-timer-progress-bar {
             background: #5e5e5e;
         }
-        span.count{
+
+        span.count {
             font-size: 12px;
             color: #3b3b3b;
         }
@@ -483,19 +484,19 @@
                         {{-- <h6 class="filter-title">رشته‌ها</h6> --}}
                         <div class="border pt-4 pe-1 pb-2 rounded position-relative" style="">
                             <h6 class="filter-title m-0">عناوین رشته</h6>
-                            <div class="autocomplete pe-2 mb-2" id="autocompleteBoxreshte" style="padding-left: 8px">
+                            <div class="autocomplete pe-2 mb-3" id="autocompleteBoxreshte" style="padding-left: 8px">
                                 <input type="text" id="searchInputreshte" name="reshte" oninput="nameinput('reshte')">
                                 <label for="searchInputreshte">جستجوی رشته...</label>
                                 <span class="clear-btn" id="clearBtn_reshte" style="left:18px;"
                                     onclick="clearInput('reshte')">×</span>
                             </div>
-                            <div class="p-2 reshte-box" dir="ltr" style="padding-right: 7px !important;">
+                            <div class="p-2 pt-0 reshte-box" dir="ltr" style="padding-right: 7px !important;">
                                 <div class="form-check mb-2 position-sticky top-0 bg-white" dir="rtl">
                                     <input class="form-check-input" type="checkbox" id="selectAllFields" value=""
                                         checked>
-                                    <label class="form-check-label text-primary" for="selectAllFields">
+                                    <label class="form-check-label text-primary pb-2" for="selectAllFields">
                                         {{-- <i class="bi bi-check2-square text-primary"></i> --}}
-                                        انتخاب همه <span class="count">({{$groups->count()}})</span>
+                                        انتخاب همه <span class="count">({{ $groups->count() }})</span>
                                     </label>
                                 </div>
                                 @foreach ($groups as $group)
@@ -503,7 +504,8 @@
                                         <input class="form-check-input field-check" type="checkbox"
                                             value="{{ $group->name }}" id="field{{ $group->name }}" checked>
                                         <label class="form-check-label" for="field{{ $group->name }}">
-                                            {{ $group->name }} <span class="field-count count" data-field="{{ $group->name }}">0</span>
+                                            {{ $group->name }} <span class="field-count count"
+                                                data-field="{{ $group->name }}">0</span>
                                         </label>
                                     </div>
                                 @endforeach
@@ -672,7 +674,7 @@
 
                 if (results.length === 1) {
                     const institute = results[0];
-                    map.setView([institute.lat, institute.lng], 15);
+                    // map.setView([institute.lat, institute.lng], 15);
 
                     // پیدا کردن مارکر مرتبط با این آموزشگاه
                     const marker = markers.find(m => {
@@ -681,8 +683,16 @@
                     });
 
                     if (marker) {
-                        map.setView([institute.lat, institute.lng], 15);
-                        marker.openPopup(); // ✅ باز کردن پاپ‌آپ همون مارکر
+                        // map.setView([institute.lat, institute.lng], 15);
+                        map.flyTo([institute.lat, institute.lng], 15, {
+                            animate: true,
+                            duration: 0.3,
+                        });
+
+                        setTimeout(() => {
+                            map.panBy([-180, 0]); // برای فضای خالی سمت راست
+                            marker.openPopup(); // ✅ باز کردن پاپ‌آپ همون مارکر
+                        }, 300);
                     }
 
                     return;
@@ -835,9 +845,9 @@
                     else if (inst.gender === 'both') bothCount++;
                 });
 
-                $('#countMale').text('( '+maleCount+' )');
-                $('#countFemale').text('( '+femaleCount+' )');
-                $('#countBoth').text('( '+bothCount+' )');
+                $('#countMale').text('( ' + maleCount + ' )');
+                $('#countFemale').text('( ' + femaleCount + ' )');
+                $('#countBoth').text('( ' + bothCount + ' )');
             }
             // فراخوانی هنگام لود صفحه
             updateGenderCounts();
@@ -859,7 +869,7 @@
                 // نمایش تعداد در کنار هر رشته
                 $('.field-count').each(function() {
                     let fieldName = $(this).data('field');
-                    $(this).text('( '+(fieldCounts[fieldName] || 0)+' )');
+                    $(this).text('( ' + (fieldCounts[fieldName] || 0) + ' )');
                 });
             }
 

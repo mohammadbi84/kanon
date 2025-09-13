@@ -249,7 +249,7 @@
                                 <a class="nav-link" href="#footer">درباره ما</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#footer">فرصت های شغلی</a>
+                                <a class="nav-link" href="{{ route('job-opportunity.index') }}">فرصت های شغلی</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#footer">مدرس شوید</a>
@@ -283,9 +283,7 @@
                             <a href="#" class="btn btn-icon"><span class="bi bi-basket"></span></a>
                             {{-- <div class="button-container">
                                 <a href="/login" class="btn btn-icon btn-primary login_btn">ورود</a>
-                                @if (Route::currentRouteName() == 'register' and !$previousRoute or
-                                        Route::currentRouteName() == 'register' and $previousRoute != 'home' or
-                                        Route::currentRouteName() == 'register' and !$errors->any() and $register_message->status)
+                                @if (Route::currentRouteName() == 'register' and !$previousRoute or Route::currentRouteName() == 'register' and $previousRoute != 'home' or Route::currentRouteName() == 'register' and !$errors->any() and $register_message->status)
                                     <a data-bs-toggle="modal" data-bs-target="#registermessageModal"
                                         class="btn btn-icon btn-primary register_btn">ثبت نام</a>
                                 @else
@@ -297,12 +295,13 @@
                                 <div class="button-container">
                                     <a href="/login" class="btn btn-icon login-btn login_btn">ورود</a>
                                     @if (Route::currentRouteName() == 'register' and !$previousRoute or
-                                        Route::currentRouteName() == 'register' and $previousRoute != 'home' or
-                                        Route::currentRouteName() == 'register' and !$errors->any() and $register_message->status)
+                                            Route::currentRouteName() == 'register' and $previousRoute != 'home' or
+                                            Route::currentRouteName() == 'register' and !$errors->any() and $register_message->status)
                                         <a data-bs-toggle="modal" data-bs-target="#registermessageModal"
                                             class="btn btn-icon register-btn register_btn">ثبت نام</a>
                                     @else
-                                        <a href="{{ route('register') }}" class="btn btn-icon register-btn register_btn">ثبت
+                                        <a href="{{ route('register') }}"
+                                            class="btn btn-icon register-btn register_btn">ثبت
                                             نام</a>
                                     @endif
                                     <div class="background-slide"></div>

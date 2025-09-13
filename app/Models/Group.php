@@ -16,8 +16,8 @@ class Group extends Model
     {
         return $this->belongsTo(Khoshe::class);
     }
-    public function herfeOrgan()
+    public function organs()
     {
-        return $this->hasMany(HerfeOrgan::class, 'herfe_id');
+        return $this->belongsToMany(Organ::class, 'herfe_organs','herfe_id');
     }
 }

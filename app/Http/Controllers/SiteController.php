@@ -409,4 +409,9 @@ class SiteController extends Controller
     {
         return view('site.school');
     }
+    public function job_index()
+    {
+        $groups = Group::orderBy('name', 'asc')->get();
+        return view('site.job_opportunity.categories',compact('groups'));
+    }
 }

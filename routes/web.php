@@ -27,9 +27,33 @@ Route::get('/sms', [\App\Http\Controllers\AuthController::class, 'sms'])->name('
 Route::get('/resend-code/{user}', [\App\Http\Controllers\AuthController::class, 'resendCode'])->name('resend.code');
 
 Route::get('/states/{cityId}', [\App\Http\Controllers\SiteController::class, 'states']);
+
+
+
+
+// site pages
 Route::get('/', [\App\Http\Controllers\SiteController::class, 'index'])->middleware('senddata')->name('home');
 Route::get('/school', [\App\Http\Controllers\SiteController::class, 'school'])->name('school');
 Route::get('/maps', [\App\Http\Controllers\SiteController::class, 'map'])->name('map');
+Route::prefix('/job-opportunity')->name('job-opportunity.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\SiteController::class, 'job_index'])->name('index');
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Route::get('/AboutUs', [\App\Http\Controllers\AboutUsController::class, 'site'])->middleware('senddata');
 Route::get('/register', [\App\Http\Controllers\SiteController::class, 'register']);
 Route::post('/register', [\App\Http\Controllers\SchoolController::class, 'addPost']);
