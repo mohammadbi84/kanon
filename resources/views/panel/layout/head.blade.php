@@ -1,10 +1,12 @@
 <head>
+    <link href="https://v1.fontapi.ir/css/VazirFD" rel="stylesheet">
+
     <style>
         /* General Styles */
         body {
-            font-family: sans-serif;
+            font-family: 'Vazir FD', sans-serif !important;
             direction: rtl;
-            background: #F3F3F9 !important;
+            background: #F2F2F2 !important;
         }
     </style>
     <meta charset="UTF-8">

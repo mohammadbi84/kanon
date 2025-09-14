@@ -68,7 +68,7 @@
     <header style="position: relative;z-index:+50">
         <div class="main-menu small">
             <nav class="navbar navbar-expand-lg">
-                <div class="container" style="padding: 0 !important">
+                <div class="container">
                     <a class="navbar-brand fw-bold" href="/">
                         <img src="{{ asset('site/public/img/logo-yazdskill2.png') }}" alt="website logo">
                     </a>

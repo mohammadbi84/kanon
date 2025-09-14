@@ -3,8 +3,7 @@
     <title>حساب کاربری</title>
     <style>
         body {
-            background-color: #f5f6f9;
-            font-family: sans-serif;
+            background-color: #F2F2F2;
         }
 
         .card-box {
@@ -40,16 +39,115 @@
         .text-light-blue {
             color: #3b82f6;
         }
+
+
+
+
+
+
+        .tabtow-link.active i {
+            color: #e69926;
+        }
+
+        .tabtow-link:hover {
+            color: #e69926 !important;
+        }
+
+        .nav-tabs .nav-link {
+            margin-bottom: calc(-1 * var(--bs-nav-tabs-border-width));
+            border: none;
+            border-color: #ffae00;
+        }
+
+
+        .leaflet-touch .leaflet-control-attribution {
+            display: none !important;
+        }
+
+
+        /* کلاس ها */
+        .school-event-card {
+            background-color: white;
+            /* overflow: hidden; */
+            padding: 2rem 1.5rem;
+        }
+
+        .event-image {
+            width: 130px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .event-date {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .event-date i {
+            font-size: 1rem;
+            margin-right: 6px;
+        }
+
+        .alert-dismissible .btn-close {
+            right: auto !important;
+            left: 0 !important;
+        }
+        .text-alert{
+            font-size: 12px;
+            line-height: 20px;
+            color: #484848;
+            text-align: justify;
+        }
+        .alert-costum{
+            background: #e9e9e9;
+            border: 2px dashed #d6d6d6;
+            padding-right: 16px  !important;
+        }
     </style>
     {{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"> --}}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 @endsection
 @section('content')
     <div class="container mb-5 py-5" style="margin-top: 70px">
-        <div class="row">
-            <div class="col-md-1"></div>
-            <div class="col-md-10">
-                <div class="row p-4 rounded-3 shadow bg-white border">
+        <div class="row g-0">
+            <div class="col-md-12 mb-4">
+                    <div class="alert alert-costum alert-dismissible">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <strong>توجه!</strong>
+                        <div class="row mt-3">
+                            <div class="col-md-8">
+                                <p class="text-alert mt-2">
+                                    لطفا جهت استفاده آسان تر از سامانه، از راهتماى ساماته استفاده كنيد.
+                                    در صورتى كه مايل به ايجاد درخواست جديد هستيد از كزينه درخواست جديد در همين صفحه استفاده كنيد. و يا
+                                    از متوى سمت راست سامانه، كزينه درخواست رزرو تابلو را
+                                    انتخاب كرده و بر اساس نوع تابلو درخواست خودرا ايجاد كنيد.
+                                    در صورتى كه درخواست شما در انتظار تاييد كارشناس سامانه است، منتظر بمانيد تا بيامك مربوط به تاييد و
+                                    يا رد درخواست براى شما ارسال شود.
+                                    ـر صورتى كه درخواست شما تابيد شده است وبيامك مربوط به أن براى شما ارسال شده است، جهت تاييد تهايى و
+                                    ادامه درخواست از منوى سمت راس
+                                    رزرو تابلو را انتخاب كرده وبر اساس نوع تايلو درخواست هاى خود را انتخاب ومشاهده كنيد.
+
+                                    وادامه درخواست از منوى سمت راست ساماته، كزينه درخواست
+                                    ر صیرتی كه درخواست شما رد شده است و پيامك مربوط به آن براى شما ارسال شده است، جهت مشاهده دلیل رد
+                                    درخواست و ایجاد درخواست جديد از منوى سمت راست
+                                    سامانه، كزينه درخواست رزرو تابلورا انتخاب كرده وبر اساس نوع تابلو درخواست هاى خودرا انتخاب ومشاهده
+                                    كنيد.
+
+                                    ٠ ويديو هاى من
+
+                                    صورت بروز هر كونه مشكل با شماره تلفن ٠٣٥٣٨٢٧٧٢٥٠ و٠٣٥٣٣١٣٥٣٠٨ واحد تبليغات (آقاى سلمانى) تماس
+                                    بكيريد.
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <img src="{{asset('site/public/img/User_Panel-question.png')}}" alt="question" class="object-fit-cover" width="250">
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="col-md-12">
+                <div class="row p-4 rounded-3 shadow bg-white border g-0">
                     <!-- آیکون ها -->
                     <div class="col-md-9">
                         <div class="row g-3">
@@ -147,7 +245,7 @@
                         </div>
                     </div>
                     <!-- اشتراک -->
-                    <div class="col-md-3">
+                    <div class="col-md-3 pe-3">
                         <div class="card-box text-white text-center align-content-center" style="background: #1654CD;">
                             <h5 class="fw-bold mb-4 text-warning">شما اشتراک ندارید!</h5>
                             <p class="mb-4 p-1 rounded-pill text-center" style="background-color: #2563EB;">با خرید
@@ -158,10 +256,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-1"></div>
-            <div class="col-md-1"></div>
-            <div class="col-md-10">
-                <div class="row mt-4 p-2 px-0">
+            <div class="col-md-12">
+                <div class="row mt-4 p-2 px-0 g-0">
                     <div class="col-md-4 pe-0">
                         <div class="border rounded-3 bg-white shadow p-3">
                             <p>متن تستی</p>
@@ -169,15 +265,262 @@
                     </div>
                     <div class="col-md-8 ps-0">
                         <div class="border rounded-3 bg-white shadow p-3 m-0 h-100">
-                            <h4>آگهی های اخیر</h4>
+                            <!-- تب آگهی‌ها و کلاس‌ها -->
+                            <div class="">
+                                <ul class="nav nav-tabs mb-3 pe-0 border-bottom-0 position-relative" id="tabTwo"
+                                    role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link tabtow-link text-dark active" id="ads-tab"
+                                            data-bs-toggle="tab" data-bs-target="#ads" type="button" role="tab">
+                                            <i class="bi bi-newspaper ms-2"></i>
+                                            آگهی‌ها
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link tabtow-link text-dark" id="classes-tab"
+                                            data-bs-toggle="tab" data-bs-target="#classes" type="button"
+                                            role="tab">
+                                            <i class="bi bi-pencil ms-2"></i>
+                                            کلاس‌های آموزشی
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link tabtow-link text-dark" id="opper-tab"
+                                            data-bs-toggle="tab" data-bs-target="#opper" type="button" role="tab">
+                                            <i class="bi bi-newspaper ms-2"></i>
+                                            فرصت های شغلی
+                                        </button>
+                                    </li>
+                                    <div class="position-absolute" style="left: 0;bottom:0">
+                                        <label class="switch2">
+                                            <input type="checkbox" name="off" id="off">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </ul>
+                                <div class="tab-content" id="tabTwoContent">
+                                    <div class="tab-pane fade show active" id="ads" role="tabpanel">
+                                        <div class="school-event-card row d-flex align-items-center flex-wrap border-top">
+                                            <!-- سمت راست: تصویر و اطلاعات -->
+                                            <div class="col-2 p-0">
+                                                <img src="{{ asset('https://kanon.royceceramica.com/files/files/1/img3.jpg') }}"
+                                                    class="event-image" alt="رویداد">
+                                            </div>
+                                            <!-- سمت چپ: تاریخ و دکمه -->
+                                            <div class="text-start col-10 pe-4 position-relative">
+                                                <div class="discount-squer"
+                                                    style="position: absolute;left: -11px;top: -38px;">
+                                                    <img src="{{ asset('Group 1.svg') }}" width="90" alt="discount">
+                                                    <span class="d-flex"
+                                                        style="font-size: 12px;font-weight: 800;position: absolute;right: 12px;top: 7px;"
+                                                        dir="ltr">
+                                                        <span class="me-1" style="font-size: 13px;">تخفیف</span>
+                                                        <strong class="" style="font-size: 12px;">10%</strong>
+                                                    </span>
+                                                </div>
+                                                <div class=" d-flex justify-content-between position-relative"
+                                                    style="bottom: 33px;width: 88%;" dir="ltr">
+                                                    <div class="" style="padding-top: 4px;">
+                                                        <p class="text-center m-0"
+                                                            style="font-size: 14px;direction: rtl;font-weight:bold;margin-bottom:4px">
+                                                            <span class="text-dark" style="font-size: 14px;">اعتبار :
+                                                            </span>
+                                                            <span class="text-primary"
+                                                                style="font-size: 14px">1403/05/08</span>
+                                                            <span class="text-dark" style="font-size: 14px;">الی</span>
+                                                            <span class="text-primary"
+                                                                style="font-size: 14px">1403/05/20</span>
+                                                        </p>
+                                                    </div>
+                                                    <a href="#" class="text-reset text-decoration-none">
+                                                        <small style="font-size: 11.9px">
+                                                            5
+                                                            <i class="bi bi-exclamation-triangle ms-1 text-primary"
+                                                                style="position: relative;top: 2px;"></i>
+                                                        </small>
+                                                    </a>
+                                                    <small style="font-size: 11.9px;">
+                                                        50
+                                                        <i class="bi bi-heart ms-1 text-primary"
+                                                            style="position: relative;top: 2px;"></i>
+                                                    </small>
+                                                    <small style="font-size: 11.9px;">
+                                                        112
+                                                        <i class="bi bi-eye ms-1 text-primary"
+                                                            style="position: relative;top: 2px;"></i>
+                                                    </small>
+                                                    <small style="font-size: 11.9px;">
+                                                        2 روز پیش
+                                                        <i class="bi bi-clock ms-1 text-primary"
+                                                            style="position: relative;top: 2px;"></i>
+                                                    </small>
+                                                </div>
+                                                <div class="event-date mb-3">
+                                                    <span class="badge bg-success mb-1"
+                                                        style="padding:6px;font-size:16px;font-weight: 400;position: relative;bottom: 17px;">نمایش
+                                                        شهربازی</span>
+                                                    <p class="text-muted text-intro mt-2 position-relative"
+                                                        style="bottom: 12px;">
+                                                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با
+                                                        استفاده
+                                                        از طراحان
+                                                        گرافیک است
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="school-event-card row d-flex align-items-center flex-wrap border-top">
+                                            <!-- سمت راست: تصویر و اطلاعات -->
+                                            <div class="col-2 p-0">
+                                                <img src="{{ asset('https://kanon.royceceramica.com/files/files/1/img3.jpg') }}"
+                                                    class="event-image" alt="رویداد">
+                                            </div>
+                                            <!-- سمت چپ: تاریخ و دکمه -->
+                                            <div class="text-start col-10 pe-4 position-relative">
+                                                <div class="discount-squer"
+                                                    style="position: absolute;left: -11px;top: -38px;">
+                                                    <img src="{{ asset('Group 1.svg') }}" width="90" alt="discount">
+                                                    <span class="d-flex"
+                                                        style="font-size: 12px;font-weight: 800;position: absolute;right: 12px;top: 7px;"
+                                                        dir="ltr">
+                                                        <span class="me-1" style="font-size: 13px;">تخفیف</span>
+                                                        <strong class="" style="font-size: 12px;">10%</strong>
+                                                    </span>
+                                                </div>
+                                                <div class=" d-flex justify-content-between position-relative"
+                                                    style="bottom: 33px;width: 88%;" dir="ltr">
+                                                    <div class="" style="padding-top: 4px;">
+                                                        <p class="text-center m-0"
+                                                            style="font-size: 14px;direction: rtl;font-weight:bold;margin-bottom:4px">
+                                                            <span class="text-dark" style="font-size: 14px;">اعتبار :
+                                                            </span>
+                                                            <span class="text-primary"
+                                                                style="font-size: 14px">1403/05/08</span>
+                                                            <span class="text-dark" style="font-size: 14px;">الی</span>
+                                                            <span class="text-primary"
+                                                                style="font-size: 14px">1403/05/20</span>
+                                                        </p>
+                                                    </div>
+                                                    <a href="#" class="text-reset text-decoration-none">
+                                                        <small style="font-size: 11.9px">
+                                                            5
+                                                            <i class="bi bi-exclamation-triangle ms-1 text-primary"
+                                                                style="position: relative;top: 2px;"></i>
+                                                        </small>
+                                                    </a>
+                                                    <small style="font-size: 11.9px;">
+                                                        50
+                                                        <i class="bi bi-heart ms-1 text-primary"
+                                                            style="position: relative;top: 2px;"></i>
+                                                    </small>
+                                                    <small style="font-size: 11.9px;">
+                                                        112
+                                                        <i class="bi bi-eye ms-1 text-primary"
+                                                            style="position: relative;top: 2px;"></i>
+                                                    </small>
+                                                    <small style="font-size: 11.9px;">
+                                                        2 روز پیش
+                                                        <i class="bi bi-clock ms-1 text-primary"
+                                                            style="position: relative;top: 2px;"></i>
+                                                    </small>
+                                                </div>
+                                                <div class="event-date mb-3">
+                                                    <span class="badge bg-success mb-1"
+                                                        style="padding:6px;font-size:16px;font-weight: 400;position: relative;bottom: 17px;">نمایش
+                                                        شهربازی</span>
+                                                    <p class="text-muted text-intro mt-2 position-relative"
+                                                        style="bottom: 12px;">
+                                                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با
+                                                        استفاده
+                                                        از طراحان
+                                                        گرافیک است
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="school-event-card row d-flex align-items-center flex-wrap border-top">
+                                            <!-- سمت راست: تصویر و اطلاعات -->
+                                            <div class="col-2 p-0">
+                                                <img src="{{ asset('https://kanon.royceceramica.com/files/files/1/img3.jpg') }}"
+                                                    class="event-image" alt="رویداد">
+                                            </div>
+                                            <!-- سمت چپ: تاریخ و دکمه -->
+                                            <div class="text-start col-10 pe-4 position-relative">
+                                                <div class="discount-squer"
+                                                    style="position: absolute;left: -11px;top: -38px;">
+                                                    <img src="{{ asset('Group 1.svg') }}" width="90" alt="discount">
+                                                    <span class="d-flex"
+                                                        style="font-size: 12px;font-weight: 800;position: absolute;right: 12px;top: 7px;"
+                                                        dir="ltr">
+                                                        <span class="me-1" style="font-size: 13px;">تخفیف</span>
+                                                        <strong class="" style="font-size: 12px;">10%</strong>
+                                                    </span>
+                                                </div>
+                                                <div class=" d-flex justify-content-between position-relative"
+                                                    style="bottom: 33px;width: 88%;" dir="ltr">
+                                                    <div class="" style="padding-top: 4px;">
+                                                        <p class="text-center m-0"
+                                                            style="font-size: 14px;direction: rtl;font-weight:bold;margin-bottom:4px">
+                                                            <span class="text-dark" style="font-size: 14px;">اعتبار :
+                                                            </span>
+                                                            <span class="text-primary"
+                                                                style="font-size: 14px">1403/05/08</span>
+                                                            <span class="text-dark" style="font-size: 14px;">الی</span>
+                                                            <span class="text-primary"
+                                                                style="font-size: 14px">1403/05/20</span>
+                                                        </p>
+                                                    </div>
+                                                    <a href="#" class="text-reset text-decoration-none">
+                                                        <small style="font-size: 11.9px">
+                                                            5
+                                                            <i class="bi bi-exclamation-triangle ms-1 text-primary"
+                                                                style="position: relative;top: 2px;"></i>
+                                                        </small>
+                                                    </a>
+                                                    <small style="font-size: 11.9px;">
+                                                        50
+                                                        <i class="bi bi-heart ms-1 text-primary"
+                                                            style="position: relative;top: 2px;"></i>
+                                                    </small>
+                                                    <small style="font-size: 11.9px;">
+                                                        112
+                                                        <i class="bi bi-eye ms-1 text-primary"
+                                                            style="position: relative;top: 2px;"></i>
+                                                    </small>
+                                                    <small style="font-size: 11.9px;">
+                                                        2 روز پیش
+                                                        <i class="bi bi-clock ms-1 text-primary"
+                                                            style="position: relative;top: 2px;"></i>
+                                                    </small>
+                                                </div>
+                                                <div class="event-date mb-3">
+                                                    <span class="badge bg-success mb-1"
+                                                        style="padding:6px;font-size:16px;font-weight: 400;position: relative;bottom: 17px;">نمایش
+                                                        شهربازی</span>
+                                                    <p class="text-muted text-intro mt-2 position-relative"
+                                                        style="bottom: 12px;">
+                                                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با
+                                                        استفاده
+                                                        از طراحان
+                                                        گرافیک است
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="classes" role="tabpanel">
+                                        <ul class="list-group list-group-flush small pe-0">
+                                            <li class="list-group-item">کلاس آموزش React - دوشنبه‌ها</li>
+                                            <li class="list-group-item">کلاس آموزش AutoCAD - چهارشنبه‌ها</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-1"></div>
-
         </div>
-
     </div>
 @endsection
 @section('script')

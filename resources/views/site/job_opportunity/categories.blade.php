@@ -125,7 +125,7 @@
     @php
         $chunks = $groups->chunk(ceil($groups->count() / 3)); // تقسیم به 3 قسمت
     @endphp
-    <div class="container wrapper mb-5" style="padding-top: 120px !important">
+    <div class="container wrapper mb-5" style="min-height: 100vh;align-items: center;align-content: center;">
         <h3 class="text-center">عنوان اصلی وسط صفحه</h3>
         <p class="text-center text-muted mb-4">متن فرعی زیر عنوان اصلی به صورت وسط چین و جاستیفای با رنگ کمرنگ تر از اصلی</p>
 
@@ -133,15 +133,15 @@
             <ul class="nav nav-tabs pe-3 gap-4" id="tabOne" role="tablist" style="border-radius: 5px 5px 0 0">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link tabone-link py-3 px-1 active" id="fields-tab" data-bs-toggle="tab"
-                        data-bs-target="#fields" type="button" role="tab">تدریس
+                        data-bs-target="#fields" type="button" role="tab">آموزشی
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link tabone-link py-3 px-1" id="professions-tab" data-bs-toggle="tab"
-                        data-bs-target="#professions" type="button" role="tab">پرسنل</button>
+                        data-bs-target="#professions" type="button" role="tab">اداری</button>
                 </li>
             </ul>
-            <div class="tab-content p-3" id="tabOneContent" style="border-radius: 0 0 5px 5px">
+            <div class="tab-content p-3 pb-5" id="tabOneContent" style="border-radius: 0 0 5px 5px">
                 <div class="tab-pane fade show active" id="fields" role="tabpanel">
                     <div class="row gap-3 g-0">
                         @foreach ($chunks as $chunk)
