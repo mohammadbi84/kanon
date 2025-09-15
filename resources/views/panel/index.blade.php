@@ -320,8 +320,8 @@
                         <div class="card-header border-0 p-0">
                             <div class="slider-header">
                                 <span>اسلایدر تبلیغاتی</span>
-                                <a class="btn btn-light collapse1" data-bs-toggle="collapse" href="#collapseOne"><i class="bi bi-plus"
-                                        style="position: relative;top:1px"></i></a>
+                                <a class="btn btn-light collapse1" data-bs-toggle="collapse" href="#collapseOne"><i
+                                        class="bi bi-plus" style="position: relative;top:1px"></i></a>
                             </div>
                         </div>
                         <div id="collapseOne" class="collapse show border-0" data-bs-parent="#accordion">
@@ -361,8 +361,9 @@
                                 <div class="card-header border-0 p-0">
                                     <div class="slider-header">
                                         <span>پست های شما</span>
-                                        <a class="btn btn-light collapse1" data-bs-toggle="collapse" href="#collapsetwo"><i
-                                                class="bi bi-plus" style="position: relative;top:1px"></i></a>
+                                        <a class="btn btn-light collapse1" data-bs-toggle="collapse"
+                                            href="#collapsetwo"><i class="bi bi-plus"
+                                                style="position: relative;top:1px"></i></a>
                                     </div>
                                 </div>
                                 <div id="collapsetwo" class="collapse show border-0" data-bs-parent="#accordionTwo">
@@ -681,6 +682,71 @@
                 $(this).hide();
                 let card = $(this).closest(".card");
                 card.find(".card-header").show();
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const playButton = document.getElementById('btn-play');
+            const video = document.getElementById('video-player');
+            const previewImage = document.getElementById('video-cover');
+            const btnPlayContainer = document.getElementById('btn-play-container');
+            const stopButton = document.getElementById('btn-stop');
+
+            let isPlaying = false;
+            const videoSrc = '/public/vid/1.mp4'; // مسیر ویدیو
+
+            // دکمه Play وسط
+            playButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+
+                if (!isPlaying) {
+                    if (video.src === '') {
+                        video.src = videoSrc;
+                    }
+                    previewImage.classList.add('d-none');
+                    video.classList.remove('d-none');
+                    video.play();
+                    btnPlayContainer.classList.add('d-none');
+                    isPlaying = true;
+                } else {
+                    video.pause();
+                    btnPlayContainer.classList.remove('d-none');
+                    isPlaying = false;
+                }
+            });
+
+            // کلیک روی خود ویدیو
+            video.addEventListener('click', function() {
+                if (isPlaying) {
+                    video.pause();
+                    btnPlayContainer.classList.remove('d-none');
+                    isPlaying = false;
+                } else {
+                    video.play();
+                    btnPlayContainer.classList.add('d-none');
+                    isPlaying = true;
+                }
+            });
+
+            // دکمه Stop که فقط با هاور ظاهر می‌شود
+            stopButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (isPlaying) {
+                    video.pause();
+                    btnPlayContainer.classList.remove('d-none');
+                    isPlaying = false;
+                } else {
+                    video.play();
+                    btnPlayContainer.classList.add('d-none');
+                    isPlaying = true;
+                }
+            });
+
+            // وقتی ویدیو تمام شد → دکمه Play نمایش داده شود
+            video.addEventListener('ended', function() {
+                isPlaying = false;
+                btnPlayContainer.classList.remove('d-none');
             });
         });
     </script>
