@@ -52,8 +52,6 @@ Route::prefix('/job-opportunity')->name('job-opportunity.')->group(function () {
 
 
 
-
-
 Route::get('/AboutUs', [\App\Http\Controllers\AboutUsController::class, 'site'])->middleware('senddata');
 Route::get('/register', [\App\Http\Controllers\SiteController::class, 'register']);
 Route::post('/register', [\App\Http\Controllers\SchoolController::class, 'addPost']);
