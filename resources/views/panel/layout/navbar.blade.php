@@ -62,6 +62,112 @@
         transform: translateY(0) !important;
         visibility: visible !important;
     }
+
+    /* انیمیشن پالس */
+    /* Music Bg */
+    .main-menu .navbar .btn-icon {
+        width: 45px;
+        height: 50px;
+    }
+
+    .music-bg {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .music-bg p {
+        margin: 0;
+        font-size: 9px;
+        font-weight: 100;
+    }
+
+    .music-bg .lines {
+        display: flex;
+        width: 24px;
+        height: 24px;
+        margin: 0 auto 10px;
+        align-items: flex-end;
+    }
+
+    .music-bg .lines span {
+        display: inline-flex;
+        margin: 0px 1px;
+        width: 7px;
+        height: 5px;
+        background: #000000;
+    }
+
+    /* وقتی موزیک پلی هست */
+    .audio-on .lines span:nth-child(1) {
+        animation: musicline 2s 0.5s ease-out alternate infinite;
+    }
+
+    .audio-on .lines span:nth-child(2) {
+        animation: musicline 2s 1s ease-out alternate infinite;
+    }
+
+    .audio-on .lines span:nth-child(3) {
+        animation: musicline 2s 1.5s ease-out alternate infinite;
+    }
+
+    .audio-on .lines span:nth-child(4) {
+        animation: musicline 2s 0.25s ease-out alternate infinite;
+    }
+
+    .audio-on .lines span:nth-child(5) {
+        animation: musicline 2s 0.75s ease-out alternate infinite;
+    }
+
+    .audio-on .lines span:nth-child(6) {
+        animation: musicline 2s 1.25s ease-out alternate infinite;
+    }
+
+    /* Animation Music Line */
+    @keyframes musicline {
+        0% {
+            height: 5px;
+        }
+
+        10% {
+            height: 10px;
+        }
+
+        20% {
+            height: 5px;
+        }
+
+        30% {
+            height: 14px;
+        }
+
+        40% {
+            height: 18px;
+        }
+
+        50% {
+            height: 5px;
+        }
+
+        60% {
+            height: 16px;
+        }
+
+        70% {
+            height: 10px;
+        }
+
+        80% {
+            height: 12px;
+        }
+
+        90% {
+            height: 4px;
+        }
+
+        100% {
+            height: 18px;
+        }
+    }
 </style>
 
 <div class="container" id="navbar_container">
@@ -104,6 +210,17 @@
                         </ul>
                         <div class="d-flex gap-2 align-items-center justify-content-center position-relative">
                             <!-- آیکون‌های دیگر -->
+                            <a id="music-toggle" class="btn btn-icon music-bg audio-on">
+                                <div class="lines">
+                                    <span></span><span></span><span></span>
+                                    <span></span><span></span><span></span>
+                                </div>
+                                {{-- <p>موسیقی</p> --}}
+                            </a>
+                            <!-- موزیک -->
+                            <audio loop autoplay id="audio-player">
+                                <source src="{{ asset('music.mp3') }}" type="audio/mpeg">
+                            </audio>
                             <a href="#" class="btn btn-icon"><span class="bi bi-bell"></span></a>
                             {{-- cart --}}
                             <div class="dropdown">
@@ -112,7 +229,8 @@
                                     <span class="bi bi-basket"></span>
                                 </a>
                                 <!-- منوی دراپ‌داون با انیمیشن -->
-                                <ul class="dropdown-menu dropdown-animated text-end p-1 shadow border-0" style="width:350px">
+                                <ul class="dropdown-menu dropdown-animated text-end p-1 shadow border-0"
+                                    style="width:350px">
                                     <li class="bg-white" style="position: sticky;top: 0px;">
                                         <h5 class="dropdown-header text-start border-bottom w-100">
                                             5 کالا
@@ -142,8 +260,7 @@
                                     <li class="bg-white p-3 border-top" style="position: sticky;bottom: 0;">
                                         <div class="row ">
                                             <div class="col text-start">
-                                                <span
-                                                    class="float-end mt-0 card-price">9,500<span
+                                                <span class="float-end mt-0 card-price">9,500<span
                                                         class="toman">تومان</span></span>
                                             </div>
                                             <div class="col text-start">
@@ -258,5 +375,29 @@
             keyboard: false // دکمه Escape کار نکنه
         });
         $('#registermessageModal').modal('show');
+    });
+</script>
+
+{{-- music --}}
+<script>
+    const audioPlayer = document.getElementById("audio-player");
+    const toggleBtn = document.getElementById("music-toggle");
+
+    // برای مرورگرها نیاز به تعامل کاربر هست، autoplay ممکنه بلاک بشه
+    window.addEventListener("load", () => {
+        audioPlayer.play().catch(() => {
+            console.log("Autoplay بلاک شد، باید روی دکمه کلیک بشه.");
+        });
+    });
+
+    toggleBtn.addEventListener("click", function(e) {
+        e.preventDefault();
+        if (audioPlayer.paused) {
+            audioPlayer.play();
+            toggleBtn.classList.add("audio-on");
+        } else {
+            audioPlayer.pause();
+            toggleBtn.classList.remove("audio-on");
+        }
     });
 </script>

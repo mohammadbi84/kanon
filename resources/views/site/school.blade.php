@@ -1369,7 +1369,6 @@
                 clearBtn.style.display = 'none';
             }
         }
-
         function clearInput(id) {
 
             const box = document.getElementById("autocompleteBox" + id);

@@ -141,16 +141,28 @@
             /* display: none; */
             background: #fff;
             border: 1px solid #ddd;
-            padding: .5rem 1rem;
+            padding: 0 1rem;
             border-radius: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
+            height: 41px;
         }
 
         .card-header {
             display: none;
+        }
+
+        .plus-btn {
+            padding: 0;
+            text-align: center;
+            width: 41px;
+            height: 41px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            align-content: center;
         }
     </style>
     {{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"> --}}
@@ -204,7 +216,7 @@
             </div>
             {{-- profile and info --}}
             <div class="col-md-12">
-                <div class="row p-4 rounded-3 shadow bg-white border g-0">
+                <div class="row p-4 rounded-3 shadow-sm bg-white border g-0">
                     <!-- آیکون ها -->
                     <div class="col-md-9">
                         <div class="row g-3">
@@ -320,7 +332,7 @@
                         <div class="card-header border-0 p-0">
                             <div class="slider-header">
                                 <span>اسلایدر تبلیغاتی</span>
-                                <a class="btn btn-light collapse1" data-bs-toggle="collapse" href="#collapseOne"><i
+                                <a class="btn btn-light plus-btn border border-end-0 collapse1" data-bs-toggle="collapse" href="#collapseOne"><i
                                         class="bi bi-plus" style="position: relative;top:1px"></i></a>
                             </div>
                         </div>
@@ -331,7 +343,7 @@
                             <div class="card-body p-0 border-0">
                                 <div class="splide" id="slider_panel" role="group"
                                     aria-label="Splide Basic HTML Example">
-                                    <div class="splide__track rounded-3 shadow">
+                                    <div class="splide__track rounded-3 shadow-sm">
                                         <ul class="splide__list">
                                             <li class="splide__slide"><img src="{{ asset('1.jpg') }}" alt="">
                                             </li>
@@ -351,9 +363,51 @@
             <div class="col-md-12">
                 <div class="row mt-4 p-2 px-0 g-0 gap-3">
                     <div class="col-md-4 pe-0">
-                        <div class="border rounded-3 bg-white shadow p-3">
-                            <p>متن تستی</p>
+                        <div id="accordionthree">
+                            <div class="card border-0">
+                                <div class="card-header border-0 p-0">
+                                    <div class="slider-header">
+                                        <span>ویدیو تبلیغات</span>
+                                        <a class="btn btn-light plus-btn border border-end-0 collapse1" data-bs-toggle="collapse"
+                                            href="#collapsethree"><i class="bi bi-plus"
+                                                style="position: relative;top:1px"></i></a>
+                                    </div>
+                                </div>
+                                <div id="collapsethree" class="collapse show border-0" data-bs-parent="#accordionthree">
+                                    <button type="button" data-bs-toggle="collapse" href="#collapsethree"
+                                        class="btn collapse2 btn-sm btn-dark slider-close-btn slider-toggle border"><i
+                                            class="bi bi-dash" style="position: relative;top:1px"></i></button>
+                                    <div class="card-body p-0 border-0">
+                                        <div class="border rounded-3 bg-white shadow-sm p-0">
+                                            <div class="video"
+                                                style="height: 90vh; position: relative; overflow: hidden;border-radius:8px">
+                                                <img id="video-cover" src="{{ asset('site/public/img/1.png') }}"
+                                                    class="img" style="width:100%; height:100%; object-fit:cover;"
+                                                    alt="">
+                                                <video src="{{ asset('fazel.mp4') }}" id="video-player" class="d-none"
+                                                    style="width:100%; height:100%; object-fit:cover;"></video>
+
+                                                <!-- دکمه Stop که فقط با هاور نمایش داده می‌شود -->
+                                                <div id="btn-stop-container" class="btn-stop-container"
+                                                    style="position:absolute; top:50%; left:50%; display:none;transform:translate(-50%, -50%);">
+                                                    <button id="btn-stop" class="btn-play btn-stop">
+                                                        <span class="bi bi-pause-fill"></span>
+                                                    </button>
+                                                </div>
+                                                <!-- دکمه Play وسط -->
+                                                <div id="btn-play-container" class="btn-play-container"
+                                                    style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);">
+                                                    <button id="btn-play" class="btn-play pulse">
+                                                        <span class="bi bi-play-fill"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
                     </div>
                     <div class="col ps-0">
                         <div id="accordionTwo">
@@ -361,18 +415,18 @@
                                 <div class="card-header border-0 p-0">
                                     <div class="slider-header">
                                         <span>پست های شما</span>
-                                        <a class="btn btn-light collapse1" data-bs-toggle="collapse"
+                                        <a class="btn btn-light plus-btn border border-end-0 collapse1" data-bs-toggle="collapse"
                                             href="#collapsetwo"><i class="bi bi-plus"
                                                 style="position: relative;top:1px"></i></a>
                                     </div>
                                 </div>
                                 <div id="collapsetwo" class="collapse show border-0" data-bs-parent="#accordionTwo">
                                     <button type="button" data-bs-toggle="collapse" href="#collapsetwo"
-                                        class="btn collapse2 btn-sm slider-close-btn slider-toggle shadow"
+                                        class="btn collapse2 btn-sm slider-close-btn slider-toggle shadow-sm"
                                         style="top: 1px:left:1px;background: #e5e5e5;border: 1px solid #d3d3d3;"><i
                                             class="bi bi-dash" style="position: relative;top:1px"></i></button>
                                     <div class="card-body p-0 border-0">
-                                        <div class="border rounded-3 bg-white shadow p-3 m-0 h-100">
+                                        <div class="border rounded-3 bg-white shadow-sm p-3 m-0 h-100">
                                             <!-- تب آگهی‌ها و کلاس‌ها -->
                                             <div class="">
                                                 <ul class="nav nav-tabs mb-3 pe-0 border-bottom-0 position-relative"
@@ -677,14 +731,24 @@
                 card.find(".collapse2").show();
                 let parent = $(this).closest(".card-header");
                 parent.hide();
+
+                var rounded = card.find(".rounded-0");
+                rounded.removeClass("rounded-0");
+                rounded.addClass("rounded-3");
             });
             $(".collapse2").on("click", function() {
                 $(this).hide();
                 let card = $(this).closest(".card");
+
+                var rounded = card.find(".rounded-3");
+                rounded.removeClass("rounded-3");
+                rounded.addClass("rounded-0");
+
                 card.find(".card-header").show();
             });
         });
     </script>
+    {{-- video --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const playButton = document.getElementById('btn-play');

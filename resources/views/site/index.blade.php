@@ -1447,8 +1447,6 @@
                         <span class="bi bi-play-fill"></span>
                     </button>
                 </div>
-
-
             </div>
         </div>
 
