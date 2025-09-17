@@ -96,7 +96,7 @@
 
         .text-alert {
             font-size: 12px;
-            line-height: 20px;
+            line-height: 25px;
             color: #484848;
             text-align: justify;
         }
@@ -152,6 +152,7 @@
 
         .card-header {
             display: none;
+            background: transparent !important;
         }
 
         .plus-btn {
@@ -164,56 +165,21 @@
             top: 0;
             align-content: center;
         }
+
+        .plus-btn i {
+            font-size: 29px;
+        }
+
+        #accordion .card {
+            background: transparent !important;
+        }
     </style>
     {{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"> --}}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 @endsection
 @section('content')
-    <div class="container mb-5 py-5" style="margin-top: 70px">
+    <div class="container wrapper mb-5 py-5" style="margin-top: 120px">
         <div class="row g-0">
-            {{-- alert --}}
-            <div class="col-md-12 mb-4">
-                <div class="alert alert-costum alert-dismissible">
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    <strong>توجه!</strong>
-                    <div class="row mt-3">
-                        <div class="col-md-8">
-                            <p class="text-alert mt-2">
-                                لطفا جهت استفاده آسان تر از سامانه، از راهتماى ساماته استفاده كنيد.
-                                در صورتى كه مايل به ايجاد درخواست جديد هستيد از كزينه درخواست جديد در همين صفحه استفاده
-                                كنيد. و يا
-                                از متوى سمت راست سامانه، كزينه درخواست رزرو تابلو را
-                                انتخاب كرده و بر اساس نوع تابلو درخواست خودرا ايجاد كنيد.
-                                در صورتى كه درخواست شما در انتظار تاييد كارشناس سامانه است، منتظر بمانيد تا بيامك مربوط به
-                                تاييد و
-                                يا رد درخواست براى شما ارسال شود.
-                                ـر صورتى كه درخواست شما تابيد شده است وبيامك مربوط به أن براى شما ارسال شده است، جهت تاييد
-                                تهايى و
-                                ادامه درخواست از منوى سمت راس
-                                رزرو تابلو را انتخاب كرده وبر اساس نوع تايلو درخواست هاى خود را انتخاب ومشاهده كنيد.
-
-                                وادامه درخواست از منوى سمت راست ساماته، كزينه درخواست
-                                ر صیرتی كه درخواست شما رد شده است و پيامك مربوط به آن براى شما ارسال شده است، جهت مشاهده
-                                دلیل رد
-                                درخواست و ایجاد درخواست جديد از منوى سمت راست
-                                سامانه، كزينه درخواست رزرو تابلورا انتخاب كرده وبر اساس نوع تابلو درخواست هاى خودرا انتخاب
-                                ومشاهده
-                                كنيد.
-
-                                ٠ ويديو هاى من
-
-                                صورت بروز هر كونه مشكل با شماره تلفن ٠٣٥٣٨٢٧٧٢٥٠ و٠٣٥٣٣١٣٥٣٠٨ واحد تبليغات (آقاى سلمانى)
-                                تماس
-                                بكيريد.
-                            </p>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <img src="{{ asset('site/public/img/User_Panel-question.png') }}" alt="question"
-                                class="object-fit-cover" width="250">
-                        </div>
-                    </div>
-                </div>
-            </div>
             {{-- profile and info --}}
             <div class="col-md-12">
                 <div class="row p-4 rounded-3 shadow-sm bg-white border g-0">
@@ -325,22 +291,68 @@
                     </div>
                 </div>
             </div>
+            {{-- alert --}}
+            <div class="col-md-12">
+                <div class="alert alert-costum alert-dismissible mt-5 mb-0">
+                    {{-- <button type="button" class="btn-close" data-bs-dismiss="alert"></button> --}}
+                    <button type="button" data-bs-dismiss="alert"
+                        class="btn collapse2 btn-sm btn-dark slider-close-btn slider-toggle"><i class="bi bi-dash"
+                            style="position: relative;"></i></button>
+                    <strong>توجه!</strong>
+                    <div class="row mt-3">
+                        <div class="col-md-9">
+                            <p class="text-alert mt-2">
+                                لطفا جهت استفاده آسان تر از سامانه، از راهتماى ساماته استفاده كنيد.
+                                در صورتى كه مايل به ايجاد درخواست جديد هستيد از كزينه درخواست جديد در همين صفحه استفاده
+                                كنيد. و يا
+                                از متوى سمت راست سامانه، كزينه درخواست رزرو تابلو را
+                                انتخاب كرده و بر اساس نوع تابلو درخواست خودرا ايجاد كنيد.
+                                در صورتى كه درخواست شما در انتظار تاييد كارشناس سامانه است، منتظر بمانيد تا بيامك مربوط به
+                                تاييد و
+                                يا رد درخواست براى شما ارسال شود.
+                                ـر صورتى كه درخواست شما تابيد شده است وبيامك مربوط به أن براى شما ارسال شده است، جهت تاييد
+                                تهايى و
+                                ادامه درخواست از منوى سمت راس
+                                رزرو تابلو را انتخاب كرده وبر اساس نوع تايلو درخواست هاى خود را انتخاب ومشاهده كنيد.
+
+                                وادامه درخواست از منوى سمت راست ساماته، كزينه درخواست
+                                ر صیرتی كه درخواست شما رد شده است و پيامك مربوط به آن براى شما ارسال شده است، جهت مشاهده
+                                دلیل رد
+                                درخواست و ایجاد درخواست جديد از منوى سمت راست
+                                سامانه، كزينه درخواست رزرو تابلورا انتخاب كرده وبر اساس نوع تابلو درخواست هاى خودرا انتخاب
+                                ومشاهده
+                                كنيد.
+
+                                ٠ ويديو هاى من
+
+                                صورت بروز هر كونه مشكل با شماره تلفن ٠٣٥٣٨٢٧٧٢٥٠ و٠٣٥٣٣١٣٥٣٠٨ واحد تبليغات (آقاى سلمانى)
+                                تماس
+                                بكيريد.
+                            </p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <img src="{{ asset('site/public/img/User_Panel-question.png') }}" alt="question"
+                                class="object-fit-cover" width="250">
+                        </div>
+                    </div>
+                </div>
+            </div>
             {{-- slider --}}
-            <div class="col-12 mt-4">
+            <div class="col-12 mt-5">
                 <div id="accordion">
                     <div class="card border-0">
                         <div class="card-header border-0 p-0">
                             <div class="slider-header">
                                 <span>اسلایدر تبلیغاتی</span>
-                                <a class="btn btn-light plus-btn border border-end-0 collapse1" data-bs-toggle="collapse" href="#collapseOne"><i
-                                        class="bi bi-plus" style="position: relative;top:1px"></i></a>
+                                <a class="btn btn-light plus-btn border border-end-0 collapse1" data-bs-toggle="collapse"
+                                    href="#collapseOne"><i class="bi bi-plus" style="position: relative;top:1px"></i></a>
                             </div>
                         </div>
                         <div id="collapseOne" class="collapse show border-0" data-bs-parent="#accordion">
                             <button type="button" data-bs-toggle="collapse" href="#collapseOne"
                                 class="btn collapse2 btn-sm btn-dark slider-close-btn slider-toggle"><i class="bi bi-dash"
                                     style="position: relative;top:1px"></i></button>
-                            <div class="card-body p-0 border-0">
+                            <div class="card-body bg-transparent p-0 border-0">
                                 <div class="splide" id="slider_panel" role="group"
                                     aria-label="Splide Basic HTML Example">
                                     <div class="splide__track rounded-3 shadow-sm">
@@ -361,15 +373,15 @@
             </div>
             {{-- adds and classes and more --}}
             <div class="col-md-12">
-                <div class="row mt-4 p-2 px-0 g-0 gap-3">
-                    <div class="col-md-4 pe-0">
+                <div class="row mt-5 pb-2 px-0 g-0 gap-3">
+                    <div class="col-md-3 pe-0">
                         <div id="accordionthree">
                             <div class="card border-0">
                                 <div class="card-header border-0 p-0">
                                     <div class="slider-header">
                                         <span>ویدیو تبلیغات</span>
-                                        <a class="btn btn-light plus-btn border border-end-0 collapse1" data-bs-toggle="collapse"
-                                            href="#collapsethree"><i class="bi bi-plus"
+                                        <a class="btn btn-light plus-btn border border-end-0 collapse1"
+                                            data-bs-toggle="collapse" href="#collapsethree"><i class="bi bi-plus"
                                                 style="position: relative;top:1px"></i></a>
                                     </div>
                                 </div>
@@ -377,14 +389,15 @@
                                     <button type="button" data-bs-toggle="collapse" href="#collapsethree"
                                         class="btn collapse2 btn-sm btn-dark slider-close-btn slider-toggle border"><i
                                             class="bi bi-dash" style="position: relative;top:1px"></i></button>
-                                    <div class="card-body p-0 border-0">
+                                    <div class="card-body bg-transparent p-0 border-0">
                                         <div class="border rounded-3 bg-white shadow-sm p-0">
                                             <div class="video"
-                                                style="height: 90vh; position: relative; overflow: hidden;border-radius:8px">
+                                                style="aspect-ratio: 9 / 16; position: relative; overflow: hidden;border-radius:8px">
                                                 <img id="video-cover" src="{{ asset('site/public/img/1.png') }}"
-                                                    class="img" style="width:100%; height:100%; object-fit:cover;"
+                                                    class="img"
+                                                    style="width:100%; height:100%; object-fit:cover;z-index: 0;"
                                                     alt="">
-                                                <video src="{{ asset('fazel.mp4') }}" id="video-player" class="d-none"
+                                                <video src="{{ asset('divar.mp4') }}" id="video-player" class="d-none"
                                                     style="width:100%; height:100%; object-fit:cover;"></video>
 
                                                 <!-- دکمه Stop که فقط با هاور نمایش داده می‌شود -->
@@ -415,17 +428,17 @@
                                 <div class="card-header border-0 p-0">
                                     <div class="slider-header">
                                         <span>پست های شما</span>
-                                        <a class="btn btn-light plus-btn border border-end-0 collapse1" data-bs-toggle="collapse"
-                                            href="#collapsetwo"><i class="bi bi-plus"
+                                        <a class="btn btn-light plus-btn border border-end-0 collapse1"
+                                            data-bs-toggle="collapse" href="#collapsetwo"><i class="bi bi-plus"
                                                 style="position: relative;top:1px"></i></a>
                                     </div>
                                 </div>
                                 <div id="collapsetwo" class="collapse show border-0" data-bs-parent="#accordionTwo">
                                     <button type="button" data-bs-toggle="collapse" href="#collapsetwo"
-                                        class="btn collapse2 btn-sm slider-close-btn slider-toggle shadow-sm"
-                                        style="top: 1px:left:1px;background: #e5e5e5;border: 1px solid #d3d3d3;"><i
-                                            class="bi bi-dash" style="position: relative;top:1px"></i></button>
-                                    <div class="card-body p-0 border-0">
+                                        class="btn collapse2 btn-sm slider-close-btn slider-toggle border"
+                                        style="top: 1px:left:1px;"><i class="bi bi-dash"
+                                            style="position: relative;top:1px"></i></button>
+                                    <div class="card-body bg-transparent p-0 border-0">
                                         <div class="border rounded-3 bg-white shadow-sm p-3 m-0 h-100">
                                             <!-- تب آگهی‌ها و کلاس‌ها -->
                                             <div class="">
