@@ -377,6 +377,7 @@ Route::prefix('/dashboard')->middleware('auth')->group(function () {
 });
 Route::prefix('/panel')->middleware('auth')->group(function () {
     Route::get('/', [PannelController::class, 'index'])->name('panel');
+    Route::get('/personal_page', [PannelController::class, 'personal_page'])->name('personal_page');
 });
 
 Route::post('/buying', [Controller::class, 'buying'])->name('buying');

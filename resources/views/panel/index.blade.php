@@ -2,10 +2,6 @@
 @section('head')
     <title>حساب کاربری</title>
     <style>
-        body {
-            background-color: #F2F2F2;
-        }
-
         .card-box {
             border-radius: 20px;
             padding: 25px;
@@ -192,7 +188,7 @@
                                         class="rounded-avatar mb-2">
                                     <div class="fw-bold mt-3">آموزشگاه فاضل</div>
                                     <div class="text-muted small mt-1">09927501130</div>
-                                    <button class="btn btn-primary btn-sm mt-3">تکمیل پروفایل</button>
+                                    <a href="{{route('personal_page')}}" class="btn btn-primary btn-sm mt-3">تکمیل پروفایل</a>
                                 </div>
                             </div>
                             <div class="col">

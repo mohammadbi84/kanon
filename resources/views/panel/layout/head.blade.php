@@ -37,73 +37,23 @@
     <!-- SLIDER LIBRARY (Splide) -->
 
     <link rel="stylesheet" href="{{ asset('site/src/style/styles.css') }}">
-    <script src="{{ asset('site/src/js/utils.js') }}"></script>
 
     <!-- main menu -->
     <link rel="stylesheet" href="{{ asset('site/src/style/main-menu-full.css') }}">
     <script src="{{ asset('site/src/js/main-menu.js') }}"></script>
     <!-- main menu -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- top slider -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/top-slider.css') }}">
-    <script src="{{ asset('site/src/js/top-slider.js') }}"></script>
-    <!-- top slider -->
-
-    <!-- top ad -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/top-ad.css') }}">
-    <script src="{{ asset('site/src/js/top-ad.js') }}"></script>
-    <!-- top ad -->
-
-    <!-- video popup -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/video-popup.css') }}">
-    <script src="{{ asset('site/src/js/video-popup.js') }}"></script>
-    <!-- video popup -->
-
-    <!-- forms -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/forms.css') }}">
-    <!-- forms -->
-
-    <!-- btn-play with pulse -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/btn-play-pulse.css') }}">
-    <!-- btn-play with pulse -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
 
 
-    <!-- btn support -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/btn-support.css') }}">
-    <script src="{{ asset('site/src/js/btn-support.js') }}"></script>
-    <!-- btn go-to-top -->
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-fa-IR.js"></script>
 
-    <!-- btn go-to-top -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/btn-go-to-top.css') }}">
-    <script src="{{ asset('site/src/js/btn-go-to-top.js') }}"></script>
-    <!-- btn go-to-top -->
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- switch element -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/switch.css') }}">
-    <!-- switch element -->
-
-
-    <!-- wave overlay -->
-    <script src="{{ asset('site/src/js/wave-overlay.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('site/src/style/wave-overlay.css') }}">
-    <!-- wave overlay -->
-
-    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> --}}
-
-    <script src="{{ asset('site/src/js/init.js') }}"></script>
-    <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
-
-    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> --}}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <!-- Font Awesome -->
-    <script src="https://kit.fontawesome.com/fbc05d3d5f.js" crossorigin="anonymous"></script>
-    <!-- Leaflet Marker Cluster CSS and JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <style>
         html,
         body {
@@ -128,6 +78,64 @@
         .container {
             padding-right: 20px !important;
             padding-left: 20px !important;
+        }
+
+
+
+        /* inputs */
+        .autocomplete {
+            position: relative;
+            /* width: 300px; */
+        }
+
+        .autocomplete input,
+        .autocomplete textarea {
+            outline: 0px solid transparent !important;
+            width: 100%;
+            padding: 10px 15px 10px 10px;
+            padding-left: 24px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px
+        }
+
+        .autocomplete label {
+            font-size: 15px;
+            position: absolute;
+            right: 15px;
+            top: 21%;
+            transition: 0.2s;
+            pointer-events: none;
+            color: #666;
+        }
+
+        .autocomplete .dropdown .active {
+            background-color: #F2F9FF;
+        }
+
+        .autocomplete input:focus+label,
+        .autocomplete.filled input+label,
+        .autocomplete textarea:focus+label,
+        .autocomplete.filled textarea+label {
+            outline: none !important;
+            border: none !important;
+            top: -10px !important;
+            right: 10px;
+            background: white;
+            padding: 0 5px;
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+
+        .autocomplete .clear-btn {
+            display: none;
+            position: absolute;
+            left: 10px;
+            top: 47%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-weight: bold;
+            color: #888;
         }
     </style>
     @yield('head')

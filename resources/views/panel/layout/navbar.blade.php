@@ -296,7 +296,7 @@
                                     type="button" aria-expanded="false">
                                     <div class="d-flex align-items-center justify-content-between rounded-4">
                                         <div class="icon-box">
-                                            <img src="{{ asset('user.svg') }}" alt="user" class="w-100">
+                                            <img src="{{ asset('user.svg') }}" alt="user" width="50">
                                         </div>
                                         <div class="me-2">
                                             <div class="fw-bold text-dark">
@@ -348,35 +348,7 @@
     </header>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 
-<script>
-    const searchBtn = document.getElementById('toggleSearch');
-    const searchBox = document.getElementById('searchInputWrapper');
-
-    searchBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        searchBox.classList.toggle('show');
-        if (searchBox.classList.contains('show')) {
-            searchBox.querySelector('.input').focus();
-            searchBox.querySelector('.input').classList.add('focus');
-        }
-    });
-
-    document.addEventListener('click', function(e) {
-        if (!searchBox.contains(e.target) && !searchBtn.contains(e.target)) {
-            searchBox.classList.remove('show');
-        }
-    });
-
-    $(document).ready(function() {
-        $('#registermessageModal').modal({
-            backdrop: 'static', // کلیک روی بک‌گراند کار نکنه
-            keyboard: false // دکمه Escape کار نکنه
-        });
-        $('#registermessageModal').modal('show');
-    });
-</script>
 
 {{-- music --}}
 <script>
