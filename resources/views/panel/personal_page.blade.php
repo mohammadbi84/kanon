@@ -132,6 +132,33 @@
             top: 5px;
             left: 5px;
         }
+        .gallery-item .btn-remove {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+        }
+
+        .gallery-item .btn-edit {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+
+        .gallery-count {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
 
         /* استایل اینپوت های سفارشی شما */
         .autocomplete {
@@ -282,11 +309,11 @@
             padding: 15px;
             margin-bottom: 20px;
             /* border: 1px solid #e9ecef; */
-            min-width: 40%;
+            min-width: 25%;
         }
 
         .storage-progress {
-            height: 10px;
+            height: 4px;
             border-radius: 5px;
             margin: 5px 0;
             overflow: hidden;
@@ -317,16 +344,38 @@
         }
 
         .file-size-info {
-            background: #c6c6c6ab;
             font-size: 0.8rem;
-            color: #000000;
+            color: #6c757d;
             margin-top: 5px;
-            position: relative;
-            bottom: 30px;
-            right: 8px;
-            width: fit-content;
-            padding: 0 5px;
+        }
+
+        .gallery_count {
+            top: 5px !important;
+            right: 5px !important;
             border-radius: 5px;
+            padding: 3px;
+            background: #d5d5d5a5
+        }
+        /* مودال ویرایش تصویر */
+        .modal-content {
+            border-radius: 10px;
+        }
+
+        .modal-header {
+            background-color: #4e73df;
+            color: white;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .image-preview-container {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
         }
     </style>
 @endsection
@@ -337,18 +386,23 @@
                 <h4 class="text-end px-4 py-4">ویرایش صفحه شخصی آموزشگاه</h4>
                 <!-- نوار اطلاعات حجم -->
                 <div class="storage-info">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="mb-0" style="font-size: 12px;">حجم آپلود شده: <span id="usedStorage">0</span> از
+                    <div class="d-flex justify-content-end align-items-center">
+                        {{-- <span class="mb-0" style="font-size: 12px;">حجم آپلود شده: <span id="usedStorage">0</span> از
                             <span id="totalStorage">2</span>
-                            مگابایت</span>
+                            مگابایت</span> --}}
                         <span id="storagePercentage" style="font-size: 12px;">0%</span>
                     </div>
-                    <div class="storage-progress">
+                    <div class="storage-progress" dir="ltr">
                         <div id="storageProgressBar" class="storage-progress-bar bg-success" style="width: 0%"></div>
                     </div>
                     <div class="storage-details">
-                        <span id="storageStatus">حجم آزاد: 2 مگابایت</span>
-                        <span id="storageAlert" class="d-none">هشدار: حجم شما در حال پر شدن است</span>
+                        <span style="font-size: 12px;">
+                            <span id="storageStatus" style="font-size: 12px;">2</span> آزاد از <span id="totalStorage"
+                                style="font-size: 12px;">10</span> <span class="mx-1"
+                                style="font-size: 12px;">مگابایت</span>
+                        </span>
+                        {{-- <span id="storageStatus">حجم آزاد: 2 مگابایت</span> --}}
+                        {{-- <span id="storageAlert" class="d-none" style="font-size: 12px;">هشدار: حجم شما در حال پر شدن است</span> --}}
                     </div>
                 </div>
             </div>
@@ -474,7 +528,8 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <button type="button" class="btn btn-danger btn-remove-social"><i class="bi bi-trash"></i></button>
+                                <button type="button" class="btn btn-danger btn-remove-social"><i
+                                        class="bi bi-trash"></i></button>
                             </div>
                         </div>
                     </div>
@@ -619,7 +674,7 @@
                     </div>
                     <div class="mt-4">
                         <input type="file" id="galleryUpload" multiple accept="image/*" class="d-none"
-                            data-max-size="800">
+                            data-max-size="80000">
                         <label for="galleryUpload" class="btn btn-primary"><i class="fas fa-cloud-upload-alt"></i> آپلود
                             تصاویر جدید</label>
                     </div>
@@ -637,13 +692,42 @@
                     </div>
                 </div>
             </div>
+
+            <!-- مودال ویرایش تصویر گالری -->
+            <div class="modal fade" id="editImageModal" tabindex="-1" aria-labelledby="editImageModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editImageModalLabel">ویرایش تصویر گالری</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="image-preview-container">
+                                <img id="editImagePreview" src="" alt="تصویر برای ویرایش" class="image-preview">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editImageFile" class="form-label">انتخاب تصویر جدید</label>
+                                <input class="form-control" type="file" id="editImageFile" accept="image/*">
+                            </div>
+                            <div class="file-size-info" id="editImageFileSizeInfo"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                            <button type="button" class="btn btn-primary" id="saveEditedImage">ذخیره تغییرات</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
 @section('script')
-<script>
+    <script>
         // متغیرهای جهانی برای نقشه
-        let map, marker, defaultLatitude = 31.8974, defaultLongitude = 54.3569;
+        let map, marker, defaultLatitude = 31.8974,
+            defaultLongitude = 54.3569;
 
 
 
@@ -669,26 +753,26 @@
             const percentage = (currentStorageUsed / totalStorageLimit) * 100;
             const remainingStorage = totalStorageLimit - currentStorageUsed;
 
-            document.getElementById('usedStorage').textContent = formatBytes(currentStorageUsed);
+            // document.getElementById('usedStorage').textContent = formatBytes(currentStorageUsed);
             document.getElementById('storagePercentage').textContent = percentage.toFixed(1) + '%';
             document.getElementById('storageProgressBar').style.width = percentage + '%';
-            document.getElementById('storageStatus').textContent = 'حجم آزاد: ' + formatBytes(remainingStorage);
+            document.getElementById('storageStatus').textContent = formatBytes(remainingStorage);
 
             // تغییر رنگ نوار بر اساس درصد استفاده
             const progressBar = document.getElementById('storageProgressBar');
             if (percentage >= 90) {
                 progressBar.className = 'storage-progress-bar bg-danger';
-                document.getElementById('storageAlert').classList.remove('d-none');
-                document.getElementById('storageAlert').textContent = 'هشدار: حجم شما تقریباً پر شده است!';
-                document.getElementById('storageAlert').className = 'storage-danger';
+                // document.getElementById('storageAlert').classList.remove('d-none');
+                // document.getElementById('storageAlert').textContent = 'هشدار: حجم شما تقریباً پر شده است!';
+                // document.getElementById('storageAlert').className = 'storage-danger';
             } else if (percentage >= 75) {
                 progressBar.className = 'storage-progress-bar bg-warning';
-                document.getElementById('storageAlert').classList.remove('d-none');
-                document.getElementById('storageAlert').textContent = 'هشدار: حجم شما در حال پر شدن است';
-                document.getElementById('storageAlert').className = 'storage-warning';
+                // document.getElementById('storageAlert').classList.remove('d-none');
+                // document.getElementById('storageAlert').textContent = 'هشدار: حجم شما در حال پر شدن است';
+                // document.getElementById('storageAlert').className = 'storage-warning';
             } else {
                 progressBar.className = 'storage-progress-bar bg-success';
-                document.getElementById('storageAlert').classList.add('d-none');
+                // document.getElementById('storageAlert').classList.add('d-none');
             }
         }
 
@@ -697,7 +781,9 @@
             const maxSizeBytes = maxSizeKB * 1024;
 
             if (file.size > maxSizeBytes) {
-                alert(`حجم فایل ${fileType} باید کمتر از ${maxSizeKB} کیلوبایت باشد. حجم فایل انتخابی: ${formatBytes(file.size)}`);
+                alert(
+                    `حجم فایل ${fileType} باید کمتر از ${maxSizeKB} کیلوبایت باشد. حجم فایل انتخابی: ${formatBytes(file.size)}`
+                );
                 return false;
             }
 
@@ -712,14 +798,15 @@
         }
 
         // تابع افزودن فایل به لیست و به‌روزرسانی حجم
-        function addFileToStorage(file, fileType, maxSize) {
-            if (!checkFileSize(file, maxSize, fileType)) {
+        function addFileToStorage(file, fileType, maxSizeKB) {
+            if (!checkFileSize(file, maxSizeKB, fileType)) {
                 return false;
             }
 
             // افزودن فایل به لیست
+            const fileId = Date.now();
             uploadedFiles.push({
-                id: Date.now(),
+                id: fileId,
                 file: file,
                 type: fileType,
                 size: file.size
@@ -729,19 +816,15 @@
             currentStorageUsed += file.size;
             updateStorageDisplay();
 
-            // نمایش اطلاعات حجم فایل
-            // const sizeInfo = document.getElementById(elementId + 'FileSizeInfo') ||
-            //     document.querySelector(`#${elementId}`).parentNode.querySelector('.file-size-info');
-            // if (sizeInfo) {
-            //     sizeInfo.textContent = `اندازه فایل: ${formatBytes(file.size)}`;
-            // }
-
-            return true;
+            return fileId;
         }
 
         // تابع حذف فایل از لیست و به‌روزرسانی حجم
         function removeFileFromStorage(fileId) {
+            // alert('tettdtdttd');
             const fileIndex = uploadedFiles.findIndex(f => f.id === fileId);
+            // alert(fileIndex);
+            // alert(uploadedFiles);
             if (fileIndex !== -1) {
                 currentStorageUsed -= uploadedFiles[fileIndex].size;
                 uploadedFiles.splice(fileIndex, 1);
@@ -753,7 +836,7 @@
 
 
         // فعال کردن ویرایشگر متن
-        $(document).ready(function () {
+        $(document).ready(function() {
             updateStorageDisplay();
 
 
@@ -780,17 +863,56 @@
         });
 
         // مختصات شهرهای استان یزد
-        const yazdCities = [
-            { lat: 31.8974, lng: 54.3569, name: 'یزد' },
-            { lat: 31.0290, lng: 55.9660, name: 'اردکان' },
-            { lat: 32.2350, lng: 54.0000, name: 'بافق' },
-            { lat: 31.5833, lng: 54.2000, name: 'تفت' },
-            { lat: 32.2500, lng: 54.5167, name: 'مهریز' },
-            { lat: 31.5167, lng: 54.1167, name: 'میبد' },
-            { lat: 30.0594, lng: 55.9800, name: 'اشکذر' },
-            { lat: 31.9333, lng: 54.2833, name: 'بهاباد' },
-            { lat: 31.1833, lng: 53.2500, name: 'خاتم' },
-            { lat: 31.4167, lng: 54.6667, name: 'صدوق' },
+        const yazdCities = [{
+                lat: 31.8974,
+                lng: 54.3569,
+                name: 'یزد'
+            },
+            {
+                lat: 31.0290,
+                lng: 55.9660,
+                name: 'اردکان'
+            },
+            {
+                lat: 32.2350,
+                lng: 54.0000,
+                name: 'بافق'
+            },
+            {
+                lat: 31.5833,
+                lng: 54.2000,
+                name: 'تفت'
+            },
+            {
+                lat: 32.2500,
+                lng: 54.5167,
+                name: 'مهریز'
+            },
+            {
+                lat: 31.5167,
+                lng: 54.1167,
+                name: 'میبد'
+            },
+            {
+                lat: 30.0594,
+                lng: 55.9800,
+                name: 'اشکذر'
+            },
+            {
+                lat: 31.9333,
+                lng: 54.2833,
+                name: 'بهاباد'
+            },
+            {
+                lat: 31.1833,
+                lng: 53.2500,
+                name: 'خاتم'
+            },
+            {
+                lat: 31.4167,
+                lng: 54.6667,
+                name: 'صدوق'
+            },
         ];
 
         // تابع مقداردهی اولیه نقشه
@@ -814,18 +936,21 @@
             }).addTo(map);
 
             // به‌روزرسانی مختصات هنگامی که نشانگر حرکت می‌کند
-            marker.on('dragend', function (e) {
+            marker.on('dragend', function(e) {
                 updateCoordinates(marker.getLatLng());
             });
 
             // اضافه کردن رویداد کلیک روی نقشه برای تغییر موقعیت نشانگر
-            map.on('click', function (e) {
+            map.on('click', function(e) {
                 marker.setLatLng(e.latlng);
                 updateCoordinates(e.latlng);
             });
 
             // به‌روزرسانی مختصات
-            updateCoordinates({ lat: lat, lng: lng });
+            updateCoordinates({
+                lat: lat,
+                lng: lng
+            });
         }
 
         // تابع به‌روزرسانی مختصات در فیلدها
@@ -850,14 +975,14 @@
         }
 
         // وقتی صفحه لود شد
-        $(document).ready(function () {
+        $(document).ready(function() {
             // مقداردهی اولیه نقشه
             initMap();
 
             // پیدا کردن موقعیت کاربر
-            $('#locateMe').click(function () {
+            $('#locateMe').click(function() {
                 if ("geolocation" in navigator) {
-                    navigator.geolocation.getCurrentPosition(function (position) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
                         const lat = position.coords.latitude;
                         const lng = position.coords.longitude;
 
@@ -866,9 +991,14 @@
                         marker.setLatLng([lat, lng]);
 
                         // به‌روزرسانی فیلدهای مختصات
-                        updateCoordinates({ lat: lat, lng: lng });
-                    }, function (error) {
-                        alert('دسترسی به موقعیت مکانی امکان‌پذیر نیست. لطفاً از تنظیمات مرورگر خود اجازه دسترسی به موقعیت مکانی را فعال کنید.');
+                        updateCoordinates({
+                            lat: lat,
+                            lng: lng
+                        });
+                    }, function(error) {
+                        alert(
+                            'دسترسی به موقعیت مکانی امکان‌پذیر نیست. لطفاً از تنظیمات مرورگر خود اجازه دسترسی به موقعیت مکانی را فعال کنید.'
+                        );
                     });
                 } else {
                     alert('مرورگر شما از ویژگی موقعیت‌یابی پشتیبانی نمی‌کند.');
@@ -876,7 +1006,7 @@
             });
 
             // بازنشانی نقشه به موقعیت پیش‌فرض (یزد)
-            $('#resetMap').click(function () {
+            $('#resetMap').click(function() {
                 initMap(defaultLatitude, defaultLongitude);
             });
 
@@ -950,12 +1080,24 @@
             setTimeout(() => dropdown.style.display = 'none', 150);
         }
 
-        var socials = [
-            { id: 1, name: "اینستاگرام" },
-            { id: 2, name: "تلگرام" },
-            { id: 3, name: "ایتا" },
-            { id: 4, name: "ایمیل" }
+        var socials = [{
+                id: 1,
+                name: "اینستاگرام"
+            },
+            {
+                id: 2,
+                name: "تلگرام"
+            },
+            {
+                id: 3,
+                name: "ایتا"
+            },
+            {
+                id: 4,
+                name: "ایمیل"
+            }
         ];
+
         function filterOptions(divId, status) {
             const dropdown = document.getElementById("dropdownList" + divId);
             const input = document.getElementById("searchInput" + divId);
@@ -967,14 +1109,14 @@
                     dropdown.innerHTML = filtered.length ?
                         filtered.map(item =>
                             `<div onclick="selectItem('${item.name}', '${item.name}','${divId}')">${item.name}</div>`)
-                            .join('') :
+                        .join('') :
                         '<div>نتیجه‌ای یافت نشد</div>';
                 } else {
                     const filtered = yazdCities;
                     dropdown.innerHTML = filtered.length ?
                         filtered.map(item =>
                             `<div onclick="selectItem('${item.name}', '${item.name}','${divId}')">${item.name}</div>`)
-                            .join('') :
+                        .join('') :
                         '<div>نتیجه‌ای یافت نشد</div>';
                 }
 
@@ -984,14 +1126,14 @@
                     dropdown.innerHTML = filtered.length ?
                         filtered.map(item =>
                             `<div onclick="selectItem(${item.id}, '${item.name}','${divId}')">${item.name}</div>`)
-                            .join('') :
+                        .join('') :
                         '<div>نتیجه‌ای یافت نشد</div>';
                 } else {
                     const filtered = socials;
                     dropdown.innerHTML = filtered.length ?
                         filtered.map(item =>
                             `<div onclick="selectItem(${item.id}, '${item.name}','${divId}')">${item.name}</div>`)
-                            .join('') :
+                        .join('') :
                         '<div>نتیجه‌ای یافت نشد</div>';
                 }
             }
@@ -1017,7 +1159,7 @@
             }
         }
         document.querySelectorAll("input[id^='searchInput']").forEach(input => {
-            input.addEventListener("keydown", function (e) {
+            input.addEventListener("keydown", function(e) {
                 const id = this.id.replace("searchInput", "");
                 const dropdown = document.getElementById("dropdownList" + id);
                 const items = dropdown.querySelectorAll("div");
@@ -1058,7 +1200,7 @@
         });
 
         // وقتی جایی روی صفحه کلیک شد
-        document.addEventListener('click', function (e) {
+        document.addEventListener('click', function(e) {
             // اگر کلیک داخل جعبه autocomplete ای که dropdown داره بود، هیچی نکن
             if (e.target.closest('.autocomplete') && e.target.closest('.autocomplete').querySelector('.dropdown')) {
                 return;
@@ -1079,12 +1221,12 @@
         }
 
         // مدیریت آپلود تصویر هدر
-        document.getElementById('headerUpload').addEventListener('change', function (e) {
+        document.getElementById('headerUpload').addEventListener('change', function(e) {
             const file = e.target.files[0];
 
-            if (addFileToStorage(file, 'header', 800)) {
+            if (addFileToStorage(file, 'header', 800000)) {
                 const reader = new FileReader();
-                reader.onload = function (event) {
+                reader.onload = function(event) {
                     document.getElementById('headerPreview').src = event.target.result;
                 };
                 reader.readAsDataURL(file);
@@ -1093,12 +1235,13 @@
             }
         });
 
-        document.getElementById('removeHeader').addEventListener('click', function () {
-            document.getElementById('headerPreview').src = 'https://via.placeholder.com/1200x250/ddd/ddd?text=هدر+آموزشگاه';
+        document.getElementById('removeHeader').addEventListener('click', function() {
+            document.getElementById('headerPreview').src =
+                'https://via.placeholder.com/1200x250/ddd/ddd?text=هدر+آموزشگاه';
         });
 
         // مدیریت شبکه های اجتماعی
-        document.getElementById('addSocial').addEventListener('click', function () {
+        document.getElementById('addSocial').addEventListener('click', function() {
             const socialCount = document.querySelectorAll('.social-item').length + 1;
             const socialSelectCount = document.querySelectorAll('.social-item').length + 2;
             const socialHtml = `
@@ -1132,13 +1275,13 @@
             document.getElementById('socialNetworks').appendChild(div);
 
             // اضافه کردن event listener برای دکمه حذف
-            div.querySelector('.btn-remove-social').addEventListener('click', function () {
+            div.querySelector('.btn-remove-social').addEventListener('click', function() {
                 this.closest('.social-item').remove();
             });
         });
 
         // مدیریت اساتید
-        document.getElementById('addTeacher').addEventListener('click', function () {
+        document.getElementById('addTeacher').addEventListener('click', function() {
             const teacherCount = document.querySelectorAll('.teacher-card').length + 1;
             const teacherHtml = `
                 <div class="teacher-card card mb-3">
@@ -1190,7 +1333,7 @@
             document.getElementById('teachersList').appendChild(div);
 
             // اضافه کردن event listener برای دکمه حذف
-            div.querySelector('.btn-remove-teacher').addEventListener('click', function () {
+            div.querySelector('.btn-remove-teacher').addEventListener('click', function() {
                 this.closest('.teacher-card').remove();
             });
 
@@ -1200,19 +1343,19 @@
             const imagePreview = div.querySelector('.teacher-image');
             const fileSizeInfo = div.querySelector('.teacher-file-size-info');
 
-            imageBtn.addEventListener('click', function () {
+            imageBtn.addEventListener('click', function() {
                 imageInput.click();
             });
 
-            imageInput.addEventListener('change', function (e) {
+            imageInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
                     const fileId = Date.now();
                     this.setAttribute('data-file-id', fileId);
 
-                    if (addFileToStorage(file, 'teacher', 400)) {
+                    if (addFileToStorage(file, 'teacher', 10000000)) {
                         const reader = new FileReader();
-                        reader.onload = function (event) {
+                        reader.onload = function(event) {
                             imagePreview.src = event.target.result;
                         };
                         reader.readAsDataURL(file);
@@ -1226,16 +1369,114 @@
             });
         });
 
+
+        // گاللللللرییییی
+        // تابع به‌روزرسانی شماره‌گذاری تصاویر گالری
+        function updateGalleryIndexes() {
+            const galleryItems = document.querySelectorAll('#galleryItems .gallery-item');
+            galleryItems.forEach((item, index) => {
+                const countElement = item.querySelector('.gallery-count');
+                if (countElement) {
+                    countElement.textContent = index + 1;
+                }
+            });
+        }
+
+        // تابع باز کردن مودال ویرایش تصویر
+        function openEditImageModal(fileId) {
+            const file = uploadedFiles.find(f => f.id === fileId);
+            if (!file) return;
+
+            currentEditingImageId = fileId;
+
+            // نمایش تصویر فعلی در مودال
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('editImagePreview').src = event.target.result;
+            };
+            reader.readAsDataURL(file.file);
+
+            // نمایش اطلاعات فایل
+            document.getElementById('editImageFileSizeInfo').textContent = `اندازه فعلی: ${formatBytes(file.size)}`;
+
+            // باز کردن مودال
+            const modal = new bootstrap.Modal(document.getElementById('editImageModal'));
+            modal.show();
+        }
+
+        // تابع ذخیره تصویر ویرایش شده
+        function saveEditedImage(newFile) {
+            if (!currentEditingImageId || !newFile) return;
+
+            const fileIndex = uploadedFiles.findIndex(f => f.id === currentEditingImageId);
+            if (fileIndex === -1) return;
+
+            // بررسی حجم فایل جدید
+            if (!checkFileSize(newFile, 40000000, 'گالری')) {
+                return;
+            }
+
+            // محاسبه اختلاف حجم
+            const sizeDifference = newFile.size - uploadedFiles[fileIndex].size;
+
+            // بررسی آیا حجم کل از محدودیت بیشتر می‌شود
+            if (currentStorageUsed + sizeDifference > totalStorageLimit) {
+                alert('حجم فایل جدید از محدودیت مجاز بیشتر خواهد شد.');
+                return;
+            }
+
+            // به‌روزرسانی فایل
+            uploadedFiles[fileIndex].file = newFile;
+            uploadedFiles[fileIndex].size = newFile.size;
+
+            // به‌روزرسانی حجم استفاده شده
+            currentStorageUsed += sizeDifference;
+            updateStorageDisplay();
+
+            // به‌روزرسانی تصویر در گالری
+            const galleryItem = document.querySelector(`.gallery-item[data-file-id="${currentEditingImageId}"]`);
+            if (galleryItem) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    galleryItem.querySelector('img').src = event.target.result;
+                    galleryItem.querySelector('.file-size-info').textContent = `اندازه: ${formatBytes(newFile.size)}`;
+                };
+                reader.readAsDataURL(newFile);
+            }
+
+            // بستن مودال
+            bootstrap.Modal.getInstance(document.getElementById('editImageModal')).hide();
+            currentEditingImageId = null;
+
+            alert('تصویر با موفقیت ویرایش شد.');
+        }
+
+        // مدیریت ویرایش تصویر در مودال
+        document.getElementById('editImageFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('editImagePreview').src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+
+                document.getElementById('editImageFileSizeInfo').textContent =
+                    `اندازه فعلی: ${formatBytes(uploadedFiles.find(f => f.id === currentEditingImageId).size)} | اندازه جدید: ${formatBytes(file.size)}`;
+            }
+        });
+
         // مدیریت گالری تصاویر
-        document.getElementById('galleryUpload').addEventListener('change', function (e) {
+        document.getElementById('galleryUpload').addEventListener('change', function(e) {
             const files = e.target.files;
+
             if (files.length > 0) {
                 let validFiles = [];
 
                 // بررسی تمام فایل‌ها
                 for (let i = 0; i < files.length; i++) {
                     const file = files[i];
-                    if (checkFileSize(file, 400, 'گالری')) {
+                    if (checkFileSize(file, 40000000, 'گالری')) {
                         validFiles.push(file);
                     }
                 }
@@ -1243,45 +1484,72 @@
                 // آپلود فایل‌های معتبر
                 for (let i = 0; i < validFiles.length; i++) {
                     const file = validFiles[i];
-                    const fileId = Date.now() + i;
-
-                    if (addFileToStorage(file, 'gallery', 800)) {
+                    const fileId = addFileToStorage(file, 'gallery', 40000000);
+                    if (fileId) {
                         const reader = new FileReader();
 
-                        reader.onload = function (event) {
+                        reader.onload = function(event) {
+                            // شماره تصویر بر اساس تعداد تصاویر موجود + 1
+                            const currentCount = document.querySelectorAll('#galleryItems .gallery-item')
+                                .length + 1;
+
                             const galleryHtml = `
-                                <div class="col-md-4">
-                                    <div class="gallery-item">
-                                        <img src="${event.target.result}" alt="تصویر گالری">
-                                        <button class="btn btn-danger btn-sm btn-remove" data-file-id="${fileId}"><i class="bi bi-trash"></i></button>
-                                        <div class="file-size-info">اندازه: ${formatBytes(file.size)}</div>
-                                    </div>
+                                <div class="gallery-item position-relative" data-file-id="${fileId}">
+                                    <img src="${event.target.result}" alt="تصویر گالری" class="w-100 h-100 object-fit-cover">
+                                    <span class="gallery-count">${currentCount}</span>
+                                    <button class="btn btn-danger btn-sm btn-remove" data-file-id="${fileId}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                    <button class="btn btn-primary btn-sm btn-edit" data-file-id="${fileId}">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <div class="file-size-info">اندازه: ${formatBytes(file.size)}</div>
                                 </div>
                             `;
 
                             const div = document.createElement('div');
+                            div.classList.add('col-md-3')
                             div.innerHTML = galleryHtml;
                             document.getElementById('galleryItems').appendChild(div);
 
                             // اضافه کردن event listener برای دکمه حذف
-                            div.querySelector('.btn-remove').addEventListener('click', function () {
+                            div.querySelector('.btn-remove').addEventListener('click', function() {
                                 const fileId = parseInt(this.getAttribute('data-file-id'));
                                 removeFileFromStorage(fileId);
-                                this.closest('.col-md-4').remove();
+                                this.closest('.col-md-3').remove();
+                                updateGalleryIndexes(); // به‌روزرسانی شماره‌ها پس از حذف
+                            });
+
+                            // اضافه کردن event listener برای دکمه ویرایش
+                            div.querySelector('.btn-edit').addEventListener('click', function() {
+                                const fileId = parseInt(this.getAttribute('data-file-id'));
+                                openEditImageModal(fileId);
                             });
                         };
 
                         reader.readAsDataURL(file);
-                    } else {
                     }
                 }
+            }
+
+            // پاک کردن فایل‌های انتخابی از input
+            this.value = '';
+        });
+
+        // ذخیره تصویر ویرایش شده
+        document.getElementById('saveEditedImage').addEventListener('click', function() {
+            const fileInput = document.getElementById('editImageFile');
+            if (fileInput.files.length > 0) {
+                saveEditedImage(fileInput.files[0]);
+            } else {
+                alert('لطفاً یک تصویر جدید انتخاب کنید.');
             }
         });
 
         // پیدا کردن موقعیت کاربر
-        document.getElementById('locateMe').addEventListener('click', function () {
+        document.getElementById('locateMe').addEventListener('click', function() {
             if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(function (position) {
+                navigator.geolocation.getCurrentPosition(function(position) {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
 
@@ -1292,8 +1560,10 @@
                     // به‌روزرسانی فیلدهای مختصات
                     document.getElementById('latitude').value = lat.toFixed(6);
                     document.getElementById('longitude').value = lng.toFixed(6);
-                }, function (error) {
-                    alert('دسترسی به موقعیت مکانی امکان‌پذیر نیست. لطفاً از تنظیمات مرورگر خود اجازه دسترسی به موقعیت مکانی را فعال کنید.');
+                }, function(error) {
+                    alert(
+                        'دسترسی به موقعیت مکانی امکان‌پذیر نیست. لطفاً از تنظیمات مرورگر خود اجازه دسترسی به موقعیت مکانی را فعال کنید.'
+                    );
                 });
             } else {
                 alert('مرورگر شما از ویژگی موقعیت‌یابی پشتیبانی نمی‌کند.');
@@ -1301,7 +1571,7 @@
         });
 
         // بازنشانی نقشه به موقعیت پیش‌فرض
-        document.getElementById('resetMap').addEventListener('click', function () {
+        document.getElementById('resetMap').addEventListener('click', function() {
             map.setView([defaultLatitude, defaultLongitude], 13);
             marker.setLatLng([defaultLatitude, defaultLongitude]);
             document.getElementById('latitude').value = defaultLatitude.toFixed(6);
@@ -1309,7 +1579,7 @@
         });
 
         // مدیریت دکمه های ذخیره و انصراف
-        document.getElementById('saveProfile').addEventListener('click', function () {
+        document.getElementById('saveProfile').addEventListener('click', function() {
             // بررسی حجم کل قبل از ذخیره
             if (currentStorageUsed > totalStorageLimit) {
                 alert('حجم آپلود شده از محدودیت مجاز بیشتر است. لطفاً برخی فایل‌ها را حذف کنید.');
@@ -1329,7 +1599,7 @@
             alert('تغییرات با موفقیت ذخیره شدند!');
         });
 
-        document.getElementById('cancelChanges').addEventListener('click', function () {
+        document.getElementById('cancelChanges').addEventListener('click', function() {
             if (confirm('آیا از انصراف از تغییرات اطمینان دارید؟')) {
                 window.location.reload();
             }
@@ -1337,13 +1607,13 @@
 
         // مقداردهی اولیه event listeners برای المان های موجود
         document.querySelectorAll('.btn-remove-social').forEach(button => {
-            button.addEventListener('click', function () {
+            button.addEventListener('click', function() {
                 this.closest('.social-item').remove();
             });
         });
 
         document.querySelectorAll('.btn-remove-teacher').forEach(button => {
-            button.addEventListener('click', function () {
+            button.addEventListener('click', function() {
                 // حذف تصویر استاد از لیست
                 const imageInput = this.closest('.teacher-card').querySelector('.teacher-image-input');
                 if (imageInput && imageInput.files.length > 0) {
@@ -1357,32 +1627,32 @@
         });
 
         document.querySelectorAll('.btn-remove').forEach(button => {
-            button.addEventListener('click', function () {
+            button.addEventListener('click', function() {
                 const fileId = parseInt(this.getAttribute('data-file-id'));
                 if (fileId) {
                     removeFileFromStorage(fileId);
                 }
-                this.closest('.col-md-4').remove();
+                this.closest('.col-md-3').remove();
             });
         });
 
         // مدیریت آپلود تصویر برای استاد موجود
         document.querySelectorAll('.teacher-image-btn').forEach(button => {
-            button.addEventListener('click', function () {
+            button.addEventListener('click', function() {
                 this.previousElementSibling.click();
             });
         });
 
         document.querySelectorAll('.teacher-image-input').forEach(input => {
-            input.addEventListener('change', function (e) {
+            input.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
                     const fileId = Date.now();
                     this.setAttribute('data-file-id', fileId);
 
-                    if (addFileToStorage(file, 'teacher', 400)) {
+                    if (addFileToStorage(file, 'teacher', 400000000)) {
                         const reader = new FileReader();
-                        reader.onload = function (event) {
+                        reader.onload = function(event) {
                             const imageElement = input.previousElementSibling;
                             imageElement.src = event.target.result;
                         };
@@ -1402,7 +1672,7 @@
 
         // فعال کردن اینپوت‌های موجود
         document.querySelectorAll('.autocomplete input, .autocomplete textarea, .autocomplete select').forEach(input => {
-            input.addEventListener('input', function () {
+            input.addEventListener('input', function() {
                 const box = this.closest('.autocomplete');
                 const label = box.querySelector('label');
                 const clearBtn = box.querySelector('.clear-btn');
