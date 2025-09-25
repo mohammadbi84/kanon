@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\JobOpportunityController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PannelController;
 use App\Http\Controllers\PopupController;
 use App\Http\Controllers\RegisterAlertController;
 use App\Http\Controllers\RegisterMessageController;
+use App\Http\Controllers\SiteController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,17 +28,18 @@ Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']
 Route::get('/sms', [\App\Http\Controllers\AuthController::class, 'sms'])->name('sms');
 Route::get('/resend-code/{user}', [\App\Http\Controllers\AuthController::class, 'resendCode'])->name('resend.code');
 
-Route::get('/states/{cityId}', [\App\Http\Controllers\SiteController::class, 'states']);
+Route::get('/states/{cityId}', [SiteController::class, 'states']);
 
 
 
 
 // site pages
-Route::get('/', [\App\Http\Controllers\SiteController::class, 'index'])->middleware('senddata')->name('home');
-Route::get('/school', [\App\Http\Controllers\SiteController::class, 'school'])->name('school');
-Route::get('/maps', [\App\Http\Controllers\SiteController::class, 'map'])->name('map');
-Route::prefix('/job-opportunity')->name('job-opportunity.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\SiteController::class, 'job_index'])->name('index');
+Route::get('/', [SiteController::class, 'index'])->middleware('senddata')->name('home');
+Route::get('/school', [SiteController::class, 'school'])->name('school');
+Route::get('/maps', [SiteController::class, 'map'])->name('map');
+Route::prefix('/job-opportunity')->group(function () {
+    Route::get('/', [JobOpportunityController::class, 'categories'])->name('job-opportunity.categories');
+    Route::get('/jobs', [JobOpportunityController::class, 'index'])->name('job-opportunity.index');
 });
 
 

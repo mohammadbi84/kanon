@@ -409,10 +409,4 @@ class SiteController extends Controller
     {
         return view('site.school');
     }
-    public function job_index()
-    {
-        $group_organ = HerfeOrgan::pluck('herfe_id');
-        $groups = Group::orderBy('name', 'asc')->whereIn('id',$group_organ)->get();
-        return view('site.job_opportunity.categories',compact('groups'));
-    }
 }

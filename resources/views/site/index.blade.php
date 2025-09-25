@@ -431,7 +431,7 @@
                                 <a class="nav-link" href="#footer">درباره ما</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{route('job-opportunity.index')}}">فرصت های شغلی</a>
+                                <a class="nav-link" href="{{route('job-opportunity.categories')}}">فرصت های شغلی</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#footer">مدرس شوید</a>
@@ -2451,7 +2451,14 @@
                             '<span class="d-block text-dark">ثانیه</span>');
 
                     } else {
-                        $(this).html('<p>زمان این دوره به پایان رسیده است.</p>');
+                        $(this).find('.days').html(0 +
+                            '<span class="d-block text-dark">روز</span>');
+                        $(this).find('.hours').html(0 +
+                            '<span class="d-block text-dark">ساعت</span>');
+                        $(this).find('.minutes').html(0 +
+                            '<span class="d-block text-dark">دقیقه</span>');
+                        $(this).find('.seconds').html(0 +
+                            '<span class="d-block text-dark">ثانیه</span>');
                     }
                 });
 

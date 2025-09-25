@@ -217,11 +217,11 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     @foreach ($organs as $organ)
-                                        <li><a class="dropdown-item" href="#" disabled>{{ $organ->name }}</a>
+                                        <li><a class="dropdown-item" href="{{route('school')}}" disabled>{{ $organ->name }}</a>
                                         </li>
                                     @endforeach
-                                    <li><a class="dropdown-item" href="#">آیتم 1</a></li>
-                                    <li><a class="dropdown-item" href="#">آیتم 2</a></li>
+                                    <li><a class="dropdown-item" href="{{route('school')}}">آیتم 1</a></li>
+                                    <li><a class="dropdown-item" href="{{route('school')}}">آیتم 2</a></li>
                                 </ul>
                             </li>
 
@@ -249,7 +249,7 @@
                                 <a class="nav-link" href="#footer">درباره ما</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('job-opportunity.index') }}">فرصت های شغلی</a>
+                                <a class="nav-link" href="{{ route('job-opportunity.categories') }}">فرصت های شغلی</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#footer">مدرس شوید</a>
