@@ -132,6 +132,7 @@
             top: 5px;
             left: 5px;
         }
+
         .gallery-item .btn-remove {
             position: absolute;
             top: 5px;
@@ -146,18 +147,18 @@
 
         .gallery-count {
             position: absolute;
-            top: 5px;
-            left: 50%;
+            bottom: 5px;
+            left: 15px;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.7);
             color: white;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 20px;
+            height: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            /* font-weight: bold; */
         }
 
         /* استایل اینپوت های سفارشی شما */
@@ -208,6 +209,22 @@
             font-size: 0.75rem;
             color: #6c757d;
         }
+        .autocomplete input:focus+.map-label,
+        .autocomplete.filled input+.map-label,
+        .autocomplete textarea:focus+.map-label,
+        .autocomplete.filled textarea+.map-label,
+        .autocomplete select:focus+.map-label,
+        .autocomplete.filled select+.map-label {
+            outline: none !important;
+            border: none !important;
+            top: 1px !important;
+            right: 10px;
+            background: white;
+            padding: 0 5px;
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+
 
         .autocomplete .clear-btn {
             display: none;
@@ -349,13 +366,6 @@
             margin-top: 5px;
         }
 
-        .gallery_count {
-            top: 5px !important;
-            right: 5px !important;
-            border-radius: 5px;
-            padding: 3px;
-            background: #d5d5d5a5
-        }
         /* مودال ویرایش تصویر */
         .modal-content {
             border-radius: 10px;
@@ -377,10 +387,91 @@
             max-height: 300px;
             border-radius: 8px;
         }
+
+        .alert-costum {
+            background: #e9e9e9;
+            border: 2px dashed #d6d6d6;
+            padding-right: 16px !important;
+        }
+
+        /* دکمه بالا وقتی بازه */
+        .slider-close-btn {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            border-radius: 6px 0 10px;
+            width: 41px;
+            height: 41px;
+            line-height: 1;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            padding: 0;
+            background: #fff;
+            border: #fff;
+        }
+
+        .slider-close-btn:hover {
+            background: #ccc;
+        }
+
+        .slider-close-btn i {
+            font-size: 30px;
+            color: #e69926;
+        }
     </style>
 @endsection
 @section('content')
     <div class="container wrapper py-4" style="margin-top: 70px">
+        {{-- alert --}}
+        <div class="row p-0">
+            <div class="col-md-12">
+                <div class="alert alert-costum alert-dismissible mt-5 mb-0">
+                    {{-- <button type="button" class="btn-close" data-bs-dismiss="alert"></button> --}}
+                    <button type="button" data-bs-dismiss="alert"
+                        class="btn collapse2 btn-sm btn-dark slider-close-btn slider-toggle"><i class="bi bi-dash"
+                            style="position: relative;"></i></button>
+                    <strong>توجه!</strong>
+                    <div class="row mt-3">
+                        <div class="col-md-9">
+                            <p class="text-alert mt-2">
+                                لطفا جهت استفاده آسان تر از سامانه، از راهتماى ساماته استفاده كنيد.
+                                در صورتى كه مايل به ايجاد درخواست جديد هستيد از كزينه درخواست جديد در همين صفحه استفاده
+                                كنيد. و يا
+                                از متوى سمت راست سامانه، كزينه درخواست رزرو تابلو را
+                                انتخاب كرده و بر اساس نوع تابلو درخواست خودرا ايجاد كنيد.
+                                در صورتى كه درخواست شما در انتظار تاييد كارشناس سامانه است، منتظر بمانيد تا بيامك مربوط به
+                                تاييد و
+                                يا رد درخواست براى شما ارسال شود.
+                                ـر صورتى كه درخواست شما تابيد شده است وبيامك مربوط به أن براى شما ارسال شده است، جهت تاييد
+                                تهايى و
+                                ادامه درخواست از منوى سمت راس
+                                رزرو تابلو را انتخاب كرده وبر اساس نوع تايلو درخواست هاى خود را انتخاب ومشاهده كنيد.
+
+                                وادامه درخواست از منوى سمت راست ساماته، كزينه درخواست
+                                ر صیرتی كه درخواست شما رد شده است و پيامك مربوط به آن براى شما ارسال شده است، جهت مشاهده
+                                دلیل رد
+                                درخواست و ایجاد درخواست جديد از منوى سمت راست
+                                سامانه، كزينه درخواست رزرو تابلورا انتخاب كرده وبر اساس نوع تابلو درخواست هاى خودرا انتخاب
+                                ومشاهده
+                                كنيد.
+
+                                ٠ ويديو هاى من
+
+                                صورت بروز هر كونه مشكل با شماره تلفن ٠٣٥٣٨٢٧٧٢٥٠ و٠٣٥٣٣١٣٥٣٠٨ واحد تبليغات (آقاى سلمانى)
+                                تماس
+                                بكيريد.
+                            </p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <img src="{{ asset('site/public/img/User_Panel-question.png') }}" alt="question"
+                                class="object-fit-cover" width="250">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="main-container">
             <div class="w-100 d-flex justify-content-between align-items-center">
                 <h4 class="text-end px-4 py-4">ویرایش صفحه شخصی آموزشگاه</h4>
@@ -446,8 +537,8 @@
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="gallery-tab" data-bs-toggle="tab" data-bs-target="#gallery" type="button"
-                        role="tab" aria-controls="gallery" aria-selected="false">
+                    <button class="nav-link" id="gallery-tab" data-bs-toggle="tab" data-bs-target="#gallery"
+                        type="button" role="tab" aria-controls="gallery" aria-selected="false">
                         <i class="fas fa-photo-video ms-2"></i>گالری
                     </button>
                 </li>
@@ -458,9 +549,7 @@
                 <!-- تب تصویر هدر -->
                 <div class="tab-pane fade show active" id="header" role="tabpanel" aria-labelledby="header-tab">
                     <div class="profile-header border">
-                        <img id="headerPreview"
-                            src="https://via.placeholder.com/1200x250/e69926/ffffff?text=آموزشگاه+خود+را+اینجا+بارگذاری+کنید"
-                            alt="هدر آموزشگاه">
+                        <img id="headerPreview" src="{{ asset('no-image-wide.svg') }}" alt="هدر آموزشگاه">
                         <div class="profile-header-overlay">
                             <div class="d-flex justify-content-between align-items-center">
                                 <span>تصویر هدر آموزشگاه</span>
@@ -546,11 +635,11 @@
                             <div class="" style="min-width: 250px;">
                                 <!-- انتخاب شهر -->
                                 <div class="city-selector mb-0">
-                                    <div class="autocomplete mb-0" id="autocompleteBoxcity">
+                                    <div class="autocomplete mb-0 filled" id="autocompleteBoxcity">
                                         <input type="text" id="searchInputcity" oninput="filterOptions('city',1)"
-                                            onclick="dropdownshow('city')">
-                                        <label>انتخاب شهر</label>
-                                        <span class="clear-btn" id="clearBtn_city" onclick="clearInput('city')">×</span>
+                                            onclick="dropdownshow('city')" style="padding: 16px 15px 16px 10px;" value="یزد">
+                                        <label class="map-label">انتخاب شهر</label>
+                                        <span class="clear-btn" id="clearBtn_city" onclick="clearInput('city')" style="display: block !important;">×</span>
                                         <div class="dropdown" id="dropdownListcity" style="display: none;"></div>
                                         <input type="hidden" name="social" id="selectedIdcity">
                                     </div>
@@ -609,60 +698,7 @@
                 <!-- تب اساتید -->
                 <div class="tab-pane fade" id="teachers" role="tabpanel" aria-labelledby="teachers-tab">
                     <div id="teachersList">
-                        <div class="teacher-card card mb-3">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <div class="teacher-image-container text-center mb-3">
-                                            <img src="https://via.placeholder.com/150/e69926/ffffff?text=تصویر+استاد"
-                                                class="img-thumbnail teacher-image" alt="تصویر استاد">
-                                            <input type="file" class="d-none teacher-image-input" accept="image/*"
-                                                data-max-size="300">
-                                            <button class="btn btn-sm btn-outline-primary mt-2 teacher-image-btn">انتخاب
-                                                تصویر</button>
-                                            <div class="file-size-info teacher-file-size-info"></div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="autocomplete" id="autocompleteBoxteacherName">
-                                                    <input type="text" id="searchInputteacherName" name="teacherName"
-                                                        oninput="nameinput('teacherName')">
-                                                    <label for="searchInputteacherName" style="right: 15px;">نام
-                                                        استاد</label>
-                                                    <span class="clear-btn" id="clearBtn_teacherName"
-                                                        onclick="clearInput('teacherName')">×</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="autocomplete" id="autocompleteBoxteacherDegree">
-                                                    <input type="text" id="searchInputteacherDegree"
-                                                        name="teacherDegree" oninput="nameinput('teacherDegree')">
-                                                    <label for="searchInputteacherDegree" style="right: 15px;">مدرک
-                                                        استاد</label>
-                                                    <span class="clear-btn" id="clearBtn_teacherDegree"
-                                                        onclick="clearInput('teacherDegree')">×</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12 mt-3">
-                                                <div class="autocomplete" id="autocompleteBoxteacherBio">
-                                                    <textarea id="searchInputteacherBio" name="teacherBio" rows="3" oninput="nameinput('teacherBio')"></textarea>
-                                                    <label for="searchInputteacherBio" style="right: 15px;">بیوگرافی
-                                                        استاد</label>
-                                                    <span class="clear-btn" id="clearBtn_teacherBio"
-                                                        onclick="clearInput('teacherBio')">×</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-end mt-3">
-                                    <button type="button" class="btn btn-danger btn-remove-teacher"><i
-                                            class="fas fa-trash"></i> حذف استاد</button>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
                     <button type="button" class="btn btn-primary mt-3" id="addTeacher"><i
                             class="fas fa-plus-circle"></i> افزودن استاد جدید</button>
@@ -731,7 +767,7 @@
 
 
 
-        let totalStorageLimit = 2 * 1024 * 1024; // 2 مگابایت به بایت
+        let totalStorageLimit = 10 * 1024 * 1024; // 2 مگابایت به بایت
         let currentStorageUsed = 0; // حجم فعلی استفاده شده (بر حسب بایت)
         let uploadedFiles = []; // لیست فایل‌های آپلود شده
 
@@ -1237,7 +1273,16 @@
 
         document.getElementById('removeHeader').addEventListener('click', function() {
             document.getElementById('headerPreview').src =
-                'https://via.placeholder.com/1200x250/ddd/ddd?text=هدر+آموزشگاه';
+                '{{ asset('no-image-wide.svg') }}';
+
+            document.getElementById('headerUpload').value = '';
+            document.getElementById('headerFileSizeInfo').textContent = '';
+
+            // حذف فایل از لیست
+            const headerFile = uploadedFiles.find(f => f.type === 'header');
+            if (headerFile) {
+                removeFileFromStorage(headerFile.id);
+            }
         });
 
         // مدیریت شبکه های اجتماعی
@@ -1289,7 +1334,7 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="teacher-image-container text-center mb-3">
-                                    <img src="https://via.placeholder.com/150/e69926/ffffff?text=تصویر+استاد" class="img-thumbnail teacher-image" alt="تصویر استاد">
+                                    <img src="{{ asset('no-image.svg') }}" class="img-thumbnail teacher-image" alt="تصویر استاد">
                                     <div class="file-size-info teacher-file-size-info"></div>
                                     <input type="file" class="d-none teacher-image-input" accept="image/*">
                                     <button class="btn btn-sm btn-outline-primary mt-2 teacher-image-btn">انتخاب تصویر</button>
@@ -1334,6 +1379,14 @@
 
             // اضافه کردن event listener برای دکمه حذف
             div.querySelector('.btn-remove-teacher').addEventListener('click', function() {
+                // حذف تصویر استاد از لیست
+                const imageInput = this.closest('.teacher-card').querySelector('.teacher-image-input');
+                if (imageInput.files.length > 0) {
+                    const fileId = parseInt(imageInput.getAttribute('data-file-id'));
+                    if (fileId) {
+                        removeFileFromStorage(fileId);
+                    }
+                }
                 this.closest('.teacher-card').remove();
             });
 
@@ -1348,12 +1401,20 @@
             });
 
             imageInput.addEventListener('change', function(e) {
+                // حذف تصویر استاد از لیست
+                const imageInput = this.closest('.teacher-card').querySelector('.teacher-image-input');
+                if (imageInput.files.length > 0) {
+                    const fileId = parseInt(imageInput.getAttribute('data-file-id'));
+                    if (fileId) {
+                        removeFileFromStorage(fileId);
+                    }
+                }
                 const file = e.target.files[0];
                 if (file) {
-                    const fileId = Date.now();
-                    this.setAttribute('data-file-id', fileId);
+                    const fileId = addFileToStorage(file, 'teacher', 300);
+                    if (fileId) {
+                        this.setAttribute('data-file-id', fileId);
 
-                    if (addFileToStorage(file, 'teacher', 10000000)) {
                         const reader = new FileReader();
                         reader.onload = function(event) {
                             imagePreview.src = event.target.result;

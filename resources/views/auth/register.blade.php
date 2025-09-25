@@ -2010,18 +2010,6 @@
     </script>
     {{-- inputs script --}}
     <script>
-        // const element = document.getElementById('mySelect');
-        // const choices = new Choices(element, {
-        //     removeItemButton: true,
-        //     searchEnabled: true,
-        //     shouldSort: false,
-        //     noResultsText: 'نتیجه‌ای پیدا نشد!',
-        //     noChoicesText: 'هیچ گزینه‌ای موجود نیست!',
-        //     itemSelectText: 'برای انتخاب کلیک کنید',
-        //     placeholderValue: 'انتخاب کنید', // چون لیبل داریم، نیازی به placeholder اینجا نیست
-        //     searchPlaceholderValue: 'جستجو...',
-        // });
-
         $(document).on("input", ".only-persian", function() {
             let value = $(this).val();
             let inputField = $(this);
