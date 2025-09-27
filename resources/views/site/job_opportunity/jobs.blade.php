@@ -84,14 +84,15 @@
         .info-bar {
             background-color: #f8f9fa;
             border-top: 1px solid #e9ecef;
-            padding: 10px 15px;
+            padding: 10px 19px;
             border-radius: 0 0 10px 10px;
             margin-top: 15px;
         }
 
         .salary {
             color: #242424;
-            font-weight: bold;
+            /* font-weight: bold; */
+            font-size: 12.8px;
         }
 
         .filter-section {
@@ -322,17 +323,13 @@
     </style>
 @endsection
 @section('content')
-    <div class="container wrapper mb-5" style="min-height: 100vh;align-items: center;align-content: center;">
+    <div class="container wrapper mb-5" style="min-height: 100vh;align-items: center;align-content: center;padding-top:110px;">
         <div class="bg-white border shadow rounded-3">
             <ul class="nav nav-tabs pe-3 gap-4" id="tabOne" role="tablist" style="border-radius: 5px 5px 0 0">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link tabone-link py-3 px-1 active" id="fields-tab" data-bs-toggle="tab"
                         data-bs-target="#fields" type="button" role="tab">آموزشی
                     </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link tabone-link py-3 px-1" id="professions-tab" data-bs-toggle="tab"
-                        data-bs-target="#professions" type="button" role="tab">اداری</button>
                 </li>
             </ul>
             <div class="tab-content p-3 pb-5" id="tabOneContent" style="border-radius: 0 0 5px 5px">
@@ -440,118 +437,7 @@
                                                 </div>
                                             </div>
                                             <div>
-                                                <span class="salary">8,000,000 <small>تومان</small></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="professions" role="tabpanel">
-                    <!-- لیست کارت‌های موقعیت شغلی -->
-                    <div class="row" id="jobCards">
-                        <div class="col-12">
-                            <!-- بخش فیلترها -->
-                            <div class="filter-section">
-                                <div class="row g-3">
-                                    <div class="col-md-3">
-                                        <label for="jobType" class="form-label">نوع شغل</label>
-                                        <select class="form-select" id="jobType">
-                                            <option selected>همه</option>
-                                            <option>پاره وقت</option>
-                                            <option>تمام وقت</option>
-                                            <option>دورکاری</option>
-                                            <option>پروژه‌ای</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="city" class="form-label">شهر</label>
-                                        <select class="form-select" id="city">
-                                            <option selected>همه شهرها</option>
-                                            <option>تهران</option>
-                                            <option>مشهد</option>
-                                            <option>اصفهان</option>
-                                            <option>شیراز</option>
-                                            <option>تبریز</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="salaryRange" class="form-label">محدوده حقوق</label>
-                                        <select class="form-select" id="salaryRange">
-                                            <option selected>همه</option>
-                                            <option>تا ۵ میلیون تومان</option>
-                                            <option>۵ تا ۱۰ میلیون تومان</option>
-                                            <option>۱۰ تا ۱۵ میلیون تومان</option>
-                                            <option>بیش از ۱۵ میلیون تومان</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3 text-center mt-3">
-                                        <button class="btn btn-primary" id="applyFilter">
-                                            <i class="fas fa-filter me-2"></i>اعمال فیلتر
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- کارت 1 -->
-                        <div class="col-lg-6">
-                            <div class="card border">
-                                <div class="card-body p-0">
-                                    <div class="row p-3 pb-0">
-                                        <div class="col-9">
-                                            <div class="d-flex align-items-start">
-                                                <img src="{{ asset('no-image.svg') }}" alt="لوگو آموزشگاه"
-                                                    class="company-logo">
-                                                <div class="me-4">
-                                                    <h5 class="card-title mb-2">آموزشگاه زبان خارجه</h5>
-                                                    <p class="job-title">مدرس زبان انگلیسی</p>
-                                                    <div class="job-features">
-                                                        <span class="badge badge-success">پاره وقت</span>
-                                                        <span class="badge badge-danger">دورکاری</span>
-                                                        <span class="badge badge-primary">تجربه لازم: ۲ سال</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-3 stats-section">
-                                            <div class="stat-item">
-                                                <a href="#" class="text-reset text-decoration-none">
-                                                    <small style="font-size: 13px;">
-                                                        50
-                                                        <i class="bi bi-heart me-1 text-primary"
-                                                            style="position: relative;top: 2px;"></i>
-                                                    </small>
-                                                </a>
-                                            </div>
-                                            <div class="stat-item">
-                                                <small style="font-size: 13px;">
-                                                    112
-                                                    <i class="bi bi-eye me-1 text-primary"
-                                                        style="position: relative;top: 2px;"></i>
-                                                </small>
-                                            </div>
-                                            <div class="stat-item">
-                                                <small style="font-size: 13px;">
-                                                    2 روز پیش
-                                                    <i class="bi bi-clock me-1 text-primary"
-                                                        style="position: relative;top: 2px;"></i>
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="info-bar">
-                                        <div class="d-flex justify-content-between">
-                                            <div>
-                                                <div class="d-flex align-items-center gap-1">
-                                                    <span class="text-small-1">یزد</span>
-                                                    <span class="">|</span>
-                                                    <span class="text-small-1">035-31231234</span>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <span class="salary">8,000,000 <small>تومان</small></span>
+                                                <span class="salary">8,000,000 <small>تومان / درآمد ماهانه </small></span>
                                             </div>
                                         </div>
                                     </div>

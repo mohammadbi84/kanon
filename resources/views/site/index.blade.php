@@ -27,12 +27,6 @@
     <link rel="stylesheet" href="{{ asset('site/src/style/bootstrap-icons.css') }}" />
     <!-- BOOTSTRAP 5 -->
 
-
-    <!-- SLIDER LIBRARY (tiny slider) -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/tiny-slider.css') }}">
-    <script src="{{ asset('site/src/js/tiny-slider.js') }}"></script>
-    <!-- SLIDER LIBRARY (tiny slider) -->
-
     <!-- SLIDER LIBRARY (Splide) -->
     <script src="{{ asset('site/src/js/splide.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('site/src/style/splide.css') }}">
@@ -56,11 +50,6 @@
     <link rel="stylesheet" href="{{ asset('site/src/style/top-ad.css') }}">
     <script src="{{ asset('site/src/js/top-ad.js') }}"></script>
     <!-- top ad -->
-
-    <!-- video popup -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/video-popup.css') }}">
-    <script src="{{ asset('site/src/js/video-popup.js') }}"></script>
-    <!-- video popup -->
 
     <!-- forms -->
     <link rel="stylesheet" href="{{ asset('site/src/style/forms.css') }}">
@@ -88,12 +77,6 @@
     <script src="{{ asset('site/src/js/wave-overlay.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('site/src/style/wave-overlay.css') }}">
     <!-- wave overlay -->
-    <!-- input with floating-label -->
-    <link rel="stylesheet" type="text/css" href="{{ asset('site/src/style/input-with-floating-label.css') }}"
-        media="screen">
-    <link rel="stylesheet" type="text/css" href="{{ asset('site/src/style/input-with-floating-label-rtl-fix.css') }}"
-        media="screen">
-    <!-- input with floating-label -->
 
     <script src="{{ asset('site/src/js/init.js') }}"></script>
     <link href="{{ asset('site/src/style/animate.css') }}" rel="stylesheet">

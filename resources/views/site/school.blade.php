@@ -328,8 +328,8 @@
         }
 
         /* .swiper.teachers-slider {
-                                                                                    direction: rtl !important;
-                                                                                } */
+                                                                                        direction: rtl !important;
+                                                                                    } */
         .swiper.teachers-slider .swiper-button-next {
             display: none;
         }
@@ -494,33 +494,40 @@
         .info-bar {
             background-color: #f8f9fa;
             border-top: 1px solid #e9ecef;
-            /* padding: 10px 15px; */
+            padding: 10px 19px;
             border-radius: 0 0 10px 10px;
+            margin-top: 15px;
         }
 
         .salary {
             color: #242424;
-            font-weight: bold;
+            /* font-weight: bold; */
+            font-size: 12.8px;
         }
-        .countdown-timer {
-    display: flex;
-    /*  خیلی مهم: تایمر رو به یک فلکس‌باکس تبدیل می‌کنیم */
-    justify-content: space-around;
-    /* فاصله مساوی بین آیتم‌ها */
-    /*  اختیاری: می‌تونید استایل‌های دیگه هم اضافه کنید */
-    /*  مثلاً: */
-    /* width: 80%; */
-    /* margin: 0 auto;  */
-    /* padding: 10px; */
-    /* border: 1px solid #ccc; */
-}
 
-.timer-col {
-    /*  اختیاری: استایل‌دهی به هر ستون تایمر */
-    text-align: center;
-    padding: 5px;
-    width: 100%;
-}
+        .countdown-timer {
+            display: flex;
+            /*  خیلی مهم: تایمر رو به یک فلکس‌باکس تبدیل می‌کنیم */
+            justify-content: space-around;
+            /* فاصله مساوی بین آیتم‌ها */
+            /*  اختیاری: می‌تونید استایل‌های دیگه هم اضافه کنید */
+            /*  مثلاً: */
+            /* width: 80%; */
+            /* margin: 0 auto;  */
+            /* padding: 10px; */
+            /* border: 1px solid #ccc; */
+        }
+
+        .timer-col {
+            /*  اختیاری: استایل‌دهی به هر ستون تایمر */
+            text-align: center;
+            padding: 5px;
+            width: 100%;
+        }
+
+        .timer-short .timer-number {
+            font-size: 15px;
+        }
     </style>
 @endsection
 @section('content')
@@ -1347,15 +1354,15 @@
                             <div class="row">
                                 <div class="col-12 mt-3">
                                     <div class="row course-card m-0">
-                                        <div class="col-5 shadow p-0 img position-relative overflow-hidden">
+                                        <div class="col-4 shadow p-0 img position-relative overflow-hidden">
                                             <img src="{{ asset($item->image ?? 'Untitled.png') }}" alt=""
                                                 class="w-100 h-100 object-fit-cover">
                                         </div>
 
-                                        <div class="col-7 shadow d-flex flex-wrap align-content-around flex-column justify-content-between gap-2 p-3 py-2"
+                                        <div class="col-8 shadow d-flex flex-wrap align-content-around flex-column justify-content-between gap-2 p-3 py-2"
                                             style="border-top-left-radius: 5px;border-bottom-left-radius: 5px;">
                                             <div class="row g-0 w-100 align-content-center" dir="ltr">
-                                                <div class="d-flex align-items-center justify-content-between">
+                                                <div class="d-flex align-items-center justify-content-start gap-3">
                                                     <div style="font-size: 11.9px;" class="text-center fw-bold">
                                                         حضوری
                                                         <i class="bi bi-mortarboard ms-1 text-primary"
@@ -1400,7 +1407,8 @@
                                                 {{-- تایمر شمارش معکوس --}}
                                                 <div
                                                     class="col-6 p-0 d-flex flex-wrap justify-content-start align-content-center">
-                                                    <div class="d-flex flex-wrap align-content-center align-items-center flex-column">
+                                                    <div
+                                                        class="d-flex flex-wrap align-content-center align-items-center flex-column">
                                                         <span><span class="badge me-1"
                                                                 style="font-size: 12px;background-color:#e69926">20%</span><del
                                                                 style="font-size: 14px"
@@ -1410,8 +1418,8 @@
                                                                 style="padding-right: 6px;font-size:14px">تومان</span></span>
                                                     </div>
                                                 </div>
-                                                <div class="col-6 p-0">
-                                                    <div class="countdown-timer timer-short justify-content-between"
+                                                <div class="col-6 p-0 d-flex justify-content-end">
+                                                    <div class="countdown-timer timer-short justify-content-between gap-3"
                                                         id="countdown-1" data-end-date="2025-12-30 22:46:25">
                                                         <div class="timer-col">
                                                             <span class="timer-number days">12</span>
@@ -1481,7 +1489,7 @@
                                                 </div>
                                             </div>
                                             <div>
-                                                <span class="salary">8,000,000 <small>تومان</small></span>
+                                                <span class="salary">8,000,000 <small>تومان / درآمد ماهانه </small></span>
                                             </div>
                                         </div>
                                     </div>
