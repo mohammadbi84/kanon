@@ -3,7 +3,6 @@
         /* General Styles */
         body {
             direction: rtl;
-            background: #F3F3F9 !important;
         }
     </style>
     <meta charset="UTF-8">
@@ -97,6 +96,7 @@
         body {
             font-family: 'Vazir FD', sans-serif !important;
             /* Or 'Vazirmatn', 'Vazir', depending on the CDN/version */
+            background-color: #f2f2f2 !important;
         }
     </style>
     <style>

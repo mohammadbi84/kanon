@@ -143,7 +143,7 @@
             color: #e69926 !important;
             font-weight: bold;
             /* transform: scale(1.2);
-                                    margin-bottom: 1.5px !important; */
+                                        margin-bottom: 1.5px !important; */
         }
 
         .tabone-link.active i {
@@ -323,7 +323,8 @@
     </style>
 @endsection
 @section('content')
-    <div class="container wrapper mb-5" style="min-height: 100vh;align-items: center;align-content: center;padding-top:110px;">
+    <div class="container wrapper mb-5"
+        style="min-height: 100vh;align-items: center;align-content: center;padding-top:110px;">
         <div class="bg-white border shadow rounded-3">
             <ul class="nav nav-tabs pe-3 gap-4" id="tabOne" role="tablist" style="border-radius: 5px 5px 0 0">
                 <li class="nav-item" role="presentation">

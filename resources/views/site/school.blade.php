@@ -1359,7 +1359,7 @@
                                                 class="w-100 h-100 object-fit-cover">
                                         </div>
 
-                                        <div class="col-8 shadow d-flex flex-wrap align-content-around flex-column justify-content-between gap-2 p-3 py-2"
+                                        <div class="col-8 shadow d-flex flex-wrap align-content-around flex-column justify-content-between gap-2 p-3 py-1"
                                             style="border-top-left-radius: 5px;border-bottom-left-radius: 5px;">
                                             <div class="row g-0 w-100 align-content-center" dir="ltr">
                                                 <div class="d-flex align-items-center justify-content-start gap-3">
