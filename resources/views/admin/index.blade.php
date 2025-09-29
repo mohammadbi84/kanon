@@ -1,6 +1,6 @@
 @extends('admin.layout.master')
 @section('head')
-    <link rel="stylesheet" href="../../assets/vendor/libs/apex-charts/apex-charts.css">
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/apex-charts/apex-charts.css')}}">
 @endsection
 @section('content')
     <div class="row">
@@ -54,5 +54,5 @@
     </div>
 @endsection
 @section('script')
-    <script src="../../assets/vendor/libs/apex-charts/apexcharts.js"></script>
+    <script src="{{asset('admin/assets/vendor/libs/apex-charts/apexcharts.js')}}"></script>
 @endsection

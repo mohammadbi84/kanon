@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fa" class="light-style layout-navbar-fixed layout-menu-fixed" dir="rtl" data-theme="theme-default"
-    data-assets-path="../../assets/" data-template="vertical-menu-template-no-customizer">
+    data-assets-path="admin/assets/" data-template="vertical-menu-template-no-customizer">
 {{-- head --}}
 @include('admin.layout.head')
 
@@ -37,8 +37,7 @@
                                 طراحی شده توسط دارالفنون فاضل
                             </div>
                             <div>
-                                <a href="https://rtl-theme.com" class="footer-link me-4"
-                                    target="_blank">لایسنس</a>
+                                <a href="https://rtl-theme.com" class="footer-link me-4" target="_blank">لایسنس</a>
                                 <a href="https://rtl-theme.com" target="_blank" class="footer-link me-4">قالب‌های
                                     بیشتر</a>
 
@@ -69,25 +68,39 @@
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
-    <script src="../../assets/vendor/libs/jquery/jquery.js"></script>
-    <script src="../../assets/vendor/libs/popper/popper.js"></script>
-    <script src="../../assets/vendor/js/bootstrap.js"></script>
-    <script src="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
 
-    <script src="../../assets/vendor/libs/hammer/hammer.js"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/hammer/hammer.js') }}"></script>
 
-    <script src="../../assets/vendor/libs/i18n/i18n.js"></script>
-    <script src="../../assets/vendor/libs/typeahead-js/typeahead.js"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/i18n/i18n.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/typeahead-js/typeahead.js') }}"></script>
 
-    <script src="../../assets/vendor/js/menu.js"></script>
+    <script src="{{ asset('admin/assets/vendor/js/menu.js') }}"></script>
     <!-- endbuild -->
 
     <!-- Vendors JS -->
 
     <!-- Main JS -->
-    <script src="../../assets/js/main.js"></script>
+    <script src="{{ asset('admin/assets/js/main.js') }}"></script>
 
     <!-- Page JS -->
+
+    <!-- Vendors JS -->
+    <script src="{{ asset('admin/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/datatables-bs5/i18n/fa.js') }}"></script>
+    <!-- Flat Picker -->
+    <script src="{{ asset('admin/assets/vendor/libs/moment/moment.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/jdate/jdate.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/flatpickr/flatpickr-jdate.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/flatpickr/l10n/fa-jdate.js') }}"></script>
+    <!-- Form Validation -->
+    <script src="{{ asset('admin/assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js') }}"></script>
+    <script src="{{asset('admin/assets/js/tables-datatables-basic.js')}}"></script>
     @yield('script')
 </body>
 

@@ -8,31 +8,38 @@
     <meta name="description" content="">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="../../assets/img/favicon/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="{{asset('admin/assets/img/favicon/favicon.ico')}}">
 
     <!-- Icons -->
-    <link rel="stylesheet" href="../../assets/vendor/fonts/boxicons.css">
-    <link rel="stylesheet" href="../../assets/vendor/fonts/fontawesome.css">
-    <link rel="stylesheet" href="../../assets/vendor/fonts/flag-icons.css">
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/fonts/boxicons.css')}}">
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/fonts/fontawesome.css')}}">
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/fonts/flag-icons.css')}}">
 
     <!-- Core CSS -->
-    <link rel="stylesheet" href="../../assets/vendor/css/rtl/core.css">
-    <link rel="stylesheet" href="../../assets/vendor/css/rtl/theme-default.css">
-    <link rel="stylesheet" href="../../assets/css/demo.css">
-    <link rel="stylesheet" href="../../assets/vendor/css/rtl/rtl.css">
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/css/rtl/core.css')}}">
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/css/rtl/theme-default.css')}}">
+    <link rel="stylesheet" href="{{asset('admin/assets/css/demo.css')}}">
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/css/rtl/rtl.css')}}">
 
     <!-- Vendors CSS -->
-    <link rel="stylesheet" href="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css">
-    <link rel="stylesheet" href="../../assets/vendor/libs/typeahead-js/typeahead.css">
-
-    <!-- Page CSS -->
+    <link rel="stylesheet" href="{{asset('dashboard/plugins/perfect-scrollbar/perfect-scrollbar.css')}}">
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/typeahead-js/typeahead.css')}}">
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css')}}">
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css')}}">
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/datatables-checkboxes-jquery/datatables.checkboxes.css')}}">
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css')}}">
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/flatpickr/flatpickr.css')}}">
+    <!-- Row Group CSS -->
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css')}}">
+    <!-- Form Validation -->
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/formvalidation/dist/css/formValidation.min.css')}}">
 
     <!-- Helpers -->
-    <script src="../../assets/vendor/js/helpers.js"></script>
+    <script src="{{asset('admin/assets/vendor/js/helpers.js')}}"></script>
 
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-    <script src="../../assets/js/config.js"></script>
+    <script src="{{asset('admin/assets/js/config.js')}}"></script>
 
 
     @yield('head')

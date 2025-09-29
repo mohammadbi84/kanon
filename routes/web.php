@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\JobtypeController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\JobOpportunityController;
 use App\Http\Controllers\LikeController;
@@ -44,7 +46,15 @@ Route::prefix('/job-opportunity')->group(function () {
 
 
 
-
+// admin pages
+Route::prefix('/admin2')->name('admin.')->group(function(){
+    Route::get('/',[AdminController::class,'index'])->name('index');
+    Route::prefix('/jobtype')->group(function () {
+        Route::get('/', [JobtypeController::class, 'index'])->name('jobtype.index');
+        Route::post('/store', [JobtypeController::class, 'store'])->name('jobtype.store');
+        Route::get('/delete/{id}', [JobtypeController::class, 'delete'])->name('jobtype.delete');
+    });
+});
 
 
 

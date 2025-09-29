@@ -51,33 +51,94 @@
     <div class="menu-inner-shadow"></div>
 
     <ul class="menu-inner py-1">
-        <!-- Dashboards -->
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <li class="menu-item @if (Route::currentRouteName() == 'admin.index') active @endif">
+            <a href="#" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Dashboards">پیکربندی</div>
+                <div>داشبورد</div>
+            </a>
+        </li>
+        <!-- Dashboards -->
+        <li class="menu-item ">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-cog"></i>
+                <div>پیکربندی</div>
             </a>
             <ul class="menu-sub">
                 <li class="menu-item">
                     <a href="#" class="menu-link">
-                        <div data-i18n="Analytics">پاپ آپ</div>
+                        <div>پاپ آپ</div>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a href="#" class="menu-link">
-                        <div data-i18n="eCommerce">تبلیغات بالای سایت</div>
+                        <div>تبلیغات بالای سایت</div>
                     </a>
                 </li>
             </ul>
         </li>
 
-        <li class="menu-header small text-uppercase"><span class="menu-header-text">برنامه‌ها و
-                صفحات</span></li>
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">استاندارد ها</span></li>
         <li class="menu-item">
-            <a href="#" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-envelope"></i>
-                <div data-i18n="Email">ایمیل</div>
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-badge-check"></i>
+                <div>مدیریت استاندارد ها</div>
             </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <i class="menu-icon tf-icons bx bx-cog"></i>
+                        <div>پیکربندی</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <div>نوع شغل</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <div>نوع کاردانش</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <div>نرخ شهریه</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <div>حداقل تحصیلات ورودی</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <div>رسته ها</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <div>خوشه ها</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <div>رشته ها</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <div>حرفه ها</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <div>سند ها</div>
+                    </a>
+                </li>
+            </ul>
         </li>
+
     </ul>
 </aside>
