@@ -52,7 +52,7 @@ Route::prefix('/admin2')->name('admin.')->group(function(){
     Route::prefix('/jobtype')->group(function () {
         Route::get('/', [JobtypeController::class, 'index'])->name('jobtype.index');
         Route::post('/store', [JobtypeController::class, 'store'])->name('jobtype.store');
-        Route::get('/delete/{id}', [JobtypeController::class, 'delete'])->name('jobtype.delete');
+        Route::delete('/delete/{id}', [JobtypeController::class, 'delete'])->name('jobtype.delete');
     });
 });
 

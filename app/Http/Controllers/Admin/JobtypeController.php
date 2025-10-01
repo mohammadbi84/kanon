@@ -8,25 +8,32 @@ use Illuminate\Http\Request;
 
 class JobtypeController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $jobtypes = Jobtype::latest()->paginate(20);
-        return view('admin.jobtypes.index',compact('jobtypes'));
+        if (Request()->ajax()) {
+            $jobtypes = Jobtype::latest()->get();
+            return response()->json(['data' => $jobtypes]);
+        }
+        return view('admin.jobtypes.index', compact('jobtypes'));
     }
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $request->validate([
-            'name'=>'required|string',
-        ],[
-            'name.required'=>'نام نوع شغل الزامی است.',
-            'name.string'=>'نام نوع شغل باید به صورت متنی باشد',
+            'name' => 'required|string',
+        ], [
+            'name.required' => 'نام نوع شغل الزامی است.',
+            'name.string' => 'نام نوع شغل باید به صورت متنی باشد',
         ]);
-        $item=new Jobtype();
-        $item->name=$request->name;
+        $item = new Jobtype();
+        $item->name = $request->name;
         $item->save();
-        return redirect()->back()->with('success','نوع شغل با موفقیت اضافه شد.');
+        return response()->json(['success'=>'نوع شغل با موفقیت اضافه شد.']);
     }
-    public function delete($id){
+    public function delete($id)
+    {
         $jobtype = Jobtype::findOrFail($id);
         $jobtype->delete();
-        return redirect()->back()->with('success','نوع شغل با موفقیت حذف شد.');
+        return response()->json(['success'=>'نوع شغل با موفقیت حذف شد.']);
     }
 }
