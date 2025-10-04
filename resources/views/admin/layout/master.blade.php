@@ -67,6 +67,38 @@
     <!-- / Layout wrapper -->
 
     <!-- Core JS -->
+    {{-- sweet alert sweetalert2 --}}
+    <script src="{{ asset('admin/assets/vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/extended-ui-sweetalert2.js') }}"></script>
+
+    @if (Session::has('success'))
+        <script>
+            Swal.fire({
+                // position: "top-end",
+                icon: "success",
+                text: "{{ Session::get('success') }}",
+                showConfirmButton: false,
+                width: 400,
+                timer: 3000,
+                timerProgressBar: true,
+                heightAuto: false
+            });
+        </script>
+    @endif
+    @if (Session::has('fail'))
+        <script>
+            Swal.fire({
+                // position: "top-end",
+                icon: "error",
+                text: "{{ Session::get('fail') }}",
+                showConfirmButton: false,
+                width: 400,
+                timer: 3000,
+                timerProgressBar: true,
+                heightAuto: false
+            });
+        </script>
+    @endif
     <!-- build:js assets/vendor/js/core.js -->
     <script src="{{ asset('admin/assets/vendor/libs/jquery/jquery.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/libs/popper/popper.js') }}"></script>
@@ -100,7 +132,9 @@
     <script src="{{ asset('admin/assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js') }}"></script>
-    <script src="{{asset('admin/assets/js/tables-datatables-basic.js')}}"></script>
+    <script src="{{ asset('admin/assets/js/tables-datatables-basic.js') }}"></script>
+    {{-- <script src="{{asset('admin/assets/js/tables-datatables-extensions.js')}}"></script> --}}
+
     @yield('script')
 </body>
 

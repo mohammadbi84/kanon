@@ -14,7 +14,8 @@ document.addEventListener("DOMContentLoaded", function () {
             dt_row_grouping_table = $(".dt-row-grouping"),
             dt_multilingual_table = $(".dt-multilingual"),
             // my tables
-            jobTypes = $(".jobTypes");
+            jobTypes = $(".jobTypes"),
+            kardanesh = $(".kardanesh");
 
         // DataTable with buttons
         // --------------------------------------------------------------------
@@ -49,6 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle">';
                         },
                         checkboxes: {
+                            selectRow: true,
                             selectAllRender:
                                 '<input type="checkbox" class="form-check-input mt-0 align-middle">',
                         },
@@ -72,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             return (
                                 '<a href="/admin2/jobtype/' +
                                 full.id +
-                                '/edit" ' +
+                                '"' +
                                 'class="btn btn-sm btn-icon btn-primary item-edit" ' +
                                 'data-id="' +
                                 full.id +
@@ -89,8 +91,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
                     },
                 ],
-                order: [[2, "asc"]],
-                dom: '<"card-header flex-column flex-md-row"<"head-label text-center"><"dt-action-buttons text-end primary-font pt-3 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+                order: [[2, "desc"]],
+                dom:
+                    '<"card-header flex-column flex-md-row"<"head-label text-center"><"dt-action-buttons text-end primary-font pt-3 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t' +
+                    "<'row d-flex align-items-center justify-content-between'<'col-md-4'<'bulk-holder'>><'col-md-8 d-flex justify-content-between'i p>>",
                 displayLength: 10,
                 lengthMenu: [10, 25, 50, 75, 100],
                 buttons: [],
@@ -130,247 +134,263 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
                     },
                 },
+                select: {
+                    // Select style
+                    style: "multi",
+                },
             });
+            $("#bulk-actions").appendTo(".bulk-holder");
             $("div.head-label").html(
                 '<h5 class="card-title mb-0">نوع شغل ها</h5>'
             );
-        }
-
-        // Add New record
-        // ? Remove/Update this code as per your requirements
-
-        // Delete Record
-        // روی جدول EventListener می‌ذاریم
-        // روی جدول EventListener می‌ذاریم
-        dt_basic.on("click", ".item-delete", function () {
-            const id = $(this).data("id");
-
-            if (!id) return;
-
-            if (confirm("آیا از حذف این رکورد مطمئن هستید؟")) {
-                $.ajax({
-                    url: `/admin2/jobtype/delete/${id}`,
-                    type: "DELETE",
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr("content"),
+            // add new record-------------------------------------------------------------------------------------------------------------
+            initOffcanvasForm({
+                formId: "form-add-new-record",
+                // offcanvasId: "add-new-record",
+                triggerSelector: ".create-new",
+                fields: {
+                    name: {
+                        label: "نام نوع شغل",
+                        required: true,
+                        type: "text",
                     },
-                    success: function (res) {
-                        dt_basic.ajax.reload(null, false); // ریفرش جدول بدون از دست رفتن صفحه
-                    },
-                    error: function (err) {
-                        alert("خطا در حذف رکورد");
-                        console.error(err);
-                    },
+                },
+                onSubmit: function (values) {
+                    console.log("Form Data:", values);
+
+                    // اضافه کردن CSRF token
+                    values._token = $('meta[name="csrf-token"]').attr(
+                        "content"
+                    );
+
+                    // ارسال Ajax
+                    $.post("/admin2/jobtype/store", values, function (res) {
+                        console.log("Server Response:", res);
+                        // offCanvasEl.hide();
+
+                        dt_basic.ajax.reload(); // اگر میخوای جدول بروز بشه
+                    });
+                },
+            });
+            // delete one item----------------------------------------------------------------------------------------------------------------
+            dt_basic.on("click", ".item-delete", function () {
+                const id = $(this).data("id");
+
+                if (!id) return;
+                Swal.fire({
+                    title: `آیا از حذف این رکورد مطمئن هستید؟`,
+                    text: "این عملیات غیرقابل بازگشت است!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "بله، حذف کن!",
+                    cancelButtonText: "انصراف",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/admin2/jobtype/delete/"+id,
+                            type: "DELETE",
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr(
+                                    "content"
+                                ),
+                            },
+                            success: function (res) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "موفق!",
+                                    text: "رکوردها با موفقیت حذف شدند.",
+                                    timer: 2000,
+                                    timerProgressBar: true,
+                                    showConfirmButton: false,
+                                });
+                                dt_basic.ajax.reload(null, false);
+                                $("#bulk-actions").addClass("d-none");
+                            },
+                            error: function (err) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "خطا!",
+                                    text: "مشکلی در حذف گروهی رخ داد.",
+                                });
+                                console.error(err);
+                            },
+                        });
+                    }
+                });
+            });
+
+            // delete selected items----------------------------------------------------------------------------------------------------------
+            const btnBulk = $("#bulk-delete");
+            if (btnBulk) {
+                // وقتی رکورد انتخاب شد
+                dt_basic.on("select", function (e, dt, type, indexes) {
+                    toggleBulkActions();
+                });
+
+                // وقتی رکورد از انتخاب خارج شد
+                dt_basic.on("deselect", function (e, dt, type, indexes) {
+                    toggleBulkActions();
+                });
+
+                // تابع برای نمایش / مخفی کردن باکس عملیات
+                function toggleBulkActions() {
+                    const selected = dt_basic.rows({ selected: true }).count();
+                    if (selected > 0) {
+                        // $("#bulk-actions").removeClass("d-none");
+                        $("#bulk-actions #bulk-delete").prop("disabled", false);
+                    } else {
+                        $("#bulk-actions #bulk-delete").prop("disabled", true);
+                    }
+                }
+
+                // گرفتن ID ها
+                function getSelectedIds() {
+                    return dt_basic
+                        .rows({ selected: true })
+                        .data()
+                        .pluck("id")
+                        .toArray();
+                }
+
+                btnBulk.on("click", function () {
+                    const ids = getSelectedIds();
+
+                    if (ids.length === 0) {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "هیچ رکوردی انتخاب نشده!",
+                            confirmButtonText: "باشه",
+                        });
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: `آیا از حذف ${ids.length} رکورد مطمئن هستید؟`,
+                        text: "این عملیات غیرقابل بازگشت است!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "بله، حذف کن!",
+                        cancelButtonText: "انصراف",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "/admin2/jobtype/bulk-delete",
+                                type: "POST",
+                                data: {
+                                    _token: $('meta[name="csrf-token"]').attr(
+                                        "content"
+                                    ),
+                                    ids: ids,
+                                },
+                                success: function (res) {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "موفق!",
+                                        text: "رکوردها با موفقیت حذف شدند.",
+                                        timer: 2000,
+                                        timerProgressBar: true,
+                                        showConfirmButton: false,
+                                    });
+                                    dt_basic.ajax.reload(null, false);
+                                    $("#bulk-actions").addClass("d-none");
+                                },
+                                error: function (err) {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "خطا!",
+                                        text: "مشکلی در حذف گروهی رخ داد.",
+                                    });
+                                    console.error(err);
+                                },
+                            });
+                        }
+                    });
                 });
             }
-        });
-
-        $(".datatables-basic tbody").on("click", ".delete-record", function () {
-            dt_basic.row($(this).parents("tr")).remove().draw();
-        });
-
-        // Complex Header DataTable
-        // --------------------------------------------------------------------
-
-        if (dt_complex_header_table.length) {
-            var dt_complex = dt_complex_header_table.DataTable({
-                ajax: assetsPath + "json/table-datatable.json",
-                columns: [
-                    { data: "full_name" },
-                    { data: "email" },
-                    { data: "city" },
-                    { data: "post" },
-                    { data: "salary" },
-                    { data: "status" },
-                    { data: "" },
-                ],
-                columnDefs: [
-                    {
-                        // Label
-                        targets: -2,
-                        render: function (data, type, full, meta) {
-                            var $status_number = full["status"];
-                            var $status = {
-                                1: {
-                                    title: "کنونی",
-                                    class: "bg-label-primary",
-                                },
-                                2: {
-                                    title: "حرفه‌ای",
-                                    class: " bg-label-success",
-                                },
-                                3: {
-                                    title: "رد شده",
-                                    class: " bg-label-danger",
-                                },
-                                4: {
-                                    title: "استعفا داده",
-                                    class: " bg-label-warning",
-                                },
-                                5: {
-                                    title: "درخواست داده",
-                                    class: " bg-label-info",
-                                },
-                            };
-                            if (
-                                typeof $status[$status_number] === "undefined"
-                            ) {
-                                return data;
-                            }
-                            return (
-                                '<span class="badge rounded-pill ' +
-                                $status[$status_number].class +
-                                '">' +
-                                $status[$status_number].title +
-                                "</span>"
-                            );
-                        },
-                    },
-                    {
-                        // Actions
-                        targets: -1,
-                        title: "عمل‌ها",
-                        orderable: false,
-                        render: function (data, type, full, meta) {
-                            return (
-                                '<div class="d-inline-block">' +
-                                '<a href="javascript:;" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></a>' +
-                                '<div class="dropdown-menu dropdown-menu-end m-0">' +
-                                '<a href="javascript:;" class="dropdown-item">جزئیات</a>' +
-                                '<a href="javascript:;" class="dropdown-item">بایگانی</a>' +
-                                '<div class="dropdown-divider"></div>' +
-                                '<a href="javascript:;" class="dropdown-item text-danger delete-record">حذف</a>' +
-                                "</div>" +
-                                "</div>" +
-                                '<a href="javascript:;" class="btn btn-sm btn-icon item-edit"><i class="bx bxs-edit"></i></a>'
-                            );
-                        },
-                    },
-                ],
-                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>><"table-responsive"t><"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
-                displayLength: 7,
-                lengthMenu: [7, 10, 25, 50, 75, 100],
-            });
         }
-
-        // Row Grouping
-        // --------------------------------------------------------------------
-
-        var groupColumn = 2;
-        if (dt_row_grouping_table.length) {
-            var groupingTable = dt_row_grouping_table.DataTable({
-                ajax: assetsPath + "json/table-datatable.json",
+        if (kardanesh.length) {
+            dt_basic = kardanesh.DataTable({
+                ajax: "/admin2/kardanesh",
                 columns: [
-                    { data: "" },
-                    { data: "full_name" },
-                    { data: "post" },
-                    { data: "email" },
-                    { data: "city" },
-                    { data: "start_date" },
-                    { data: "salary" },
-                    { data: "status" },
-                    { data: "" },
+                    { data: "", title: "" }, // ستونی که برای responsive استفاده میشه
+                    { data: "id", title: "شناسه" },
+                    { data: "id", visible: false }, // ستون مخفی برای sort
+                    { data: "id", title: "شناسه" },
+                    { data: "name", title: "نوع کاردانش" },
+                    { data: "", title: "عملیات" }, // ستون آخر برای دکمه‌ها
                 ],
                 columnDefs: [
                     {
                         // For Responsive
                         className: "control",
                         orderable: false,
-                        targets: 0,
                         searchable: false,
+                        responsivePriority: 2,
+                        targets: 0,
                         render: function (data, type, full, meta) {
                             return "";
                         },
                     },
-                    { visible: false, targets: groupColumn },
                     {
-                        // Label
-                        targets: -2,
-                        render: function (data, type, full, meta) {
-                            var $status_number = full["status"];
-                            var $status = {
-                                1: {
-                                    title: "کنونی",
-                                    class: "bg-label-primary",
-                                },
-                                2: {
-                                    title: "حرفه‌ای",
-                                    class: " bg-label-success",
-                                },
-                                3: {
-                                    title: "رد شده",
-                                    class: " bg-label-danger",
-                                },
-                                4: {
-                                    title: "استعفا داده",
-                                    class: " bg-label-warning",
-                                },
-                                5: {
-                                    title: "درخواست داده",
-                                    class: " bg-label-info",
-                                },
-                            };
-                            if (
-                                typeof $status[$status_number] === "undefined"
-                            ) {
-                                return data;
-                            }
-                            return (
-                                '<span class="badge rounded-pill ' +
-                                $status[$status_number].class +
-                                '">' +
-                                $status[$status_number].title +
-                                "</span>"
-                            );
+                        // For Checkboxes
+                        targets: 1,
+                        orderable: false,
+                        render: function () {
+                            return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle">';
                         },
+                        checkboxes: {
+                            selectRow: true,
+                            selectAllRender:
+                                '<input type="checkbox" class="form-check-input mt-0 align-middle">',
+                        },
+                        responsivePriority: 4,
                     },
                     {
-                        // Actions
+                        targets: 2,
+                        searchable: false,
+                        visible: false,
+                    },
+                    {
+                        responsivePriority: 1,
+                        targets: 4,
+                    },
+                    {
                         targets: -1,
-                        title: "عمل‌ها",
+                        title: "عملیات",
                         orderable: false,
                         searchable: false,
                         render: function (data, type, full, meta) {
                             return (
-                                '<div class="d-inline-block">' +
-                                '<a href="javascript:;" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></a>' +
-                                '<div class="dropdown-menu dropdown-menu-end m-0">' +
-                                '<a href="javascript:;" class="dropdown-item">جزئیات</a>' +
-                                '<a href="javascript:;" class="dropdown-item">بایگانی</a>' +
-                                '<div class="dropdown-divider"></div>' +
-                                '<a href="javascript:;" class="dropdown-item text-danger delete-record">حذف</a>' +
-                                "</div>" +
-                                "</div>" +
-                                '<a href="javascript:;" class="btn btn-sm btn-icon item-edit"><i class="bx bxs-edit"></i></a>'
+                                '<a href="/admin2/kardanesh/' +
+                                full.id +
+                                '"' +
+                                'class="btn btn-sm btn-icon btn-primary item-edit" ' +
+                                'data-id="' +
+                                full.id +
+                                '">' +
+                                '<i class="bx bxs-edit"></i>' +
+                                "</a> " +
+                                '<button class="btn btn-sm btn-icon btn-danger item-delete" ' +
+                                'data-id="' +
+                                full.id +
+                                '">' +
+                                '<i class="bx bxs-trash"></i>' +
+                                "</button>"
                             );
                         },
                     },
                 ],
-                order: [[groupColumn, "asc"]],
-                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
-                displayLength: 7,
-                lengthMenu: [7, 10, 25, 50, 75, 100],
-                drawCallback: function (settings) {
-                    var api = this.api();
-                    var rows = api.rows({ page: "current" }).nodes();
-                    var last = null;
-
-                    api.column(groupColumn, { page: "current" })
-                        .data()
-                        .each(function (group, i) {
-                            if (last !== group) {
-                                $(rows)
-                                    .eq(i)
-                                    .before(
-                                        '<tr class="group"><td colspan="8">' +
-                                            group +
-                                            "</td></tr>"
-                                    );
-
-                                last = group;
-                            }
-                        });
-                },
+                order: [[2, "desc"]],
+                dom:
+                    '<"card-header flex-column flex-md-row"<"head-label text-center"><"dt-action-buttons text-end primary-font pt-3 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t' +
+                    "<'row d-flex align-items-center justify-content-between'<'col-md-4'<'bulk-holder'>><'col-md-8 d-flex justify-content-between'i p>>",
+                displayLength: 10,
+                lengthMenu: [10, 25, 50, 75, 100],
+                buttons: [],
                 responsive: {
                     details: {
                         display: $.fn.dataTable.Responsive.display.modal({
@@ -407,52 +427,195 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
                     },
                 },
+                select: {
+                    // Select style
+                    style: "multi",
+                },
+            });
+            $("#bulk-actions").appendTo(".bulk-holder");
+            $("div.head-label").html(
+                '<h5 class="card-title mb-0">نوع کاردانش ها</h5>'
+            );
+            // add new record-------------------------------------------------------------------------------------------------------------
+            initOffcanvasForm({
+                formId: "form-add-new-record",
+                // offcanvasId: "add-new-record",
+                triggerSelector: ".create-new",
+                fields: {
+                    name: {
+                        label: "نام نوع کاردانش",
+                        required: true,
+                        type: "text",
+                    },
+                },
+                onSubmit: function (values) {
+                    console.log("Form Data:", values);
+
+                    // اضافه کردن CSRF token
+                    values._token = $('meta[name="csrf-token"]').attr(
+                        "content"
+                    );
+
+                    // ارسال Ajax
+                    $.post("/admin2/kardanesh/store", values, function (res) {
+                        console.log("Server Response:", res);
+                        // offCanvasEl.hide();
+
+                        dt_basic.ajax.reload(); // اگر میخوای جدول بروز بشه
+                    });
+                },
+            });
+            // delete one item----------------------------------------------------------------------------------------------------------------
+            dt_basic.on("click", ".item-delete", function () {
+                const id = $(this).data("id");
+
+                if (!id) return;
+
+                Swal.fire({
+                    title: `آیا از حذف این رکورد مطمئن هستید؟`,
+                    text: "این عملیات غیرقابل بازگشت است!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "بله، حذف کن!",
+                    cancelButtonText: "انصراف",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/admin2/kardanesh/delete/"+id,
+                            type: "DELETE",
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr(
+                                    "content"
+                                ),
+                            },
+                            success: function (res) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "موفق!",
+                                    text: "رکورد با موفقیت حذف شدند.",
+                                    timer: 2000,
+                                    timerProgressBar: true,
+                                    showConfirmButton: false,
+                                });
+                                dt_basic.ajax.reload(null, false);
+                                $("#bulk-actions").addClass("d-none");
+                            },
+                            error: function (err) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "خطا!",
+                                    text: "مشکلی در حذف رخ داد.",
+                                });
+                                console.error(err);
+                            },
+                        });
+                    }
+                });
             });
 
-            // Order by the grouping
-            $(".dt-row-grouping tbody").on("click", "tr.group", function () {
-                var currentOrder = groupingTable.order()[0];
-                if (
-                    currentOrder[0] === groupColumn &&
-                    currentOrder[1] === "asc"
-                ) {
-                    groupingTable.order([groupColumn, "desc"]).draw();
-                } else {
-                    groupingTable.order([groupColumn, "asc"]).draw();
+            // delete selected items----------------------------------------------------------------------------------------------------------
+            const btnBulk = $("#bulk-delete");
+            if (btnBulk) {
+                // وقتی رکورد انتخاب شد
+                dt_basic.on("select", function (e, dt, type, indexes) {
+                    toggleBulkActions();
+                });
+
+                // وقتی رکورد از انتخاب خارج شد
+                dt_basic.on("deselect", function (e, dt, type, indexes) {
+                    toggleBulkActions();
+                });
+
+                // تابع برای نمایش / مخفی کردن باکس عملیات
+                function toggleBulkActions() {
+                    const selected = dt_basic.rows({ selected: true }).count();
+                    if (selected > 0) {
+                        // $("#bulk-actions").removeClass("d-none");
+                        $("#bulk-actions #bulk-delete").prop("disabled", false);
+                    } else {
+                        $("#bulk-actions #bulk-delete").prop("disabled", true);
+                    }
                 }
-            });
+
+                // گرفتن ID ها
+                function getSelectedIds() {
+                    return dt_basic
+                        .rows({ selected: true })
+                        .data()
+                        .pluck("id")
+                        .toArray();
+                }
+
+                btnBulk.on("click", function () {
+                    const ids = getSelectedIds();
+
+                    if (ids.length === 0) {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "هیچ رکوردی انتخاب نشده!",
+                            confirmButtonText: "باشه",
+                        });
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: `آیا از حذف ${ids.length} رکورد مطمئن هستید؟`,
+                        text: "این عملیات غیرقابل بازگشت است!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "بله، حذف کن!",
+                        cancelButtonText: "انصراف",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "/admin2/kardanesh/bulk-delete",
+                                type: "POST",
+                                data: {
+                                    _token: $('meta[name="csrf-token"]').attr(
+                                        "content"
+                                    ),
+                                    ids: ids,
+                                },
+                                success: function (res) {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "موفق!",
+                                        text: "رکوردها با موفقیت حذف شدند.",
+                                        timer: 2000,
+                                        timerProgressBar: true,
+                                        showConfirmButton: false,
+                                    });
+                                    dt_basic.ajax.reload(null, false);
+                                    $("#bulk-actions").addClass("d-none");
+                                },
+                                error: function (err) {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "خطا!",
+                                        text: "مشکلی در حذف گروهی رخ داد.",
+                                    });
+                                    console.error(err);
+                                },
+                            });
+                        }
+                    });
+                });
+            }
         }
-        // Filter form control to default size
-        // ? setTimeout used for multilingual table initialization
-        setTimeout(() => {
-            $(".dataTables_filter .form-control").removeClass(
-                "form-control-sm"
-            );
-            $(".dataTables_length .form-select").removeClass("form-select-sm");
-        }, 300);
     });
 
-    // تابع جنریک برای ساخت فرم با اعتبارسنجی
     // تابع جنریک برای ساخت فرم با اعتبارسنجی
     function initOffcanvasForm({ formId, triggerSelector, fields, onSubmit }) {
         let fv, offCanvasEl;
 
         const formEl = document.getElementById(formId);
-        // const offCanvasElement = document.getElementById(offcanvasId);
         const triggerBtn = document.querySelector(triggerSelector);
 
         if (!formEl) return;
-
-        // مقداردهی offCanvasEl در اینجا
-        // offCanvasEl = new bootstrap.Offcanvas(offCanvasElement);
-
-        // باز کردن Offcanvas
-        // document.addEventListener("click", function (e) {
-        //     if (e.target.closest(".create-new")) {
-        //         // دکمه اضافه رکورد کلیک شد
-        //         offCanvasEl.show(); // استفاده از متغیر از پیش تعریف شده
-        //     }
-        // });
 
         // ساخت Ruleهای ولیدیشن داینامیک
         let validationFields = {};
@@ -533,31 +696,4 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-
-    initOffcanvasForm({
-        formId: "form-add-new-record",
-        // offcanvasId: "add-new-record",
-        triggerSelector: ".create-new",
-        fields: {
-            name: {
-                label: "نام نوع شغل",
-                required: true,
-                type: "text",
-            },
-        },
-        onSubmit: function (values) {
-            console.log("Form Data:", values);
-
-            // اضافه کردن CSRF token
-            values._token = $('meta[name="csrf-token"]').attr("content");
-
-            // ارسال Ajax
-            $.post("/admin2/jobtype/store", values, function (res) {
-                console.log("Server Response:", res);
-                // offCanvasEl.hide();
-
-                dt_basic.ajax.reload(); // اگر میخوای جدول بروز بشه
-            });
-        },
-    });
 });

@@ -78,25 +78,31 @@
         </li>
 
         <li class="menu-header small text-uppercase"><span class="menu-header-text">استاندارد ها</span></li>
-        <li class="menu-item">
+        <li class="menu-item @if (Route::currentRouteName() == 'admin.jobtype.index' ||
+                Route::currentRouteName() == 'admin.jobtype.edit' ||
+                Route::currentRouteName() == 'admin.kardanesh.index' ||
+                Route::currentRouteName() == 'admin.kardanesh.edit') open @endif">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-badge-check"></i>
                 <div>مدیریت استاندارد ها</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item">
+                <li class="menu-item @if (Route::currentRouteName() == 'admin.jobtype.index' ||
+                        Route::currentRouteName() == 'admin.jobtype.edit' ||
+                        Route::currentRouteName() == 'admin.kardanesh.index' ||
+                        Route::currentRouteName() == 'admin.kardanesh.edit') open @endif">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <i class="menu-icon tf-icons bx bx-cog"></i>
                         <div>پیکربندی</div>
                     </a>
                     <ul class="menu-sub">
-                        <li class="menu-item">
-                            <a href="#" class="menu-link">
+                        <li class="menu-item @if (Route::currentRouteName() == 'admin.jobtype.index' || Route::currentRouteName() == 'admin.jobtype.edit') active @endif">
+                            <a href="{{ route('admin.jobtype.index') }}" class="menu-link">
                                 <div>نوع شغل</div>
                             </a>
                         </li>
-                        <li class="menu-item">
-                            <a href="#" class="menu-link">
+                        <li class="menu-item @if (Route::currentRouteName() == 'admin.kardanesh.index' || Route::currentRouteName() == 'admin.kardanesh.edit') active @endif">
+                            <a href="{{ route('admin.kardanesh.index') }}" class="menu-link">
                                 <div>نوع کاردانش</div>
                             </a>
                         </li>
@@ -134,7 +140,7 @@
                 </li>
                 <li class="menu-item">
                     <a href="#" class="menu-link">
-                        <div>سند ها</div>
+                        <div>سند حرفه ها</div>
                     </a>
                 </li>
             </ul>

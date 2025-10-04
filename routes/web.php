@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\JobtypeController;
+use App\Http\Controllers\Admin\KardaneshController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\JobOpportunityController;
 use App\Http\Controllers\LikeController;
@@ -49,10 +50,23 @@ Route::prefix('/job-opportunity')->group(function () {
 // admin pages
 Route::prefix('/admin2')->name('admin.')->group(function(){
     Route::get('/',[AdminController::class,'index'])->name('index');
+    // jobtypes
     Route::prefix('/jobtype')->group(function () {
         Route::get('/', [JobtypeController::class, 'index'])->name('jobtype.index');
         Route::post('/store', [JobtypeController::class, 'store'])->name('jobtype.store');
         Route::delete('/delete/{id}', [JobtypeController::class, 'delete'])->name('jobtype.delete');
+        Route::post('/bulk-delete', [JobTypeController::class, 'bulkDelete'])->name('jobtype.bulkDelete');
+        Route::get('/{id}', [JobtypeController::class, 'edit'])->name('jobtype.edit');
+        Route::post('/{id}', [JobtypeController::class, 'update'])->name('jobtype.update');
+    });
+    // kardanesh
+    Route::prefix('/kardanesh')->group(function () {
+        Route::get('/', [KardaneshController::class, 'index'])->name('kardanesh.index');
+        Route::post('/store', [KardaneshController::class, 'store'])->name('kardanesh.store');
+        Route::delete('/delete/{id}', [KardaneshController::class, 'delete'])->name('kardanesh.delete');
+        Route::post('/bulk-delete', [KardaneshController::class, 'bulkDelete'])->name('kardanesh.bulkDelete');
+        Route::get('/{id}', [KardaneshController::class, 'edit'])->name('kardanesh.edit');
+        Route::post('/{id}', [KardaneshController::class, 'update'])->name('kardanesh.update');
     });
 });
 
