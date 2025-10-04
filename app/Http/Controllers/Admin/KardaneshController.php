@@ -10,11 +10,11 @@ class KardaneshController extends Controller
 {
     public function index()
     {
-        $kardaneshs =Kardanesh::latest()->paginate(20);
         if (Request()->ajax()) {
             $kardaneshs =Kardanesh::latest()->get();
             return response()->json(['data' => $kardaneshs]);
         }
+        $kardaneshs =Kardanesh::latest()->paginate(20);
         return view('admin.kardaneshs.index', compact('kardaneshs'));
     }
     public function store(Request $request)

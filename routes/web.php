@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ClusterController;
+use App\Http\Controllers\Admin\FieldController;
 use App\Http\Controllers\Admin\JobtypeController;
 use App\Http\Controllers\Admin\KardaneshController;
 use App\Http\Controllers\Controller;
@@ -48,8 +51,8 @@ Route::prefix('/job-opportunity')->group(function () {
 
 
 // admin pages
-Route::prefix('/admin2')->name('admin.')->group(function(){
-    Route::get('/',[AdminController::class,'index'])->name('index');
+Route::prefix('/admin2')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('index');
     // jobtypes
     Route::prefix('/jobtype')->group(function () {
         Route::get('/', [JobtypeController::class, 'index'])->name('jobtype.index');
@@ -67,6 +70,35 @@ Route::prefix('/admin2')->name('admin.')->group(function(){
         Route::post('/bulk-delete', [KardaneshController::class, 'bulkDelete'])->name('kardanesh.bulkDelete');
         Route::get('/{id}', [KardaneshController::class, 'edit'])->name('kardanesh.edit');
         Route::post('/{id}', [KardaneshController::class, 'update'])->name('kardanesh.update');
+    });
+    // ================== Categories ==================
+    Route::prefix('/categories')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
+        Route::post('/store', [CategoryController::class, 'store'])->name('categories.store');
+        Route::delete('/delete/{id}', [CategoryController::class, 'delete'])->name('categories.delete');
+        Route::post('/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('categories.bulkDelete');
+        Route::get('/{id}', [CategoryController::class, 'edit'])->name('categories.edit');
+        Route::post('/{id}', [CategoryController::class, 'update'])->name('categories.update');
+    });
+
+    // ================== Clusters ==================
+    Route::prefix('/clusters')->group(function () {
+        Route::get('/', [ClusterController::class, 'index'])->name('clusters.index');
+        Route::post('/store', [ClusterController::class, 'store'])->name('clusters.store');
+        Route::delete('/delete/{id}', [ClusterController::class, 'delete'])->name('clusters.delete');
+        Route::post('/bulk-delete', [ClusterController::class, 'bulkDelete'])->name('clusters.bulkDelete');
+        Route::get('/{id}', [ClusterController::class, 'edit'])->name('clusters.edit');
+        Route::post('/{id}', [ClusterController::class, 'update'])->name('clusters.update');
+    });
+
+    // ================== Fields ==================
+    Route::prefix('/fields')->group(function () {
+        Route::get('/', [FieldController::class, 'index'])->name('fields.index');
+        Route::post('/store', [FieldController::class, 'store'])->name('fields.store');
+        Route::delete('/delete/{id}', [FieldController::class, 'delete'])->name('fields.delete');
+        Route::post('/bulk-delete', [FieldController::class, 'bulkDelete'])->name('fields.bulkDelete');
+        Route::get('/{id}', [FieldController::class, 'edit'])->name('fields.edit');
+        Route::post('/{id}', [FieldController::class, 'update'])->name('fields.update');
     });
 });
 

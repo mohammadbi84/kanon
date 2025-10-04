@@ -10,11 +10,11 @@ class JobtypeController extends Controller
 {
     public function index()
     {
-        $jobtypes = Jobtype::latest()->paginate(20);
         if (Request()->ajax()) {
             $jobtypes = Jobtype::latest()->get();
             return response()->json(['data' => $jobtypes]);
         }
+        $jobtypes = Jobtype::latest()->paginate(20);
         return view('admin.jobtypes.index', compact('jobtypes'));
     }
     public function store(Request $request)
