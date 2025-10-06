@@ -41,7 +41,7 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         $request->validate(['name' => 'required|string|max:255']);
         $category->update(['name' => $request->name]);
-        return redirect()->route('categories.index')->with('success', 'رسته با موفقیت ویرایش شد.');
+        return redirect()->route('admin.categories.index')->with('success', 'رسته با موفقیت ویرایش شد.');
     }
 
     public function delete($id)

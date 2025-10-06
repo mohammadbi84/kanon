@@ -9,11 +9,25 @@ use Illuminate\Http\Request;
 
 class FieldController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $clusterId = $request->query('cluster_id'); // اگر از صفحه خوشه‌ها اومده
+        if ($clusterId and !Cluster::find($clusterId)) {
+            abort('404');
+        }
+
         if (request()->ajax()) {
-            $fields = Field::latest()->get();
-            return response()->json(['data' => $fields]);
+            $clusters = null;
+            if ($clusterId) {
+                $fields = Field::with('cluster')
+                    ->when($clusterId, fn($q) => $q->where('cluster_id', $clusterId))
+                    ->latest()
+                    ->get();
+            } else {
+                $clusters = Cluster::all();
+                $fields = Field::with('cluster')->latest()->get();
+            }
+            return response()->json(['data' => $fields, 'clusters' => $clusters]);
         }
         $fields = Field::latest()->paginate(20);
         $clusters = Cluster::with('category')->get();
@@ -25,10 +39,10 @@ class FieldController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'cluster_id' => 'required|exists:clusters,id',
-        ],[
-            'name.required'=>'نام خوشه الزامی است.',
-            'cluster_id|required'=>'انتخاب خوشه الزامی است.',
-            'cluster_id|exists'=>'خوشه انتخابی نامعتبر است.',
+        ], [
+            'name.required' => 'نام خوشه الزامی است.',
+            'cluster_id|required' => 'انتخاب خوشه الزامی است.',
+            'cluster_id|exists' => 'خوشه انتخابی نامعتبر است.',
         ]);
 
         Field::create($request->only('name', 'cluster_id'));
@@ -48,13 +62,13 @@ class FieldController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'cluster_id' => 'required|exists:clusters,id',
-        ],[
-            'name.required'=>'نام خوشه الزامی است.',
-            'cluster_id|required'=>'انتخاب خوشه الزامی است.',
-            'cluster_id|exists'=>'خوشه انتخابی نامعتبر است.',
+        ], [
+            'name.required' => 'نام خوشه الزامی است.',
+            'cluster_id|required' => 'انتخاب خوشه الزامی است.',
+            'cluster_id|exists' => 'خوشه انتخابی نامعتبر است.',
         ]);
         $field->update($request->only('name', 'cluster_id'));
-        return redirect()->route('fields.index')->with('success', 'رشته با موفقیت ویرایش شد.');
+        return redirect()->route('admin.fields.index')->with('success', 'رشته با موفقیت ویرایش شد.');
     }
 
     public function delete($id)

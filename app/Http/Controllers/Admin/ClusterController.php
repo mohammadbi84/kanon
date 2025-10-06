@@ -9,13 +9,31 @@ use Illuminate\Http\Request;
 
 class ClusterController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        if (request()->ajax()) {
-            $clusters = Cluster::latest()->get();
-            return response()->json(['data' => $clusters]);
+        $categoryId = $request->query('category_id');
+        if ($categoryId and !Category::find($categoryId)) {
+            abort('404');
         }
-        $clusters = Cluster::latest()->paginate(20);
+
+        if (request()->ajax()) {
+            $categories = null;
+            if ($categoryId) {
+                $clusters = Cluster::with('category')
+                    ->when($categoryId, fn($q) => $q->where('category_id', $categoryId))
+                    ->latest()
+                    ->get();
+            } else {
+                $categories = Category::all();
+                $clusters = Cluster::with('category')->latest()->get();
+            }
+            return response()->json(['data' => $clusters, 'categories' => $categories]);
+        }
+        if ($categoryId) {
+            $clusters = Cluster::where('category_id', $categoryId)->latest()->get();
+        } else {
+            $clusters = Cluster::latest()->get();
+        }
         $categories = Category::all();
         return view('admin.clusters.index', compact('clusters', 'categories'));
     }
@@ -25,10 +43,10 @@ class ClusterController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-        ],[
-            'name.required'=>'نام خوشه الزامی است.',
-            'category|required'=>'انتخاب رسته الزامی است.',
-            'category|exists'=>'رسته انتخابی نامعتبر است.',
+        ], [
+            'name.required' => 'نام خوشه الزامی است.',
+            'category|required' => 'انتخاب رسته الزامی است.',
+            'category|exists' => 'رسته انتخابی نامعتبر است.',
         ]);
 
         Cluster::create($request->only('name', 'category_id'));
@@ -48,13 +66,13 @@ class ClusterController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-        ],[
-            'name.required'=>'نام خوشه الزامی است.',
-            'category|required'=>'انتخاب رسته الزامی است.',
-            'category|exists'=>'رسته انتخابی نامعتبر است.',
+        ], [
+            'name.required' => 'نام خوشه الزامی است.',
+            'category|required' => 'انتخاب رسته الزامی است.',
+            'category|exists' => 'رسته انتخابی نامعتبر است.',
         ]);
         $cluster->update($request->only('name', 'category_id'));
-        return redirect()->route('clusters.index')->with('success', 'خوشه با موفقیت ویرایش شد.');
+        return redirect()->route('admin.clusters.index')->with('success', 'خوشه با موفقیت ویرایش شد.');
     }
 
     public function delete($id)

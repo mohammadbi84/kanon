@@ -80,6 +80,12 @@
         <li class="menu-header small text-uppercase"><span class="menu-header-text">استاندارد ها</span></li>
         <li class="menu-item @if (Route::currentRouteName() == 'admin.jobtype.index' ||
                 Route::currentRouteName() == 'admin.jobtype.edit' ||
+                Route::currentRouteName() == 'admin.categories.index' ||
+                Route::currentRouteName() == 'admin.categories.edit' ||
+                Route::currentRouteName() == 'admin.clusters.index' ||
+                Route::currentRouteName() == 'admin.clusters.edit' ||
+                Route::currentRouteName() == 'admin.fields.index' ||
+                Route::currentRouteName() == 'admin.fields.edit' ||
                 Route::currentRouteName() == 'admin.kardanesh.index' ||
                 Route::currentRouteName() == 'admin.kardanesh.edit') open @endif">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -118,18 +124,18 @@
                         </li>
                     </ul>
                 </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
+                <li class="menu-item @if (Route::currentRouteName() == 'admin.categories.index' || Route::currentRouteName() == 'admin.categories.edit') active @endif">
+                    <a href="{{route('admin.categories.index')}}" class="menu-link">
                         <div>رسته ها</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
+                <li class="menu-item @if (Route::currentRouteName() == 'admin.clusters.index' || Route::currentRouteName() == 'admin.clusters.edit') active @endif">
+                    <a href="{{route('admin.clusters.index')}}" class="menu-link">
                         <div>خوشه ها</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
+                <li class="menu-item @if (Route::currentRouteName() == 'admin.fields.index' || Route::currentRouteName() == 'admin.fields.edit') active @endif">
+                    <a href="{{route('admin.fields.index')}}" class="menu-link">
                         <div>رشته ها</div>
                     </a>
                 </li>
