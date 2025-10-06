@@ -40,6 +40,7 @@ Route::get('/states/{cityId}', [SiteController::class, 'states']);
 
 
 // site pages
+// فثسف زخئئثدف
 Route::get('/', [SiteController::class, 'index'])->middleware('senddata')->name('home');
 Route::get('/school', [SiteController::class, 'school'])->name('school');
 Route::get('/maps', [SiteController::class, 'map'])->name('map');
