@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ClusterController;
 use App\Http\Controllers\Admin\FieldController;
 use App\Http\Controllers\Admin\JobtypeController;
 use App\Http\Controllers\Admin\KardaneshController;
+use App\Http\Controllers\Admin\ProfessionController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\JobOpportunityController;
 use App\Http\Controllers\LikeController;
@@ -54,7 +55,8 @@ Route::prefix('/job-opportunity')->group(function () {
 // admin pages
 Route::prefix('/admin2')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('index');
-    // jobtypes
+
+    // ================== jobtypes ==================
     Route::prefix('/jobtype')->group(function () {
         Route::get('/', [JobtypeController::class, 'index'])->name('jobtype.index');
         Route::post('/store', [JobtypeController::class, 'store'])->name('jobtype.store');
@@ -63,7 +65,8 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::get('/{id}', [JobtypeController::class, 'edit'])->name('jobtype.edit');
         Route::post('/{id}', [JobtypeController::class, 'update'])->name('jobtype.update');
     });
-    // kardanesh
+
+    // ================== kardanesh ==================
     Route::prefix('/kardanesh')->group(function () {
         Route::get('/', [KardaneshController::class, 'index'])->name('kardanesh.index');
         Route::post('/store', [KardaneshController::class, 'store'])->name('kardanesh.store');
@@ -72,6 +75,7 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::get('/{id}', [KardaneshController::class, 'edit'])->name('kardanesh.edit');
         Route::post('/{id}', [KardaneshController::class, 'update'])->name('kardanesh.update');
     });
+
     // ================== Categories ==================
     Route::prefix('/categories')->group(function () {
         Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
@@ -100,6 +104,16 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::post('/bulk-delete', [FieldController::class, 'bulkDelete'])->name('fields.bulkDelete');
         Route::get('/{id}', [FieldController::class, 'edit'])->name('fields.edit');
         Route::post('/{id}', [FieldController::class, 'update'])->name('fields.update');
+    });
+
+    // ================== Professions ==================
+    Route::prefix('/professions')->group(function () {
+        Route::get('/', [ProfessionController::class, 'index'])->name('professions.index');
+        Route::post('/store', [ProfessionController::class, 'store'])->name('professions.store');
+        Route::delete('/delete/{id}', [ProfessionController::class, 'delete'])->name('professions.delete');
+        Route::post('/bulk-delete', [ProfessionController::class, 'bulkDelete'])->name('professions.bulkDelete');
+        Route::get('/{id}', [ProfessionController::class, 'edit'])->name('professions.edit');
+        Route::post('/{id}', [ProfessionController::class, 'update'])->name('professions.update');
     });
 });
 
