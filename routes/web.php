@@ -113,7 +113,7 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::delete('/delete/{id}', [ProfessionController::class, 'delete'])->name('professions.delete');
         Route::post('/bulk-delete', [ProfessionController::class, 'bulkDelete'])->name('professions.bulkDelete');
         Route::get('/{id}', [ProfessionController::class, 'edit'])->name('professions.edit');
-        Route::post('/{id}', [ProfessionController::class, 'update'])->name('professions.update');
+        Route::put('/{id}', [ProfessionController::class, 'update'])->name('professions.update');
     });
 });
 

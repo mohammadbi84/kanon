@@ -36,4 +36,12 @@ class Profession extends Model
     {
         return $this->belongsTo(Field::class);
     }
+    public function kardanesh()
+    {
+        return $this->belongsTo(Kardanesh::class);
+    }
+    public function jobtype()
+    {
+        return $this->belongsTo(Jobtype::class);
+    }
 }

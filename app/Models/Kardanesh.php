@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Kardanesh extends Model
 {
     use HasFactory;
+    public function professions()
+    {
+        return $this->hasMany(Profession::class);
+    }
 }

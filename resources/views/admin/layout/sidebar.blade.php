@@ -86,6 +86,8 @@
                 Route::currentRouteName() == 'admin.clusters.edit' ||
                 Route::currentRouteName() == 'admin.fields.index' ||
                 Route::currentRouteName() == 'admin.fields.edit' ||
+                Route::currentRouteName() == 'admin.professions.index' ||
+                Route::currentRouteName() == 'admin.professions.edit' ||
                 Route::currentRouteName() == 'admin.kardanesh.index' ||
                 Route::currentRouteName() == 'admin.kardanesh.edit') open @endif">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -139,8 +141,8 @@
                         <div>رشته ها</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
+                <li class="menu-item @if (Route::currentRouteName() == 'admin.professions.index' || Route::currentRouteName() == 'admin.professions.edit') active @endif">
+                    <a href="{{route('admin.professions.index')}}" class="menu-link">
                         <div>حرفه ها</div>
                     </a>
                 </li>

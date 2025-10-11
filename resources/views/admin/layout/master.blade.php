@@ -128,6 +128,10 @@
     <script src="{{ asset('admin/assets/vendor/libs/jdate/jdate.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/libs/flatpickr/flatpickr-jdate.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/libs/flatpickr/l10n/fa-jdate.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/bootstrap-datepicker/bootstrap-datepicker.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/jquery-timepicker/jquery-timepicker.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/pickr/pickr.js') }}"></script>
     <!-- Form Validation -->
     <script src="{{ asset('admin/assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js') }}"></script>

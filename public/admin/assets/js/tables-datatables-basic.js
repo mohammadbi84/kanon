@@ -1662,8 +1662,20 @@ document.addEventListener("DOMContentLoaded", function () {
                     { data: "id", visible: false },
                     { data: "name", title: "نام حرفه" },
                     { data: "field.name", title: "رشته مربوطه" },
-                    { data: "kardanesh.name", title: "کاردانش" },
-                    { data: "jobtype.name", title: "نوع شغل" },
+                    {
+                        data: "kardanesh.name",
+                        title: "کاردانش",
+                        render: function (data, type, row) {
+                            return row.kardanesh ? row.kardanesh.name : "-";
+                        },
+                    },
+                    {
+                        data: "jobtype.name",
+                        title: "نوع شغل",
+                        render: function (data, type, row) {
+                            return row.jobtype ? row.jobtype.name : "-";
+                        },
+                    },
                     { data: "", title: "عملیات" },
                 ],
                 columnDefs: [
@@ -1706,14 +1718,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         searchable: false,
                         render: function (data, type, full) {
                             return (
-                                // certificates
-                                '<a href="/admin2/certificates?profession_id=' +
-                                full.id +
-                                "&profession_name=" +
-                                encodeURIComponent(full.name) +
-                                '"' +
-                                'class="btn btn-sm btn-success item-show me-1">' +
-                                "سند حرفه‌ها</a>" +
+                                // دکمه جزئیات
+                                '<button class="btn btn-sm btn-info item-details" data-item=\'' +
+                                JSON.stringify(full) +
+                                '\'><i class="bx bx-info-circle"></i> جزئیات</button> ' +
                                 // edit
                                 '<a href="/admin2/professions/' +
                                 full.id +
@@ -1794,6 +1802,36 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 $("div.head-label").html(
                     '<h5 class="card-title mb-0">لیست حرفه‌ها</h5>'
+                );
+            }
+            // عنوان جدول
+            if (fieldId && fieldName) {
+                $("div.header-label").html(
+                    '<h5 class="card-title mb-0">حرفه‌های رشته ' +
+                        fieldName +
+                        "</h5>" +
+                        `<button type="button" class="btn btn-success" id="submit-profession-form">
+                            <i class="bx bx-save"></i>
+                            ثبت اطلاعات
+                        </button>`
+                );
+            } else if (fieldId) {
+                $("div.header-label").html(
+                    '<h5 class="card-title mb-0">حرفه‌های رشته شماره ' +
+                        fieldId +
+                        "</h5>" +
+                        `<button type="button" class="btn btn-success" id="submit-profession-form">
+                            <i class="bx bx-save"></i>
+                            ثبت اطلاعات
+                        </button>`
+                );
+            } else {
+                $("div.header-label").html(
+                    '<h5 class="card-title mb-0">لیست حرفه‌ها</h5>' +
+                        `<button type="button" class="btn btn-success" id="submit-profession-form">
+                        <i class="bx bx-save"></i>
+                        ثبت اطلاعات
+                    </button>`
                 );
             }
 
@@ -2031,6 +2069,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
             });
 
+            const submitButton = document.getElementById(
+                "submit-profession-form"
+            );
+            const submitBtn = document.getElementById("form-submit-btn");
+            if (submitButton && submitBtn) {
+                submitButton.addEventListener("click", function () {
+                    // در غیر اینصورت مستقیم submit کن
+                    submitBtn.click();
+                });
+            }
+
             // پر کردن select های مربوطه
             if (!fieldId) {
                 $.get("/admin2/fields", function (res) {
@@ -2064,7 +2113,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "/admin2/fields/delete/" + id,
+                            url: "/admin2/professions/delete/" + id,
                             type: "DELETE",
                             data: {
                                 _token: $('meta[name="csrf-token"]').attr(
@@ -2153,7 +2202,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
-                                url: "/admin2/fields/bulk-delete",
+                                url: "/admin2/professions/bulk-delete",
                                 type: "POST",
                                 data: {
                                     _token: $('meta[name="csrf-token"]').attr(
@@ -2186,12 +2235,141 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                 });
             }
+
+            // وقتی روی دکمه جزئیات کلیک شد
+            $(document).on("click", ".item-details", function () {
+                const item = $(this).data("item"); // اطلاعات همون ردیف
+
+                // اگه دیتای jQuery به صورت رشته ذخیره شده باشه، باید parse کنیم:
+                const data = typeof item === "string" ? JSON.parse(item) : item;
+
+                let html = `
+                    <div class="col-md-6">
+                        <div class="demo-inline-spacing mt-3">
+                            <ul class="list-group">
+                              <li class="list-group-item d-flex align-items-center">
+                                <i class="bx bx-check-circle me-2"></i>
+                                <strong class="me-2">نام حرفه : </strong> ${
+                                    data.name
+                                }
+                              </li>
+                              <li class="list-group-item d-flex align-items-center">
+                                <i class="bx bx-check-circle me-2"></i>
+                                <strong class="me-2">رشته مربوطه: </strong> ${
+                                    data.field ? data.field.name : "-"
+                                }
+                              </li>
+                              <li class="list-group-item d-flex align-items-center">
+                                <i class="bx bx-check-circle me-2"></i>
+                                <strong class="me-2">تاریخ تدوین: </strong> ${
+                                    data.draft_date
+                                        ? new Date(
+                                              data.draft_date
+                                          ).toLocaleDateString("fa-IR")
+                                        : "-"
+                                }
+                              </li>
+                              <li class="list-group-item d-flex align-items-center">
+                                <i class="bx bx-check-circle me-2"></i>
+                                <strong class="me-2">کاردانش: </strong> ${
+                                    data.kardanesh ? data.kardanesh.name : "-"
+                                }
+                              </li>
+                              <li class="list-group-item d-flex align-items-center">
+                                <i class="bx bx-check-circle me-2"></i>
+                                <strong class="me-2">نوع شغل: </strong> ${
+                                    data.jobtype ? data.jobtype.name : "-"
+                                }
+                              </li>
+                              <li class="list-group-item d-flex align-items-center">
+                                <i class="bx bx-check-circle me-2"></i>
+                                <strong class="me-2">کد استاندارد جدید: </strong> ${
+                                    data.new_standard_code ?? "-"
+                                }
+                              </li>
+                              <li class="list-group-item d-flex align-items-center">
+                                <i class="bx bx-check-circle me-2"></i>
+                                <strong class="me-2">کد استاندارد قدیم: </strong> ${
+                                    data.old_standard_code ?? "-"
+                                }
+                              </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="demo-inline-spacing mt-3">
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex align-items-center">
+                                <i class="bx bx-check-circle me-2"></i>
+                                <strong class="me-2">تحصیلات مورد نیاز: </strong> ${
+                                    data.education_level ?? "-"
+                                }
+                              </li>
+                               <li class="list-group-item d-flex align-items-center">
+                                <i class="bx bx-check-circle me-2"></i>
+                                <strong class="me-2">صلاحیت مربی: </strong> ${
+                                    data.trainer_qualification ?? "-"
+                                }
+                              </li>
+                              <li class="list-group-item d-flex align-items-center">
+                                <i class="bx bx-check-circle me-2"></i>
+                                <strong class="me-2">زمان نظری: </strong> ${
+                                    data.theory_hour
+                                } ساعت و ${data.theory_minute} دقیقه
+                              </li>
+                              <li class="list-group-item d-flex align-items-center">
+                                <i class="bx bx-check-circle me-2"></i>
+                                <strong class="me-2">زمان عملی: </strong> ${
+                                    data.practice_hour
+                                } ساعت و ${data.practice_minute} دقیقه
+                              </li>
+                              <li class="list-group-item d-flex align-items-center">
+                                <i class="bx bx-check-circle me-2"></i>
+                                <strong class="me-2">زمان پروژه: </strong> ${
+                                    data.project_hour
+                                } ساعت و ${data.project_minute} دقیقه
+                              </li>
+                              <li class="list-group-item d-flex align-items-center">
+                                <i class="bx bx-check-circle me-2"></i>
+                                <strong class="me-2">زمان کارورزی:</strong> ${
+                                    data.internship_hour
+                                } ساعت و ${data.internship_minute} دقیقه
+                              </li>
+                              <li class="list-group-item d-flex align-items-center">
+                                <i class="bx bx-check-circle me-2"></i>
+                                <strong class="me-2">جمع کل: </strong> ${
+                                    data.total_hour
+                                } ساعت و ${data.total_minute} دقیقه
+                              </li>
+                            </ul>
+                        </div>
+                    </div>
+                    ${
+                        data.image_path
+                            ? `<div class="col-md-6"><strong>تصویر:</strong><br><img src="/${data.image_path}" class="img-fluid rounded mt-2" style="max-width: 200px;"></div>`
+                            : ""
+                    }
+                    ${
+                        data.standard_file
+                            ? `<div class="col-md-6"><strong>فایل استاندارد:</strong><br><a href="/${data.standard_file}" target="_blank" class="btn btn-sm btn-outline-primary mt-2">دانلود فایل</a></div>`
+                            : ""
+                    }
+                `;
+
+                $("#profession-details-content").html(html);
+                $("#professionDetailsModal").modal("show");
+            });
         }
     });
 
     // تابع جنریک برای ساخت فرم با اعتبارسنجی
-    // تابع جنریک برای ساخت فرم با اعتبارسنجی
-    function initOffcanvasForm({ formId, triggerSelector, fields, onSubmit }) {
+    function initOffcanvasForm({
+        formId,
+        triggerSelector,
+        fields,
+        onSubmit,
+        resetOnSubmit = true,
+    }) {
         let fv, offCanvasEl;
 
         const formEl = document.getElementById(formId);
@@ -2305,22 +2483,111 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         // مقداردهی اولیه پلاگین‌ها برای فیلدهای خاص
+        // در بخش initFieldPlugins، برای فیلدهای عددی که دقیقه هستند بررسی اضافه کنید
         function initFieldPlugins(fieldName, fieldOptions, formEl) {
             const input = formEl.querySelector(`[name="${fieldName}"]`);
             if (!input) return;
 
             switch (fieldOptions.type) {
                 case "date":
-                    // flatpickr برای تاریخ
+                    // ایجاد یک فیلد مخفی برای ذخیره تاریخ میلادی
+                    const hiddenInput = document.createElement("input");
+                    hiddenInput.type = "hidden";
+                    hiddenInput.name = fieldName + "_miladi";
+                    hiddenInput.id = fieldName + "_miladi";
+                    input.parentNode.appendChild(hiddenInput);
+
+                    // flatpickr برای تاریخ - با ذخیره میلادی
                     flatpickr(input, {
                         enableTime: fieldOptions.enableTime || false,
                         locale: "fa",
-                        dateFormat: fieldOptions.dateFormat || "Y/m/d",
-                        onChange: function () {
+                        dateFormat: "Y/m/d", // فرمت نمایش شمسی
+                        altFormat: "Y-m-d", // فرمت میلادی
+                        altInput: true, // استفاده از input مخفی
+                        altInputClass: "form-control miladi-date-hidden", // کلاس برای استایل
+                        onChange: function (selectedDates, dateStr, instance) {
                             if (fv) fv.revalidateField(fieldName);
+
+                            // ذخیره تاریخ میلادی در فیلد مخفی
+                            if (selectedDates[0]) {
+                                const miladiDate = selectedDates[0]
+                                    .toISOString()
+                                    .split("T")[0];
+                                hiddenInput.value = miladiDate;
+                                input.setAttribute(
+                                    "data-miladi-date",
+                                    miladiDate
+                                );
+                            } else {
+                                hiddenInput.value = "";
+                                input.removeAttribute("data-miladi-date");
+                            }
+                        },
+                        onReady: function (selectedDates, dateStr, instance) {
+                            // مقداردهی اولیه فیلد مخفی
+                            if (selectedDates[0]) {
+                                const miladiDate = selectedDates[0]
+                                    .toISOString()
+                                    .split("T")[0];
+                                hiddenInput.value = miladiDate;
+                                input.setAttribute(
+                                    "data-miladi-date",
+                                    miladiDate
+                                );
+                            }
                         },
                         disableMobile: true,
                     });
+                    break;
+
+                case "number":
+                    // اگر فیلد دقیقه است (نام فیلد شامل minute باشد)
+                    if (fieldName.includes("minute") || fieldOptions.isMinute) {
+                        // محدودیت مستقیم روی input
+                        input.addEventListener("input", function (e) {
+                            let value = parseInt(e.target.value) || 0;
+
+                            // اگر مقدار بیشتر از 59 بود، آن را به 59 محدود کن
+                            if (value > 59) {
+                                e.target.value = 59;
+                            }
+
+                            // اگر مقدار منفی بود، آن را به 0 محدود کن
+                            if (value < 0) {
+                                e.target.value = 0;
+                            }
+                        });
+
+                        // همچنین برای event change
+                        input.addEventListener("change", function (e) {
+                            let value = parseInt(e.target.value) || 0;
+
+                            if (value > 59) {
+                                e.target.value = 59;
+                            }
+
+                            if (value < 0) {
+                                e.target.value = 0;
+                            }
+                        });
+
+                        // محدودیت برای کلیدهای صفحه کلید
+                        input.addEventListener("keydown", function (e) {
+                            // اجازه دادن فقط به کلیدهای عددی و کنترل
+                            if (
+                                !/^[0-9]$/.test(e.key) &&
+                                ![
+                                    "Backspace",
+                                    "Delete",
+                                    "ArrowLeft",
+                                    "ArrowRight",
+                                    "Tab",
+                                ].includes(e.key)
+                            ) {
+                                e.preventDefault();
+                            }
+                        });
+                    }
                     break;
 
                 case "select2":
@@ -2359,6 +2626,69 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
+        // تابع برای ریست کردن کامل فرم
+        function resetFormCompletely() {
+            // ریست کردن اعتبارسنجی
+            fv.resetForm();
+
+            // ریست کردن تمام فیلدهای input
+            const inputs = formEl.querySelectorAll(
+                'input:not([type="hidden"]), textarea, select'
+            );
+            inputs.forEach((input) => {
+                switch (input.type) {
+                    case "text":
+                    case "email":
+                    case "tel":
+                    case "url":
+                    case "number":
+                    case "password":
+                    case "date":
+                        input.value = "";
+                        break;
+                    case "checkbox":
+                    case "radio":
+                        input.checked = false;
+                        break;
+                    case "file":
+                        input.value = "";
+                        // حذف پیش‌نمایش فایل
+                        const previewContainer = input
+                            .closest(".col-sm-6")
+                            ?.querySelector("#image-preview");
+                        if (previewContainer) {
+                            previewContainer.innerHTML = "";
+                        }
+                        break;
+                }
+            });
+
+            // ریست کردن select2
+            const select2Inputs = formEl.querySelectorAll("select.select2");
+            select2Inputs.forEach((select) => {
+                $(select).val(null).trigger("change");
+            });
+
+            // ریست کردن textarea
+            const textareas = formEl.querySelectorAll("textarea");
+            textareas.forEach((textarea) => {
+                textarea.value = "";
+                if (textarea.style.height !== "auto") {
+                    textarea.style.height = "auto";
+                }
+            });
+
+            // ریست کردن flatpickr
+            const dateInputs = formEl.querySelectorAll("[data-fp]");
+            dateInputs.forEach((dateInput) => {
+                if (dateInput._flatpickr) {
+                    dateInput._flatpickr.clear();
+                }
+            });
+
+            console.log("فرم با موفقیت ریست شد");
+        }
+
         // ساخت Validation
         fv = FormValidation.formValidation(formEl, {
             fields: validationFields,
@@ -2372,26 +2702,14 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             init: (instance) => {
                 instance.on("plugins.message.placed", function (e) {
-                    // مدیریت نمایش خطا برای input-group
-                    if (
-                        e.element.parentElement.classList.contains(
-                            "input-group"
-                        )
-                    ) {
-                        e.element.parentElement.insertAdjacentElement(
+                    const parent = e.element.closest(
+                        ".input-group, .fv-row, .form-group"
+                    );
+                    if (parent) {
+                        parent.insertAdjacentElement(
                             "afterend",
                             e.messageElement
                         );
-                    }
-
-                    // مدیریت نمایش خطا برای select2
-                    if ($(e.element).hasClass("select2-hidden-accessible")) {
-                        $(e.element)
-                            .closest(".form-select")
-                            .insertAdjacentElement(
-                                "afterend",
-                                e.messageElement
-                            );
                     }
                 });
             },
@@ -2405,7 +2723,6 @@ document.addEventListener("DOMContentLoaded", function () {
             // جمع‌آوری داده‌ها از FormData
             for (let [key, value] of formData.entries()) {
                 if (fields[key] && fields[key].type === "file") {
-                    // برای فایل‌ها، خود فایل را نگه می‌داریم
                     values[key] = value;
                 } else {
                     values[key] = value;
@@ -2432,25 +2749,29 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
 
+            // فراخوانی تابع onSubmit
             if (typeof onSubmit === "function") {
-                onSubmit(values, formData);
-            }
-
-            // ریست کردن فرم اگر نیاز باشد
-            if (fields.resetOnSubmit !== false) {
-                fv.resetForm();
-
-                // ریست کردن select2
-                Object.keys(fields).forEach((fieldName) => {
-                    if (fields[fieldName].type === "select2") {
-                        const select = formEl.querySelector(
-                            `[name="${fieldName}"]`
-                        );
-                        if (select) {
-                            $(select).val(null).trigger("change");
+                // استفاده از Promise برای اطمینان از اتمام عملیات قبل از ریست
+                Promise.resolve(onSubmit(values, formData))
+                    .then(() => {
+                        // ریست کردن فرم بعد از موفقیت آمیز بودن عملیات
+                        if (resetOnSubmit) {
+                            setTimeout(() => {
+                                resetFormCompletely();
+                            }, 100);
                         }
-                    }
-                });
+                    })
+                    .catch((error) => {
+                        console.error("خطا در اجرای onSubmit:", error);
+                        // در صورت خطا فرم ریست نمی‌شود
+                    });
+            } else {
+                // اگر تابع onSubmit تعریف نشده، فقط فرم ریست شود
+                if (resetOnSubmit) {
+                    setTimeout(() => {
+                        resetFormCompletely();
+                    }, 100);
+                }
             }
         });
 
@@ -2458,24 +2779,62 @@ document.addEventListener("DOMContentLoaded", function () {
         if (triggerBtn) {
             triggerBtn.addEventListener("click", function () {
                 // ریست کردن فرم هنگام باز کردن
-                fv.resetForm();
+                resetFormCompletely();
 
-                // مقداردهی اولیه فیلدها
+                // مقداردهی اولیه فیلدها در صورت نیاز
                 Object.entries(fields).forEach(([fieldName, fieldOptions]) => {
-                    if (fieldOptions.value !== undefined) {
-                        const input = formEl.querySelector(
-                            `[name="${fieldName}"]`
-                        );
-                        if (input) {
-                            input.value = fieldOptions.value;
+                    validationFields[fieldName] = {
+                        validators: {},
+                        ...(fieldOptions.validationOptions || {}),
+                    };
 
-                            // برای select2
-                            if (fieldOptions.type === "select2") {
-                                $(input)
-                                    .val(fieldOptions.value)
-                                    .trigger("change");
+                    // ولیدیشن required
+                    if (fieldOptions.required) {
+                        validationFields[fieldName].validators.notEmpty = {
+                            message: fieldOptions.label + " الزامی است",
+                        };
+                    }
+
+                    // ولیدیشن بر اساس type
+                    switch (fieldOptions.type) {
+                        case "number":
+                            validationFields[fieldName].validators.integer = {
+                                message: "لطفا یک عدد معتبر وارد کنید",
+                            };
+
+                            // اگر فیلد دقیقه است
+                            if (
+                                fieldName.includes("minute") ||
+                                fieldOptions.isMinute
+                            ) {
+                                validationFields[fieldName].validators.between =
+                                    {
+                                        min: 0,
+                                        max: 59,
+                                        message: "دقیقه باید بین 0 تا 59 باشد",
+                                    };
                             }
-                        }
+
+                            if (fieldOptions.min !== undefined) {
+                                validationFields[
+                                    fieldName
+                                ].validators.greaterThan = {
+                                    min: fieldOptions.min,
+                                    message: `مقدار باید بیشتر از ${fieldOptions.min} باشد`,
+                                };
+                            }
+
+                            if (fieldOptions.max !== undefined) {
+                                validationFields[
+                                    fieldName
+                                ].validators.lessThan = {
+                                    max: fieldOptions.max,
+                                    message: `مقدار باید کمتر از ${fieldOptions.max} باشد`,
+                                };
+                            }
+                            break;
+
+                        // ... بقیه case ها
                     }
                 });
             });
@@ -2483,7 +2842,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         return {
             formValidation: fv,
-            resetForm: () => fv.resetForm(),
+            resetForm: resetFormCompletely,
             revalidateField: (fieldName) => fv.revalidateField(fieldName),
         };
     }

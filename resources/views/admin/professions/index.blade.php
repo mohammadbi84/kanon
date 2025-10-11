@@ -3,9 +3,11 @@
 @endsection
 @section('content')
     <!-- DataTable with Buttons -->
+    <div class="header-label p-3 sticky-top bg-white d-flex justify-content-between align-items-center border-bottom"
+        style="top: 60px;">
+    </div>
     <div class="card">
         <div class="card-datatable table-responsive pt-0 p-3">
-            <div class="head-label p-3"></div>
             <form action="{{ route('admin.professions.store') }}" method="post" class="add-new-record pt-0 row g-2 mt-3 px-3"
                 id="form-add-new-record" enctype="multipart/form-data">
                 @csrf
@@ -17,7 +19,7 @@
                         <span id="name2" class="input-group-text">
                             <i class="bx bx-check-square"></i>
                         </span>
-                        <input type="text" id="name" class="form-control dt-full-name" name="name"
+                        <input type="text" id="name" name="name" class="form-control dt-full-name"
                             placeholder="نام حرفه" required>
                     </div>
                 </div>
@@ -27,7 +29,7 @@
                     $fieldId = request()->get('field_id');
                 @endphp
 
-                {{-- انتخاب رشته (در صورت نبود field_id در URL) --}}
+                {{-- انتخاب رشته --}}
                 @if (!$fieldId)
                     <div class="col-sm-12 mt-3">
                         <label class="form-label" for="field_id">انتخاب رشته</label>
@@ -39,7 +41,6 @@
                         </select>
                     </div>
                 @else
-                    {{-- اگر از URL آمده، فیلد hidden --}}
                     <input type="hidden" name="field_id" value="{{ $fieldId }}">
                 @endif
 
@@ -86,75 +87,60 @@
                 {{-- زمان نظری --}}
                 <div class="col-sm-6 mt-2">
                     <label class="form-label" for="theory_hour">زمان نظری</label>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <input type="number" id="theory_hour" name="theory_hour" class="form-control"
-                                placeholder="ساعت" min="0" value="0">
-                        </div>
-                        <div class="col-6">
-                            <input type="number" id="theory_minute" name="theory_minute" class="form-control"
-                                placeholder="دقیقه" min="0" max="59" value="0">
-                        </div>
+                    <div class="input-group form-group p-0">
+                        <input type="number" id="theory_hour" name="theory_hour" class="form-control" placeholder="ساعت"
+                            min="0">
+                        <span class="input-group-text"> : </span>
+                        <input type="number" id="theory_minute" name="theory_minute" class="form-control"
+                            placeholder="دقیقه" min="0" max="59">
                     </div>
                 </div>
 
                 {{-- زمان عملی --}}
                 <div class="col-sm-6 mt-2">
                     <label class="form-label" for="practice_hour">زمان عملی</label>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <input type="number" id="practice_hour" name="practice_hour" class="form-control"
-                                placeholder="ساعت" min="0" value="0">
-                        </div>
-                        <div class="col-6">
-                            <input type="number" id="practice_minute" name="practice_minute" class="form-control"
-                                placeholder="دقیقه" min="0" max="59" value="0">
-                        </div>
+                    <div class="input-group form-group p-0">
+                        <input type="number" id="practice_hour" name="practice_hour" class="form-control"
+                            placeholder="ساعت" min="0">
+                            <span class="input-group-text"> : </span>
+                        <input type="number" id="practice_minute" name="practice_minute" class="form-control"
+                            placeholder="دقیقه" min="0" max="59">
                     </div>
                 </div>
 
                 {{-- زمان پروژه --}}
                 <div class="col-sm-6 mt-3">
                     <label class="form-label" for="project_hour">زمان پروژه</label>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <input type="number" id="project_hour" name="project_hour" class="form-control"
-                                placeholder="ساعت" min="0" value="0">
-                        </div>
-                        <div class="col-6">
-                            <input type="number" id="project_minute" name="project_minute" class="form-control"
-                                placeholder="دقیقه" min="0" max="59" value="0">
-                        </div>
+                    <div class="input-group form-group p-0">
+                        <input type="number" id="project_hour" name="project_hour" class="form-control"
+                            placeholder="ساعت" min="0">
+                            <span class="input-group-text"> : </span>
+                        <input type="number" id="project_minute" name="project_minute" class="form-control"
+                            placeholder="دقیقه" min="0" max="59">
                     </div>
                 </div>
 
                 {{-- زمان کارورزی --}}
                 <div class="col-sm-6 mt-3">
                     <label class="form-label" for="internship_hour">زمان کارورزی</label>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <input type="number" id="internship_hour" name="internship_hour" class="form-control"
-                                placeholder="ساعت" min="0" value="0">
-                        </div>
-                        <div class="col-6">
-                            <input type="number" id="internship_minute" name="internship_minute" class="form-control"
-                                placeholder="دقیقه" min="0" max="59" value="0">
-                        </div>
+                    <div class="input-group form-group p-0">
+                        <input type="number" id="internship_hour" name="internship_hour" class="form-control"
+                            placeholder="ساعت" min="0">
+                            <span class="input-group-text"> : </span>
+                        <input type="number" id="internship_minute" name="internship_minute" class="form-control"
+                            placeholder="دقیقه" min="0" max="59">
                     </div>
                 </div>
 
                 {{-- زمان کل --}}
                 <div class="col-sm-6 mt-3">
                     <label class="form-label" for="total_hour">زمان کل</label>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <input type="number" id="total_hour" name="total_hour" class="form-control"
-                                placeholder="ساعت" min="0" value="0">
-                        </div>
-                        <div class="col-6">
-                            <input type="number" id="total_minute" name="total_minute" class="form-control"
-                                placeholder="دقیقه" min="0" max="59" value="0">
-                        </div>
+                    <div class="input-group form-group p-0">
+                        <input type="number" id="total_hour" name="total_hour" class="form-control" placeholder="ساعت"
+                            min="0">
+                            <span class="input-group-text"> : </span>
+                        <input type="number" id="total_minute" name="total_minute" class="form-control"
+                            placeholder="دقیقه" min="0" max="59">
                     </div>
                 </div>
 
@@ -164,7 +150,7 @@
                     <input type="date" id="draft_date" name="draft_date" class="form-control">
                 </div>
 
-                {{-- سایر فیلدهای اختیاری --}}
+                {{-- سایر فیلدها --}}
                 <div class="col-sm-6 mt-3">
                     <label class="form-label" for="education_level">حداقل تحصیلات ورودی</label>
                     <input type="text" id="education_level" name="education_level" class="form-control"
@@ -177,7 +163,7 @@
                         placeholder="مثلاً دارای مدرک کارشناسی">
                 </div>
 
-                {{-- آپلود فایل و تصویر --}}
+                {{-- فایل‌ها --}}
                 <div class="col-12 mt-4">
                     <h6 class="border-bottom pb-2 mb-3">فایل‌ها</h6>
                 </div>
@@ -196,10 +182,9 @@
 
                 {{-- دکمه ثبت --}}
                 <div class="col-sm-12 mt-4">
-                    <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1">ثبت</button>
+                    <button type="submit" id="form-submit-btn" class="d-none">ثبت</button>
                 </div>
             </form>
-
 
             <table class="dt-select-table professions table">
                 <thead>
@@ -213,6 +198,22 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="professionDetailsModal" tabindex="-1" aria-labelledby="detailsLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsLabel">جزئیات حرفه</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="profession-details-content" class="row gy-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 @section('script')
 @endsection
