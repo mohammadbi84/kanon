@@ -44,4 +44,10 @@ class Profession extends Model
     {
         return $this->belongsTo(Jobtype::class);
     }
+    public function tuitions()
+    {
+        return $this->belongsToMany(Tuition::class,'profession_tuitions')
+            ->withPivot(['price_in_person', 'price_virtual', 'price_online'])
+            ->withTimestamps();
+    }
 }

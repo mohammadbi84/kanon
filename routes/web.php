@@ -2,11 +2,14 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\ClusterController;
 use App\Http\Controllers\Admin\FieldController;
 use App\Http\Controllers\Admin\JobtypeController;
 use App\Http\Controllers\Admin\KardaneshController;
 use App\Http\Controllers\Admin\ProfessionController;
+use App\Http\Controllers\Admin\TuitionController;
+use App\Http\Controllers\Admin\TuitionProfessionController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\JobOpportunityController;
 use App\Http\Controllers\LikeController;
@@ -115,6 +118,20 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::get('/{id}', [ProfessionController::class, 'edit'])->name('professions.edit');
         Route::put('/{id}', [ProfessionController::class, 'update'])->name('professions.update');
     });
+    // ================== Tuitions ==================
+    Route::prefix('/tuitions')->name('tuitions.')->group(function () {
+        Route::get('/', [TuitionController::class, 'index'])->name('index');
+        Route::post('/store', [TuitionController::class, 'store'])->name('store');
+        Route::get('/{tuition}/edit', [TuitionController::class, 'edit'])->name('edit');
+        Route::put('/{tuition}', [TuitionController::class, 'update'])->name('update');
+        Route::delete('/delete/{id}', [TuitionController::class, 'delete'])->name('delete');
+        Route::post('/bulk-delete', [TuitionController::class, 'bulkDelete'])->name('bulkDelete');
+        // professions
+        Route::get('{tuition}/professions', [TuitionProfessionController::class, 'index'])->name('professions.index');
+        Route::post('{tuition}/professions/update', [TuitionProfessionController::class, 'update'])->name('professions.update');
+    });
+
+    Route::get('/cities', [CityController::class, 'index'])->name('cities.index');
 });
 
 

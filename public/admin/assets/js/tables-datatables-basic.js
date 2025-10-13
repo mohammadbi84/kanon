@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
             clusters = $(".clusters"),
             fields = $(".fields"),
             professions = $(".professions"),
+            tuitions = $(".tuitions"),
             kardanesh = $(".kardanesh");
 
         // DataTable with buttons
@@ -2359,6 +2360,352 @@ document.addEventListener("DOMContentLoaded", function () {
                 $("#profession-details-content").html(html);
                 $("#professionDetailsModal").modal("show");
             });
+        }
+        if (tuitions.length) {
+            dt_basic = tuitions.DataTable({
+                ajax: "/admin2/tuitions",
+                columns: [
+                    { data: "", title: "" },
+                    { data: "id", title: "شناسه" },
+                    { data: "id", visible: false },
+                    { data: "title", title: "عنوان شهریه" },
+                    { data: "city.title", title: "شهر" },
+                    { data: "start_date", title: "شروع" },
+                    { data: "end_date", title: "پایان" },
+                    { data: "", title: "عملیات" },
+                ],
+                columnDefs: [
+                    {
+                        // For Responsive
+                        className: "control",
+                        orderable: false,
+                        searchable: false,
+                        responsivePriority: 2,
+                        targets: 0,
+                        render: function (data, type, full, meta) {
+                            return "";
+                        },
+                    },
+                    {
+                        // For Checkboxes
+                        targets: 1,
+                        orderable: false,
+                        render: function () {
+                            return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle">';
+                        },
+                        checkboxes: {
+                            selectRow: true,
+                            selectAllRender:
+                                '<input type="checkbox" class="form-check-input mt-0 align-middle">',
+                        },
+                        responsivePriority: 4,
+                    },
+                    {
+                        targets: 2,
+                        searchable: false,
+                        visible: false,
+                    },
+                    {
+                        responsivePriority: 1,
+                        targets: 4,
+                    },
+                    {
+                        targets: -1,
+                        title: "عملیات",
+                        orderable: false,
+                        searchable: false,
+                        render: function (data, type, full, meta) {
+                            return `
+                            <a href="/admin2/tuitions/${full.id}/professions" class="btn btn-sm btn-info item-details">
+                                <i class="bx bx-show"></i>
+                                حرفه‌ها
+                            </a>
+                        <button class="btn btn-sm btn-warning show-certificates">
+                            سند حرفه‌ها
+                        </button>
+                        <a href="/admin2/tuitions/${full.id}/edit" class="btn btn-sm btn-primary"><i class="bx bxs-edit"></i></a>
+                        <button class="btn btn-sm btn-danger item-delete" data-id="${full.id}"><i class="bx bxs-trash"></i></button>
+                    `;
+                        },
+                    },
+                ],
+                order: [[2, "desc"]],
+                dom:
+                    '<"card-header flex-column flex-md-row"<"head-label text-center"><"dt-action-buttons text-end primary-font pt-3 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t' +
+                    "<'row d-flex align-items-center justify-content-between'<'col-md-4'<'bulk-holder'>><'col-md-8 d-flex justify-content-between'i p>>",
+                displayLength: 10,
+                lengthMenu: [10, 25, 50, 75, 100],
+                buttons: [],
+                responsive: {
+                    details: {
+                        display: $.fn.dataTable.Responsive.display.modal({
+                            header: function (row) {
+                                var data = row.data();
+                                return "جزئیات " + data["full_name"];
+                            },
+                        }),
+                        type: "column",
+                        renderer: function (api, rowIdx, columns) {
+                            var data = $.map(columns, function (col, i) {
+                                return col.title !== "" // ? Do not show row in modal popup if title is blank (for check box)
+                                    ? '<tr data-dt-row="' +
+                                          col.rowIndex +
+                                          '" data-dt-column="' +
+                                          col.columnIndex +
+                                          '">' +
+                                          "<td>" +
+                                          col.title +
+                                          ":" +
+                                          "</td> " +
+                                          "<td>" +
+                                          col.data +
+                                          "</td>" +
+                                          "</tr>"
+                                    : "";
+                            }).join("");
+
+                            return data
+                                ? $('<table class="table"/><tbody />').append(
+                                      data
+                                  )
+                                : false;
+                        },
+                    },
+                },
+                select: {
+                    // Select style
+                    style: "multi",
+                },
+            });
+            $("#bulk-actions").appendTo(".bulk-holder");
+            $("div.head-label").html(
+                '<h5 class="card-title mb-0">شهریه ها</h5>'
+            );
+            // add new record-------------------------------------------------------------------------------------------------------------
+            // فرم افزودن شهریه جدید
+            initOffcanvasForm({
+                formId: "form-add-new-record",
+                triggerSelector: ".create-new",
+                fields: {
+                    title: {
+                        label: "عنوان شهریه",
+                        required: true,
+                        type: "text",
+                    },
+                    city_id: {
+                        label: "شهر",
+                        required: true,
+                        type: "select",
+                        options: [], // بعداً با AJAX پر میشه
+                    },
+                    start_date: {
+                        label: "تاریخ شروع",
+                        required: true,
+                        type: "date",
+                    },
+                    end_date: {
+                        label: "تاریخ پایان",
+                        required: true,
+                        type: "date",
+                    },
+                },
+                onSubmit: function (values) {
+                    // تبدیل داده‌ها از رشته به تاریخ برای بررسی
+                    const startDate = new Date(values.start_date);
+                    const endDate = new Date(values.end_date);
+
+                    // بررسی معتبر بودن تاریخ‌ها
+                    if (
+                        isNaN(startDate.getTime()) ||
+                        isNaN(endDate.getTime())
+                    ) {
+                        alert(
+                            "لطفاً تاریخ شروع و پایان را به درستی وارد کنید."
+                        );
+                        return;
+                    }
+
+                    // بررسی اینکه تاریخ پایان بعد از شروع باشد
+                    if (endDate <= startDate) {
+                        alert("تاریخ پایان باید بعد از تاریخ شروع باشد.");
+                        return;
+                    }
+
+                    // اضافه کردن CSRF token
+                    values._token = $('meta[name="csrf-token"]').attr(
+                        "content"
+                    );
+
+                    // ارسال Ajax
+                    $.post("/admin2/tuitions/store", values, function (res) {
+                        if (res.success) {
+                            dt_basic.ajax.reload();
+                        } else {
+                        }
+                    }).fail(function (xhr) {
+                        console.error(xhr.responseText);
+                    });
+                },
+            });
+
+            // گرفتن لیست شهرها برای select
+            $.get("/admin2/cities", function (res) {
+                const citySelect = $(
+                    "#form-add-new-record select[name='city_id']"
+                );
+                citySelect.empty();
+                citySelect.append(
+                    '<option value="" disabled selected>انتخاب کنید...</option>'
+                );
+                res.data.forEach((city) => {
+                    citySelect.append(
+                        $("<option>", {
+                            value: city.id,
+                            text: city.title,
+                        })
+                    );
+                });
+            });
+
+            // delete one item----------------------------------------------------------------------------------------------------------------
+            dt_basic.on("click", ".item-delete", function () {
+                const id = $(this).data("id");
+
+                if (!id) return;
+                Swal.fire({
+                    title: `آیا از حذف این رکورد مطمئن هستید؟`,
+                    text: "این عملیات غیرقابل بازگشت است!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "بله، حذف کن!",
+                    cancelButtonText: "انصراف",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/admin2/tuitions/delete/" + id,
+                            type: "DELETE",
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr(
+                                    "content"
+                                ),
+                            },
+                            success: function (res) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "موفق!",
+                                    text: "رکوردها با موفقیت حذف شدند.",
+                                    timer: 2000,
+                                    timerProgressBar: true,
+                                    showConfirmButton: false,
+                                });
+                                dt_basic.ajax.reload(null, false);
+                                $("#bulk-actions").addClass("d-none");
+                            },
+                            error: function (err) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "خطا!",
+                                    text: "مشکلی در حذف گروهی رخ داد.",
+                                });
+                                console.error(err);
+                            },
+                        });
+                    }
+                });
+            });
+
+            // delete selected items----------------------------------------------------------------------------------------------------------
+            const btnBulk = $("#bulk-delete");
+            if (btnBulk) {
+                // وقتی رکورد انتخاب شد
+                dt_basic.on("select", function (e, dt, type, indexes) {
+                    toggleBulkActions();
+                });
+
+                // وقتی رکورد از انتخاب خارج شد
+                dt_basic.on("deselect", function (e, dt, type, indexes) {
+                    toggleBulkActions();
+                });
+
+                // تابع برای نمایش / مخفی کردن باکس عملیات
+                function toggleBulkActions() {
+                    const selected = dt_basic.rows({ selected: true }).count();
+                    if (selected > 0) {
+                        // $("#bulk-actions").removeClass("d-none");
+                        $("#bulk-actions #bulk-delete").prop("disabled", false);
+                    } else {
+                        $("#bulk-actions #bulk-delete").prop("disabled", true);
+                    }
+                }
+
+                // گرفتن ID ها
+                function getSelectedIds() {
+                    return dt_basic
+                        .rows({ selected: true })
+                        .data()
+                        .pluck("id")
+                        .toArray();
+                }
+
+                btnBulk.on("click", function () {
+                    const ids = getSelectedIds();
+
+                    if (ids.length === 0) {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "هیچ رکوردی انتخاب نشده!",
+                            confirmButtonText: "باشه",
+                        });
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: `آیا از حذف ${ids.length} رکورد مطمئن هستید؟`,
+                        text: "این عملیات غیرقابل بازگشت است!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "بله، حذف کن!",
+                        cancelButtonText: "انصراف",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "/admin2/tuitions/bulk-delete",
+                                type: "POST",
+                                data: {
+                                    _token: $('meta[name="csrf-token"]').attr(
+                                        "content"
+                                    ),
+                                    ids: ids,
+                                },
+                                success: function (res) {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "موفق!",
+                                        text: "رکوردها با موفقیت حذف شدند.",
+                                        timer: 2000,
+                                        timerProgressBar: true,
+                                        showConfirmButton: false,
+                                    });
+                                    dt_basic.ajax.reload(null, false);
+                                    $("#bulk-actions").addClass("d-none");
+                                },
+                                error: function (err) {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "خطا!",
+                                        text: "مشکلی در حذف گروهی رخ داد.",
+                                    });
+                                    console.error(err);
+                                },
+                            });
+                        }
+                    });
+                });
+            }
         }
     });
 

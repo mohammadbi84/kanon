@@ -88,6 +88,8 @@
                 Route::currentRouteName() == 'admin.fields.edit' ||
                 Route::currentRouteName() == 'admin.professions.index' ||
                 Route::currentRouteName() == 'admin.professions.edit' ||
+                Route::currentRouteName() == 'admin.tuitions.index' ||
+                Route::currentRouteName() == 'admin.tuitions.edit' ||
                 Route::currentRouteName() == 'admin.kardanesh.index' ||
                 Route::currentRouteName() == 'admin.kardanesh.edit') open @endif">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -98,12 +100,14 @@
                 <li class="menu-item @if (Route::currentRouteName() == 'admin.jobtype.index' ||
                         Route::currentRouteName() == 'admin.jobtype.edit' ||
                         Route::currentRouteName() == 'admin.kardanesh.index' ||
+                        Route::currentRouteName() == 'admin.tuitions.index' ||
+                        Route::currentRouteName() == 'admin.tuitions.edit' ||
                         Route::currentRouteName() == 'admin.kardanesh.edit') open @endif">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <i class="menu-icon tf-icons bx bx-cog"></i>
                         <div>پیکربندی</div>
                     </a>
-                    <ul class="menu-sub">
+                    <ul class="menu-sub ps-2">
                         <li class="menu-item @if (Route::currentRouteName() == 'admin.jobtype.index' || Route::currentRouteName() == 'admin.jobtype.edit') active @endif">
                             <a href="{{ route('admin.jobtype.index') }}" class="menu-link">
                                 <div>نوع شغل</div>
@@ -114,8 +118,8 @@
                                 <div>نوع کاردانش</div>
                             </a>
                         </li>
-                        <li class="menu-item">
-                            <a href="#" class="menu-link">
+                        <li class="menu-item @if (Route::currentRouteName() == 'admin.tuitions.index' || Route::currentRouteName() == 'admin.tuitions.edit') active @endif">
+                            <a href="{{ route('admin.tuitions.index') }}" class="menu-link">
                                 <div>نرخ شهریه</div>
                             </a>
                         </li>
@@ -127,22 +131,22 @@
                     </ul>
                 </li>
                 <li class="menu-item @if (Route::currentRouteName() == 'admin.categories.index' || Route::currentRouteName() == 'admin.categories.edit') active @endif">
-                    <a href="{{route('admin.categories.index')}}" class="menu-link">
+                    <a href="{{ route('admin.categories.index') }}" class="menu-link">
                         <div>رسته ها</div>
                     </a>
                 </li>
                 <li class="menu-item @if (Route::currentRouteName() == 'admin.clusters.index' || Route::currentRouteName() == 'admin.clusters.edit') active @endif">
-                    <a href="{{route('admin.clusters.index')}}" class="menu-link">
+                    <a href="{{ route('admin.clusters.index') }}" class="menu-link">
                         <div>خوشه ها</div>
                     </a>
                 </li>
                 <li class="menu-item @if (Route::currentRouteName() == 'admin.fields.index' || Route::currentRouteName() == 'admin.fields.edit') active @endif">
-                    <a href="{{route('admin.fields.index')}}" class="menu-link">
+                    <a href="{{ route('admin.fields.index') }}" class="menu-link">
                         <div>رشته ها</div>
                     </a>
                 </li>
                 <li class="menu-item @if (Route::currentRouteName() == 'admin.professions.index' || Route::currentRouteName() == 'admin.professions.edit') active @endif">
-                    <a href="{{route('admin.professions.index')}}" class="menu-link">
+                    <a href="{{ route('admin.professions.index') }}" class="menu-link">
                         <div>حرفه ها</div>
                     </a>
                 </li>

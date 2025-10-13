@@ -25,4 +25,10 @@ class Certificate extends Model
     {
         return $this->belongsTo(Field::class);
     }
+    public function tuitions()
+    {
+        return $this->belongsToMany(Tuition::class)
+            ->withPivot(['price_in_person', 'price_virtual', 'price_electronic'])
+            ->withTimestamps();
+    }
 }
