@@ -8,5 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class File extends Model
 {
     use HasFactory;
-    protected $fillable = ['organ_id', 'file'];
+    protected $fillable = [
+        'url',
+        'type',
+        'status',
+        'fileable_id',
+        'fileable_type',
+    ];
+
+    // رابطه معکوس چندریختی
+    public function fileable()
+    {
+        return $this->morphTo();
+    }
 }

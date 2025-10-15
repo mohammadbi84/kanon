@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ClusterController;
 use App\Http\Controllers\Admin\FieldController;
 use App\Http\Controllers\Admin\JobtypeController;
 use App\Http\Controllers\Admin\KardaneshController;
+use App\Http\Controllers\Admin\PopupController;
 use App\Http\Controllers\Admin\ProfessionController;
 use App\Http\Controllers\Admin\TuitionController;
 use App\Http\Controllers\Admin\TuitionProfessionController;
@@ -14,7 +15,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\JobOpportunityController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PannelController;
-use App\Http\Controllers\PopupController;
 use App\Http\Controllers\RegisterAlertController;
 use App\Http\Controllers\RegisterMessageController;
 use App\Http\Controllers\SiteController;
@@ -130,8 +130,17 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::get('{tuition}/professions', [TuitionProfessionController::class, 'index'])->name('professions.index');
         Route::post('{tuition}/professions/update', [TuitionProfessionController::class, 'update'])->name('professions.update');
     });
-
     Route::get('/cities', [CityController::class, 'index'])->name('cities.index');
+    // ================== Popups ==================
+    Route::prefix('popups')->name('popups.')->group(function () {
+        Route::resource('', PopupController::class)->except('show','create');
+        Route::post('/bulk-delete', [PopupController::class, 'bulkDelete'])->name('bulkDelete');
+        // images
+        Route::get('/showImages', [PopupController::class, 'showImages'])->name('showImages');
+        Route::post('/upload', [PopupController::class, 'uploadImage'])->name('upload');
+        Route::post('/status/{file}', [PopupController::class, 'toggleImageStatus'])->name('status');
+        Route::delete('/{file}', [PopupController::class, 'deleteImage'])->name('image.delete');
+    });
 });
 
 
@@ -460,8 +469,8 @@ Route::prefix('/dashboard')->middleware('auth')->group(function () {
     Route::get('/register-message', [RegisterMessageController::class, 'edit'])->name('register_message.edit');
     Route::post('/register-message', [RegisterMessageController::class, 'update'])->name('register_message.update');
     // pop-up
-    Route::get('/popup', [PopupController::class, 'edit'])->name('popup.edit');
-    Route::post('/popup', [PopupController::class, 'update'])->name('popup.update');
+    Route::get('/popup', [\App\Http\Controllers\PopupController::class, 'edit'])->name('popup.edit');
+    Route::post('/popup', [\App\Http\Controllers\PopupController::class, 'update'])->name('popup.update');
     // alert_register
     Route::get('/register_alert', [RegisterAlertController::class, 'edit'])->name('register_alert.edit');
     Route::post('/register_alert', [RegisterAlertController::class, 'update'])->name('register_alert.update');

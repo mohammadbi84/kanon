@@ -52,7 +52,7 @@
 
     <ul class="menu-inner py-1">
         <li class="menu-item @if (Route::currentRouteName() == 'admin.index') active @endif">
-            <a href="#" class="menu-link">
+            <a href="{{ route('admin.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div>داشبورد</div>
             </a>
@@ -77,7 +77,7 @@
             </ul>
         </li>
 
-        <li class="menu-header small text-uppercase"><span class="menu-header-text">استاندارد ها</span></li>
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">پیکربندی</span></li>
         <li class="menu-item @if (Route::currentRouteName() == 'admin.jobtype.index' ||
                 Route::currentRouteName() == 'admin.jobtype.edit' ||
                 Route::currentRouteName() == 'admin.categories.index' ||
@@ -157,6 +157,25 @@
                 </li>
             </ul>
         </li>
-
+        <li class="menu-item @if (Route::currentRouteName() == 'admin.popups.index' ||
+                Route::currentRouteName() == 'test' ||
+                Route::currentRouteName() == 'test') open @endif">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-grid-alt"></i>
+                <div>بخش های سایت</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item @if (Route::currentRouteName() == 'admin.popups.index') active @endif">
+                    <a href="{{ route('admin.popups.index') }}" class="menu-link">
+                        <div>پاپ آپ</div>
+                    </a>
+                </li>
+                <li class="menu-item @if (Route::currentRouteName() == 'test') active @endif">
+                    <a href="#" class="menu-link">
+                        <div>پیشنهاد ویژه (بوکمارک بالای سایت)</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
     </ul>
 </aside>
