@@ -13,7 +13,7 @@
                 id="form-add-new-record">
                 @csrf
                 {{-- عنوان --}}
-                <div class="col-sm-6">
+                <div class="col-sm-12">
                     <label class="form-label" for="title">عنوان پاپ‌آپ</label>
                     <div class="input-group input-group-merge">
                         <span class="input-group-text"><i class="bx bx-font"></i></span>
@@ -23,9 +23,9 @@
                 </div>
 
                 {{-- متن --}}
-                <div class="col-sm-6">
+                <div class="col-sm-12">
                     <label class="form-label" for="text">متن پاپ‌آپ</label>
-                    <textarea id="text" name="text" class="form-control" rows="1" placeholder="متن پاپ‌آپ"></textarea>
+                    <textarea id="text" name="text" class="form-control" rows="2" placeholder="متن پاپ‌آپ"></textarea>
                 </div>
 
                 {{-- تاریخ شروع و پایان --}}
