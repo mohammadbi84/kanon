@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
             categories = $(".categories"),
             clusters = $(".clusters"),
             fields = $(".fields"),
+            popups = $(".popups"),
             professions = $(".professions"),
             tuitions = $(".tuitions"),
             kardanesh = $(".kardanesh");
@@ -2707,6 +2708,62 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             }
         }
+        if (popups.length) {
+            // add new record-------------------------------------------------------------------------------------------------------------
+            // فرم افزودن شهریه جدید
+            initOffcanvasForm({
+                formId: "form-add-new-record",
+                // offcanvasId: "add-new-record",
+                triggerSelector: ".create-new",
+                fields: {
+                    title: {
+                        label: "عنوان پاپ‌آپ",
+                        required: true,
+                        type: "text",
+                    },
+                    text: {
+                        label: "متن پاپ‌آپ",
+                        required: true,
+                        type: "text",
+                    },
+                    start_date: {
+                        label: "تاریخ شروع",
+                        required: true,
+                        type: "date",
+                    },
+                    end_date: {
+                        label: "تاریخ پایان",
+                        required: true,
+                        type: "date",
+                    },
+                    status: {
+                        label: "وضعیت",
+                        required: true,
+                        type: "select",
+                        options: [
+                            { value: 1, text: "فعال" },
+                            { value: 0, text: "غیرفعال" },
+                        ],
+                    },
+                },
+                onSubmit: function (values) {
+                    console.log("Form Data:", values);
+
+                    // اضافه کردن CSRF token
+                    values._token = $('meta[name="csrf-token"]').attr(
+                        "content"
+                    );
+
+                    // ارسال Ajax
+                    $.post("/admin2/popups", values, function (res) {
+                        console.log("Server Response:", res);
+                        // offCanvasEl.hide();
+                        Swal.fire({ icon: "success", title: "موفق!", text: res.success, timer: 1500, showConfirmButton: false });
+                        dt_popups.ajax.reload(); // اگر میخوای جدول بروز بشه
+                    });
+                },
+            });
+        }
     });
 
     // تابع جنریک برای ساخت فرم با اعتبارسنجی
@@ -3042,7 +3099,7 @@ document.addEventListener("DOMContentLoaded", function () {
             plugins: {
                 trigger: new FormValidation.plugins.Trigger(),
                 bootstrap5: new FormValidation.plugins.Bootstrap5({
-                    rowSelector: ".col-sm-12, .col-sm-6, .col-12",
+                    rowSelector: ".col-sm-12, .col-sm-6, .col-12, col-md-6, form-group",
                 }),
                 submitButton: new FormValidation.plugins.SubmitButton(),
                 autoFocus: new FormValidation.plugins.AutoFocus(),

@@ -132,14 +132,14 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
     });
     Route::get('/cities', [CityController::class, 'index'])->name('cities.index');
     // ================== Popups ==================
+    Route::resource('popups', PopupController::class)->except('show','create');
     Route::prefix('popups')->name('popups.')->group(function () {
-        Route::resource('', PopupController::class)->except('show','create');
         Route::post('/bulk-delete', [PopupController::class, 'bulkDelete'])->name('bulkDelete');
         // images
-        Route::get('/showImages', [PopupController::class, 'showImages'])->name('showImages');
-        Route::post('/upload', [PopupController::class, 'uploadImage'])->name('upload');
-        Route::post('/status/{file}', [PopupController::class, 'toggleImageStatus'])->name('status');
-        Route::delete('/{file}', [PopupController::class, 'deleteImage'])->name('image.delete');
+        Route::get('/showImages/{id}', [PopupController::class, 'showImages'])->name('showImages');
+        Route::post('/upload/{id}', [PopupController::class, 'uploadImage'])->name('upload');
+        Route::post('/status/{id}', [PopupController::class, 'toggleImageStatus'])->name('status');
+        Route::delete('/image/{id}', [PopupController::class, 'deleteImage'])->name('image.delete');
     });
 });
 

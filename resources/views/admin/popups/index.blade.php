@@ -12,9 +12,8 @@
             <form action="{{ route('admin.popups.store') }}" method="post" class="add-new-record pt-0 row g-2 mt-3 px-3"
                 id="form-add-new-record">
                 @csrf
-
                 {{-- عنوان --}}
-                <div class="col-md-6">
+                <div class="col-sm-6">
                     <label class="form-label" for="title">عنوان پاپ‌آپ</label>
                     <div class="input-group input-group-merge">
                         <span class="input-group-text"><i class="bx bx-font"></i></span>
@@ -24,24 +23,24 @@
                 </div>
 
                 {{-- متن --}}
-                <div class="col-md-6">
+                <div class="col-sm-6">
                     <label class="form-label" for="text">متن پاپ‌آپ</label>
                     <textarea id="text" name="text" class="form-control" rows="1" placeholder="متن پاپ‌آپ"></textarea>
                 </div>
 
                 {{-- تاریخ شروع و پایان --}}
-                <div class="col-md-3">
+                <div class="col-sm-6">
                     <label class="form-label" for="start_date">تاریخ شروع</label>
                     <input type="date" id="start_date" name="start_date" class="form-control">
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-sm-6">
                     <label class="form-label" for="end_date">تاریخ پایان</label>
                     <input type="date" id="end_date" name="end_date" class="form-control">
                 </div>
 
                 {{-- وضعیت --}}
-                <div class="col-md-3">
+                <div class="col-sm-6">
                     <label class="form-label" for="status">وضعیت</label>
                     <select id="status" name="status" class="form-select">
                         <option value="1">فعال</option>
@@ -49,7 +48,7 @@
                     </select>
                 </div>
 
-                <div class="col-md-3 d-flex align-items-end">
+                <div class="col-sm-6 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100">ثبت</button>
                 </div>
             </form>
@@ -78,11 +77,17 @@
                 <div class="modal-body">
                     <input type="hidden" id="popup_id">
                     <div class="mb-3">
-                        <label class="form-label">افزودن تصویر جدید</label>
-                        <input type="file" id="popup_image" class="form-control" accept="image/*">
-                        <button id="uploadImageBtn" class="btn btn-success mt-2">آپلود</button>
+                        <div class="input-group">
+                            <button class="btn btn-outline-primary" type="button" id="image" data-input="popup_image"
+                                data-preview="imageHolder">عکس جدید</button>
+                            <input type="text" id="popup_image" name="image" class="form-control"
+                                placeholder="نام کاربری گیرنده" aria-label="Recipient's username"
+                                aria-describedby="button-addon2">
+                        </div>
+                        <div class="text-end">
+                            <button id="uploadImageBtn" class="btn btn-success mt-2">آپلود</button>
+                        </div>
                     </div>
-
                     <div id="popupImagesList" class="row g-3"></div>
                 </div>
             </div>
@@ -91,6 +96,16 @@
 @endsection
 
 @section('script')
+    <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script>
+    <script>
+        // در کد JS خود این را اضافه کنید:
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $('#image').filemanager('file');
+    </script>
     <script>
         let dt_popups;
 
@@ -98,17 +113,47 @@
             // DataTable
             dt_popups = $('.popups').DataTable({
                 ajax: "{{ route('admin.popups.index') }}",
-                columns: [
-                    {data: "",title: ""},
-                    {data: "id",title: "شناسه"},
-                    { data: "id", visible: false }, // ستون مخفی برای sort
-                    {data: "id",title: "شناسه"},
-                    {data: "title",title: "عنوان"},
-                    {data: "text",title: "متن"},
-                    {data: "start_date",title: "تاریخ شروع"},
-                    {data: "end_date",title: "تاریخ پایان"},
-                    {data: "status",title: "وضعیت",render: d => d ? "فعال" : "غیرفعال"},
-                    {data: "",title: "عملیات"},
+                columns: [{
+                        data: "",
+                        title: ""
+                    },
+                    {
+                        data: "id",
+                        title: "شناسه"
+                    },
+                    {
+                        data: "id",
+                        visible: false
+                    }, // ستون مخفی برای sort
+                    {
+                        data: "id",
+                        title: "شناسه"
+                    },
+                    {
+                        data: "title",
+                        title: "عنوان"
+                    },
+                    {
+                        data: "text",
+                        title: "متن"
+                    },
+                    {
+                        data: "start_date",
+                        title: "تاریخ شروع"
+                    },
+                    {
+                        data: "end_date",
+                        title: "تاریخ پایان"
+                    },
+                    {
+                        data: "status",
+                        title: "وضعیت",
+                        render: d => d ? "فعال" : "غیرفعال"
+                    },
+                    {
+                        data: "",
+                        title: "عملیات"
+                    },
                 ],
                 columnDefs: [{
                         // For Responsive
@@ -117,7 +162,7 @@
                         searchable: false,
                         responsivePriority: 2,
                         targets: 0,
-                        render: function (data, type, full, meta) {
+                        render: function(data, type, full, meta) {
                             return "";
                         },
                     },
@@ -125,13 +170,12 @@
                         // For Checkboxes
                         targets: 1,
                         orderable: false,
-                        render: function () {
+                        render: function() {
                             return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle">';
                         },
                         checkboxes: {
                             selectRow: true,
-                            selectAllRender:
-                                '<input type="checkbox" class="form-check-input mt-0 align-middle">',
+                            selectAllRender: '<input type="checkbox" class="form-check-input mt-0 align-middle">',
                         },
                         responsivePriority: 4,
                         orderable: false,
@@ -158,7 +202,7 @@
                             return `
                             <button class="btn btn-sm btn-info manage-files" data-id="${full.id}">مدیریت عکس‌ها</button>
                             <a href="/admin2/popups/edit/${full.id}" class="btn btn-sm btn-primary">ویرایش</a>
-                            <button class="btn btn-sm btn-danger delete-item" data-id="${full.id}">حذف</button>
+                            <button class="btn btn-sm btn-danger item-delete" data-id="${full.id}">حذف</button>
                         `;
                         }
                     }
@@ -171,36 +215,38 @@
                 responsive: {
                     details: {
                         display: $.fn.dataTable.Responsive.display.modal({
-                            header: function (row) {
+                            header: function(row) {
                                 var data = row.data();
                                 return "جزئیات " + data["full_name"];
                             },
                         }),
                         type: "column",
-                        renderer: function (api, rowIdx, columns) {
-                            var data = $.map(columns, function (col, i) {
-                                return col.title !== "" // ? Do not show row in modal popup if title is blank (for check box)
-                                    ? '<tr data-dt-row="' +
-                                          col.rowIndex +
-                                          '" data-dt-column="' +
-                                          col.columnIndex +
-                                          '">' +
-                                          "<td>" +
-                                          col.title +
-                                          ":" +
-                                          "</td> " +
-                                          "<td>" +
-                                          col.data +
-                                          "</td>" +
-                                          "</tr>"
-                                    : "";
+                        renderer: function(api, rowIdx, columns) {
+                            var data = $.map(columns, function(col, i) {
+                                return col.title !==
+                                    "" // ? Do not show row in modal popup if title is blank (for check box)
+                                    ?
+                                    '<tr data-dt-row="' +
+                                    col.rowIndex +
+                                    '" data-dt-column="' +
+                                    col.columnIndex +
+                                    '">' +
+                                    "<td>" +
+                                    col.title +
+                                    ":" +
+                                    "</td> " +
+                                    "<td>" +
+                                    col.data +
+                                    "</td>" +
+                                    "</tr>" :
+                                    "";
                             }).join("");
 
-                            return data
-                                ? $('<table class="table"/><tbody />').append(
-                                      data
-                                  )
-                                : false;
+                            return data ?
+                                $('<table class="table"/><tbody />').append(
+                                    data
+                                ) :
+                                false;
                         },
                     },
                 },
@@ -213,62 +259,8 @@
             $("div.head-label").html(
                 '<h5 class="card-title mb-0">پاپ آپ ها</h5>'
             );
-
-            // add new record-------------------------------------------------------------------------------------------------------------
-            initOffcanvasForm({
-                formId: "form-add-new-record",
-                // offcanvasId: "add-new-record",
-                triggerSelector: ".create-new",
-                fields: {
-                    title: {
-                        label: "عنوان پاپ‌آپ",
-                        required: true,
-                        type: "text",
-                    },
-                    text: {
-                        label: "متن پاپ‌آپ",
-                        required: true,
-                        type: "text",
-                    },
-                    start_date: {
-                        label: "تاریخ شروع",
-                        required: true,
-                        type: "date",
-                    },
-                    end_date: {
-                        label: "تاریخ پایان",
-                        required: true,
-                        type: "date",
-                    },
-                    status: {
-                        label: "وضعیت",
-                        required: true,
-                        type: "select",
-                        options: [
-                            { value: 1, text: "فعال" },
-                            { value: 0, text: "غیرفعال" },
-                        ],
-                    },
-                },
-                onSubmit: function (values) {
-                    console.log("Form Data:", values);
-
-                    // اضافه کردن CSRF token
-                    values._token = $('meta[name="csrf-token"]').attr(
-                        "content"
-                    );
-
-                    // ارسال Ajax
-                    $.post("/admin2/popups/store", values, function (res) {
-                        console.log("Server Response:", res);
-                        // offCanvasEl.hide();
-                        Swal.fire({ icon: "success", title: "موفق!", text: res.success, timer: 1500, showConfirmButton: false });
-                        dt_basic.ajax.reload(); // اگر میخوای جدول بروز بشه
-                    });
-                },
-            });
             // delete one item----------------------------------------------------------------------------------------------------------------
-            dt_basic.on("click", ".item-delete", function () {
+            dt_popups.on("click", ".item-delete", function() {
                 const id = $(this).data("id");
 
                 if (!id) return;
@@ -285,14 +277,14 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "/admin2/popups/delete/" + id,
+                            url: "{{ route('admin.popups.destroy', '') }}/" + id,
                             type: "DELETE",
                             data: {
                                 _token: $('meta[name="csrf-token"]').attr(
                                     "content"
                                 ),
                             },
-                            success: function (res) {
+                            success: function(res) {
                                 Swal.fire({
                                     icon: "success",
                                     title: "موفق!",
@@ -301,10 +293,10 @@
                                     timerProgressBar: true,
                                     showConfirmButton: false,
                                 });
-                                dt_basic.ajax.reload(null, false);
+                                dt_popups.ajax.reload(null, false);
                                 $("#bulk-actions").addClass("d-none");
                             },
-                            error: function (err) {
+                            error: function(err) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "خطا!",
@@ -321,18 +313,20 @@
             const btnBulk = $("#bulk-delete");
             if (btnBulk) {
                 // وقتی رکورد انتخاب شد
-                dt_basic.on("select", function (e, dt, type, indexes) {
+                dt_popups.on("select", function(e, dt, type, indexes) {
                     toggleBulkActions();
                 });
 
                 // وقتی رکورد از انتخاب خارج شد
-                dt_basic.on("deselect", function (e, dt, type, indexes) {
+                dt_popups.on("deselect", function(e, dt, type, indexes) {
                     toggleBulkActions();
                 });
 
                 // تابع برای نمایش / مخفی کردن باکس عملیات
                 function toggleBulkActions() {
-                    const selected = dt_basic.rows({ selected: true }).count();
+                    const selected = dt_popups.rows({
+                        selected: true
+                    }).count();
                     if (selected > 0) {
                         // $("#bulk-actions").removeClass("d-none");
                         $("#bulk-actions #bulk-delete").prop("disabled", false);
@@ -343,14 +337,16 @@
 
                 // گرفتن ID ها
                 function getSelectedIds() {
-                    return dt_basic
-                        .rows({ selected: true })
+                    return dt_popups
+                        .rows({
+                            selected: true
+                        })
                         .data()
                         .pluck("id")
                         .toArray();
                 }
 
-                btnBulk.on("click", function () {
+                btnBulk.on("click", function() {
                     const ids = getSelectedIds();
 
                     if (ids.length === 0) {
@@ -382,7 +378,7 @@
                                     ),
                                     ids: ids,
                                 },
-                                success: function (res) {
+                                success: function(res) {
                                     Swal.fire({
                                         icon: "success",
                                         title: "موفق!",
@@ -391,10 +387,10 @@
                                         timerProgressBar: true,
                                         showConfirmButton: false,
                                     });
-                                    dt_basic.ajax.reload(null, false);
+                                    dt_popups.ajax.reload(null, false);
                                     $("#bulk-actions").addClass("d-none");
                                 },
-                                error: function (err) {
+                                error: function(err) {
                                     Swal.fire({
                                         icon: "error",
                                         title: "خطا!",
@@ -420,16 +416,14 @@
             // آپلود تصویر جدید
             $("#uploadImageBtn").click(function() {
                 const popupId = $("#popup_id").val();
-                const file = $("#popup_image")[0].files[0];
-                if (!file) return Swal.fire("خطا!", "هیچ تصویری انتخاب نشده است.", "error");
-
+                const file = $('#popup_image').val();
                 const formData = new FormData();
                 formData.append("file", file);
                 formData.append("popup_id", popupId);
                 formData.append("_token", $('meta[name="csrf-token"]').attr("content"));
 
                 $.ajax({
-                    url: "{{ route('admin.popups.upload') }}",
+                    url: "/admin2/popups/upload/" + popupId,
                     type: "POST",
                     data: formData,
                     contentType: false,
@@ -448,7 +442,7 @@
             // بارگذاری تصاویر پاپ‌آپ
             function loadPopupFiles(popupId) {
                 $("#popupImagesList").html('<p class="text-center text-muted">در حال بارگذاری...</p>');
-                $.get(`/admin2/popup-files/list/${popupId}`, function(res) {
+                $.get(`/admin2/popups/showImages/${popupId}`, function(res) {
                     if (res.data.length === 0) {
                         $("#popupImagesList").html(
                             '<p class="text-center text-muted">هیچ تصویری وجود ندارد.</p>');
@@ -478,7 +472,7 @@
             // تغییر وضعیت عکس
             $(document).on("click", ".toggle-status", function() {
                 const id = $(this).data("id");
-                $.post(`/admin2/popup-files/toggle-status/${id}`, {
+                $.post(`/admin2/popups/status/${id}`, {
                     _token: $('meta[name="csrf-token"]').attr("content")
                 }, function() {
                     Swal.fire("موفق!", "وضعیت تصویر تغییر کرد.", "success");
@@ -499,7 +493,7 @@
                 }).then(result => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `/admin2/popup-files/${id}`,
+                            url: "{{ route('admin.popups.image.delete', '') }}/" + id,
                             type: "DELETE",
                             data: {
                                 _token: $('meta[name="csrf-token"]').attr("content")

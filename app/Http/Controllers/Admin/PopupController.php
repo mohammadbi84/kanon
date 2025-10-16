@@ -95,7 +95,7 @@ class PopupController extends Controller
     /**
      * حذف تکی
      */
-    public function delete($id)
+    public function destroy($id)
     {
         $popup = Popup::findOrFail($id);
         $popup->delete();
@@ -136,22 +136,21 @@ class PopupController extends Controller
         $popup = Popup::findOrFail($id);
 
         $request->validate([
-            'file' => 'required|mimes:jpg,jpeg,png,webp|max:2048',
+            'file' => 'required|string',
         ], [
             'file.required' => 'انتخاب عکس الزامی است.',
-            'file.mimes' => 'فرمت عکس معتبر نیست.',
-            'file.max' => 'حجم فایل باید کمتر از ۲ مگابایت باشد.',
         ]);
 
-        $path = $request->file('file')->store('uploads/popups', 'public');
+        // $file = $request->file('file');
+        // $pathName = time() . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
+        // $file->move('uploads/popups', $pathName);
+        // $url = 'uploads/popups/' . $pathName;
 
-        $file = new File([
-            'url' => '/storage/' . $path,
+        $file = $popup->files()->create([
+            'url' => $request->file,
             'type' => 'image',
             'status' => 1,
         ]);
-
-        $popup->files()->save($file);
 
         return response()->json(['success' => 'عکس با موفقیت آپلود شد.', 'file' => $file]);
     }
@@ -162,6 +161,11 @@ class PopupController extends Controller
     public function deleteImage($id)
     {
         $file = File::findOrFail($id);
+        // if (!file_exists(public_path($file->url))) {
+        //     return response()->json(['error' => 'فایل یافت نشد.'], 404);
+        // }
+        // // حذف فایل از دیسک
+        // unlink(public_path($file->url));
         $file->delete();
 
         return response()->json(['success' => 'عکس با موفقیت حذف شد.']);
