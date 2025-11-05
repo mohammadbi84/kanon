@@ -1729,27 +1729,19 @@
                                                 data-end-date="{{ $item->date }}">
                                                 <div class="timer-col">
                                                     <span class="timer-number days">12
-                                                        {{-- <span class="d-block text-dark">روز</span> --}}
                                                     </span>
-                                                    {{-- <span class="timer-text">روز</span> --}}
                                                 </div>
                                                 <div class="timer-col">
                                                     <span class="timer-number hours">20
-                                                        {{-- <span class="d-block text-dark">روز</span> --}}
                                                     </span>
-                                                    {{-- <span class="timer-text">ساعت</span> --}}
                                                 </div>
                                                 <div class="timer-col">
                                                     <span class="timer-number minutes">20
-                                                        {{-- <span class="d-block text-dark">روز</span> --}}
                                                     </span>
-                                                    {{-- <span class="timer-text">دقیقه</span> --}}
                                                 </div>
                                                 <div class="timer-col">
                                                     <span class="timer-number seconds">20
-                                                        {{-- <span class="d-block text-dark">روز</span> --}}
                                                     </span>
-                                                    {{-- <span class="timer-text">ثانیه</span> --}}
                                                 </div>
                                             </div>
                                         </div>

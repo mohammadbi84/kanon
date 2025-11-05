@@ -200,15 +200,7 @@ body {
 
 .countdown-timer {
     display: flex;
-    /*  خیلی مهم: تایمر رو به یک فلکس‌باکس تبدیل می‌کنیم */
     justify-content: space-around;
-    /* فاصله مساوی بین آیتم‌ها */
-    /*  اختیاری: می‌تونید استایل‌های دیگه هم اضافه کنید */
-    /*  مثلاً: */
-    /* width: 80%; */
-    /* margin: 0 auto;  */
-    /* padding: 10px; */
-    /* border: 1px solid #ccc; */
 }
 
 .timer-col {
