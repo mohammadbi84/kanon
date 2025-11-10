@@ -13,9 +13,6 @@ function initMainMenu() {
                 12
             }px`
         );
-        // alert(screenWidth);
-
-        // alert(searchBarParentWidth.parentElement.clientWidth);
     } else {
         let containerParentWidth = document.querySelector("#navbar_container");
 
@@ -23,9 +20,6 @@ function initMainMenu() {
             "--main-menu-margin",
             `${(screenWidth - containerParentWidth.clientWidth) / 2}px`
         );
-
-        // alert(screenWidth);
-        // alert(containerParentWidth.clientWidth);
     }
 
     //endregion: make main-menu width same as search-bar width
