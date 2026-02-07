@@ -491,7 +491,7 @@
             <div class="row row-cols-center">
                 <div class="col-md-2"></div>
                 <div class="col-md-8 px-0">
-                    @if ($alert->status == 1)
+                    {{-- @if ($alert->status == 1)
                         <div class="alert alert-dismissible"
                             style="text-align: justify;background-color:{{ $alert->color }}">
                             <strong>{{ $alert->title }}</strong>
@@ -499,7 +499,7 @@
                             {{ $alert->text }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
-                    @endif
+                    @endif --}}
                 </div>
                 <div class="col-md-2"></div>
                 <div class="col-md-2"></div>

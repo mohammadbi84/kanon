@@ -533,7 +533,7 @@
 @section('content')
     {{-- banner --}}
     <div class="profile-bg w-100 position-relative" style="">
-        <img src="{{ asset('https://kanon.royceceramica.com/files/files/1/img3.jpg') }}" alt="test"
+        <img src="{{ asset('https://yazdskill.com/files/files/1/img3.jpg') }}" alt="test"
             class="w-100 h-100 object-fit-cover">
     </div>
 
@@ -649,8 +649,8 @@
                                         <div class="teacher-card card text-center border" data-bs-toggle="modal"
                                             data-bs-target="#teacherModal" data-name="الکسانس" data-degree="دکترای عمران"
                                             data-details="سابقه: 10 سال تدریس در دانشگاه تهران، دروس: سازه، مقاومت مصالح"
-                                            data-image="https://kanon.royceceramica.com/files/files/1/img1.jpg">
-                                            <img src="https://kanon.royceceramica.com/files/files/1/img1.jpg"
+                                            data-image="https://yazdskill.com/files/files/1/img1.jpg">
+                                            <img src="https://yazdskill.com/files/files/1/img1.jpg"
                                                 class="card-img-top" alt="استاد">
                                             <div class="card-body p-0">
                                                 <p class="card-title text-intro text-center text-muted">الکسانس</p>
@@ -665,8 +665,8 @@
                                             data-bs-target="#teacherModal" data-name="دیمیک هریس"
                                             data-degree="کارشناسی ارشد معماری"
                                             data-details="سابقه: 8 سال تدریس در دانشگاه شریف، دروس: معماری مدرن"
-                                            data-image="https://kanon.royceceramica.com/files/files/1/img1.jpg">
-                                            <img src="https://kanon.royceceramica.com/files/files/1/img1.jpg"
+                                            data-image="https://yazdskill.com/files/files/1/img1.jpg">
+                                            <img src="https://yazdskill.com/files/files/1/img1.jpg"
                                                 class="card-img-top" alt="استاد">
                                             <div class="card-body p-0">
                                                 <p class="card-title text-intro text-center text-muted">دیمیک هریس</p>
@@ -681,8 +681,8 @@
                                             data-bs-target="#teacherModal" data-name="چلیسی جاگر"
                                             data-degree="دکترای برق"
                                             data-details="سابقه: 12 سال تدریس، دروس: الکترونیک قدرت"
-                                            data-image="https://kanon.royceceramica.com/files/files/1/img1.jpg">
-                                            <img src="https://kanon.royceceramica.com/files/files/1/img1.jpg"
+                                            data-image="https://yazdskill.com/files/files/1/img1.jpg">
+                                            <img src="https://yazdskill.com/files/files/1/img1.jpg"
                                                 class="card-img-top" alt="استاد">
                                             <div class="card-body p-0">
                                                 <p class="card-title text-intro text-center text-muted">چلیسی جاگر</p>
@@ -740,7 +740,7 @@
                     <div class="row g-2 mb-2">
                         <!-- تصاویر گالری کوچک -->
                         <div class="col-4">
-                            <img src="https://kanon.royceceramica.com/files/files/1/img2.jpg"
+                            <img src="https://yazdskill.com/files/files/1/img2.jpg"
                                 class="img-fluid rounded-3 gallery-img" alt="گالری" data-bs-toggle="modal"
                                 data-bs-target="#galleryModal" data-index="0">
                         </div>
@@ -1015,7 +1015,7 @@
                                 <div class="swiper mySwiper">
                                     <div class="swiper-wrapper">
                                         <div class="swiper-slide">
-                                            <img src="https://kanon.royceceramica.com/files/files/1/img2.jpg"
+                                            <img src="https://yazdskill.com/files/files/1/img2.jpg"
                                                 alt="تصویر ۱" class="w-100 h-100 object-fit-cover">
                                         </div>
                                         <div class="swiper-slide">
@@ -1166,7 +1166,7 @@
                             <div class="school-event-card row d-flex align-items-center flex-wrap border-top">
                                 <!-- سمت راست: تصویر و اطلاعات -->
                                 <div class="col-2 p-0">
-                                    <img src="{{ asset('https://kanon.royceceramica.com/files/files/1/img3.jpg') }}"
+                                    <img src="{{ asset('https://yazdskill.com/files/files/1/img3.jpg') }}"
                                         class="event-image" alt="رویداد">
                                 </div>
                                 <!-- سمت چپ: تاریخ و دکمه -->
@@ -1228,7 +1228,7 @@
                             <div class="school-event-card row d-flex align-items-center flex-wrap border-top">
                                 <!-- سمت راست: تصویر و اطلاعات -->
                                 <div class="col-2 p-0">
-                                    <img src="{{ asset('https://kanon.royceceramica.com/files/files/1/img3.jpg') }}"
+                                    <img src="{{ asset('https://yazdskill.com/files/files/1/img3.jpg') }}"
                                         class="event-image" alt="رویداد">
                                 </div>
                                 <!-- سمت چپ: تاریخ و دکمه -->
@@ -1290,7 +1290,7 @@
                             <div class="school-event-card row d-flex align-items-center flex-wrap border-top">
                                 <!-- سمت راست: تصویر و اطلاعات -->
                                 <div class="col-2 p-0">
-                                    <img src="{{ asset('https://kanon.royceceramica.com/files/files/1/img3.jpg') }}"
+                                    <img src="{{ asset('https://yazdskill.com/files/files/1/img3.jpg') }}"
                                         class="event-image" alt="رویداد">
                                 </div>
                                 <!-- سمت چپ: تاریخ و دکمه -->

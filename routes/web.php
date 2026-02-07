@@ -296,7 +296,7 @@ Route::prefix('/dashboard')->middleware('auth')->group(function () {
 
     Route::prefix('/organ')->group(function () {
         Route::get('/herfe', [\App\Http\Controllers\SchoolController::class, 'herfes'])->name('organ.herfes');
-        Route::post('/herfe', action: [\App\Http\Controllers\SchoolController::class, 'herfesPost'])->name('organ.herfes.post');
+        Route::post('/herfe', [\App\Http\Controllers\SchoolController::class, 'herfesPost'])->name('organ.herfes.post');
         Route::get('/reshte', [\App\Http\Controllers\SchoolController::class, 'reshtes'])->name('organ.reshtes');
         Route::post('/reshte', [\App\Http\Controllers\SchoolController::class, 'reshtesPost'])->name('organ.reshtes.post');
         Route::get('/file', [\App\Http\Controllers\SchoolController::class, 'files'])->name('organ.files');

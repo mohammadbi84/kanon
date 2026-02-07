@@ -312,8 +312,9 @@ class SiteController extends Controller
             $cities = City::where('active', 1)->where('parent', $state->id)->get();
             $state['cities'] = $cities;
         }
-        $herfes = Group::all();
-        return view('site.register', compact('socials', 'states', 'herfes', 'ghanon'));
+        $herfes = [];
+        $khoshes = [];
+        return view('auth.register', compact('socials', 'khoshes','states', 'herfes', 'ghanon'));
     }
     public function show($id)
     {
