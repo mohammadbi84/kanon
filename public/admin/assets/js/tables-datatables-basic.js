@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
             clusters = $(".clusters"),
             fields = $(".fields"),
             popups = $(".popups"),
+            articles = $(".articles"),
             professions = $(".professions"),
             tuitions = $(".tuitions"),
             kardanesh = $(".kardanesh");
@@ -134,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             return data
                                 ? $('<table class="table"/><tbody />').append(
-                                      data
+                                      data,
                                   )
                                 : false;
                         },
@@ -147,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             $("#bulk-actions").appendTo(".bulk-holder");
             $("div.head-label").html(
-                '<h5 class="card-title mb-0">نوع شغل ها</h5>'
+                '<h5 class="card-title mb-0">نوع شغل ها</h5>',
             );
             // add new record-------------------------------------------------------------------------------------------------------------
             initOffcanvasForm({
@@ -166,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // اضافه کردن CSRF token
                     values._token = $('meta[name="csrf-token"]').attr(
-                        "content"
+                        "content",
                     );
 
                     // ارسال Ajax
@@ -199,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             type: "DELETE",
                             data: {
                                 _token: $('meta[name="csrf-token"]').attr(
-                                    "content"
+                                    "content",
                                 ),
                             },
                             success: function (res) {
@@ -288,7 +289,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 type: "POST",
                                 data: {
                                     _token: $('meta[name="csrf-token"]').attr(
-                                        "content"
+                                        "content",
                                     ),
                                     ids: ids,
                                 },
@@ -427,7 +428,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             return data
                                 ? $('<table class="table"/><tbody />').append(
-                                      data
+                                      data,
                                   )
                                 : false;
                         },
@@ -440,7 +441,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             $("#bulk-actions").appendTo(".bulk-holder");
             $("div.head-label").html(
-                '<h5 class="card-title mb-0">نوع کاردانش ها</h5>'
+                '<h5 class="card-title mb-0">نوع کاردانش ها</h5>',
             );
             // add new record-------------------------------------------------------------------------------------------------------------
             initOffcanvasForm({
@@ -459,7 +460,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // اضافه کردن CSRF token
                     values._token = $('meta[name="csrf-token"]').attr(
-                        "content"
+                        "content",
                     );
 
                     // ارسال Ajax
@@ -493,7 +494,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             type: "DELETE",
                             data: {
                                 _token: $('meta[name="csrf-token"]').attr(
-                                    "content"
+                                    "content",
                                 ),
                             },
                             success: function (res) {
@@ -582,7 +583,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 type: "POST",
                                 data: {
                                     _token: $('meta[name="csrf-token"]').attr(
-                                        "content"
+                                        "content",
                                     ),
                                     ids: ids,
                                 },
@@ -732,7 +733,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             return data
                                 ? $('<table class="table"/><tbody />').append(
-                                      data
+                                      data,
                                   )
                                 : false;
                         },
@@ -745,7 +746,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             $("#bulk-actions").appendTo(".bulk-holder");
             $("div.head-label").html(
-                '<h5 class="card-title mb-0">رسته ها</h5>'
+                '<h5 class="card-title mb-0">رسته ها</h5>',
             );
             // add new record-------------------------------------------------------------------------------------------------------------
             initOffcanvasForm({
@@ -764,7 +765,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // اضافه کردن CSRF token
                     values._token = $('meta[name="csrf-token"]').attr(
-                        "content"
+                        "content",
                     );
 
                     // ارسال Ajax
@@ -798,7 +799,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             type: "DELETE",
                             data: {
                                 _token: $('meta[name="csrf-token"]').attr(
-                                    "content"
+                                    "content",
                                 ),
                             },
                             success: function (res) {
@@ -887,7 +888,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 type: "POST",
                                 data: {
                                     _token: $('meta[name="csrf-token"]').attr(
-                                        "content"
+                                        "content",
                                     ),
                                     ids: ids,
                                 },
@@ -1047,7 +1048,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             return data
                                 ? $('<table class="table"/><tbody />').append(
-                                      data
+                                      data,
                                   )
                                 : false;
                         },
@@ -1060,7 +1061,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             $("#bulk-actions").appendTo(".bulk-holder");
             $("div.head-label").html(
-                '<h5 class="card-title mb-0">خوشه ها</h5>'
+                '<h5 class="card-title mb-0">خوشه ها</h5>',
             );
             // add new record-------------------------------------------------------------------------------------------------------------
             initOffcanvasForm({
@@ -1097,7 +1098,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // اضافه کردن CSRF token
                     values._token = $('meta[name="csrf-token"]').attr(
-                        "content"
+                        "content",
                     );
 
                     // ارسال Ajax
@@ -1113,12 +1114,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 $.get("/admin2/categories", function (res) {
                     // فرض می‌کنیم کنترلر دسته‌ها JSON برمی‌گردونه (برای ajax)
                     const select = $(
-                        "#form-add-new-record select[name='category_id']"
+                        "#form-add-new-record select[name='category_id']",
                     );
                     select.empty();
                     res.data.forEach((cat) => {
                         select.append(
-                            $("<option>", { value: cat.id, text: cat.name })
+                            $("<option>", { value: cat.id, text: cat.name }),
                         );
                     });
                 });
@@ -1127,11 +1128,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 $("div.head-label").html(
                     '<h5 class="card-title mb-0">خوشه‌های رسته شماره ' +
                         categoryId +
-                        "</h5>"
+                        "</h5>",
                 );
             } else {
                 $("div.head-label").html(
-                    '<h5 class="card-title mb-0">خوشه‌ها</h5>'
+                    '<h5 class="card-title mb-0">خوشه‌ها</h5>',
                 );
             }
 
@@ -1157,7 +1158,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             type: "DELETE",
                             data: {
                                 _token: $('meta[name="csrf-token"]').attr(
-                                    "content"
+                                    "content",
                                 ),
                             },
                             success: function (res) {
@@ -1246,7 +1247,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 type: "POST",
                                 data: {
                                     _token: $('meta[name="csrf-token"]').attr(
-                                        "content"
+                                        "content",
                                     ),
                                     ids: ids,
                                 },
@@ -1415,7 +1416,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             return data
                                 ? $('<table class="table"/><tbody />').append(
-                                      data
+                                      data,
                                   )
                                 : false;
                         },
@@ -1428,7 +1429,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             $("#bulk-actions").appendTo(".bulk-holder");
             $("div.head-label").html(
-                '<h5 class="card-title mb-0">رشته ها</h5>'
+                '<h5 class="card-title mb-0">رشته ها</h5>',
             );
             // add new record-------------------------------------------------------------------------------------------------------------
             initOffcanvasForm({
@@ -1465,7 +1466,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // اضافه کردن CSRF token
                     values._token = $('meta[name="csrf-token"]').attr(
-                        "content"
+                        "content",
                     );
 
                     // ارسال Ajax
@@ -1481,12 +1482,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 $.get("/admin2/clusters", function (res) {
                     // فرض می‌کنیم کنترلر دسته‌ها JSON برمی‌گردونه (برای ajax)
                     const select = $(
-                        "#form-add-new-record select[name='cluster_id']"
+                        "#form-add-new-record select[name='cluster_id']",
                     );
                     select.empty();
                     res.data.forEach((cat) => {
                         select.append(
-                            $("<option>", { value: cat.id, text: cat.name })
+                            $("<option>", { value: cat.id, text: cat.name }),
                         );
                     });
                 });
@@ -1495,11 +1496,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 $("div.head-label").html(
                     '<h5 class="card-title mb-0">رشته‌های خوشه شماره ' +
                         clusterId +
-                        "</h5>"
+                        "</h5>",
                 );
             } else {
                 $("div.head-label").html(
-                    '<h5 class="card-title mb-0">رشته‌ها</h5>'
+                    '<h5 class="card-title mb-0">رشته‌ها</h5>',
                 );
             }
 
@@ -1525,7 +1526,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             type: "DELETE",
                             data: {
                                 _token: $('meta[name="csrf-token"]').attr(
-                                    "content"
+                                    "content",
                                 ),
                             },
                             success: function (res) {
@@ -1614,7 +1615,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 type: "POST",
                                 data: {
                                     _token: $('meta[name="csrf-token"]').attr(
-                                        "content"
+                                        "content",
                                     ),
                                     ids: ids,
                                 },
@@ -1776,7 +1777,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             }).join("");
                             return data
                                 ? $('<table class="table"/><tbody />').append(
-                                      data
+                                      data,
                                   )
                                 : false;
                         },
@@ -1793,17 +1794,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 $("div.head-label").html(
                     '<h5 class="card-title mb-0">حرفه‌های رشته ' +
                         fieldName +
-                        "</h5>"
+                        "</h5>",
                 );
             } else if (fieldId) {
                 $("div.head-label").html(
                     '<h5 class="card-title mb-0">حرفه‌های رشته شماره ' +
                         fieldId +
-                        "</h5>"
+                        "</h5>",
                 );
             } else {
                 $("div.head-label").html(
-                    '<h5 class="card-title mb-0">لیست حرفه‌ها</h5>'
+                    '<h5 class="card-title mb-0">لیست حرفه‌ها</h5>',
                 );
             }
             // عنوان جدول
@@ -1815,7 +1816,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         `<button type="button" class="btn btn-success" id="submit-profession-form">
                             <i class="bx bx-save"></i>
                             ثبت اطلاعات
-                        </button>`
+                        </button>`,
                 );
             } else if (fieldId) {
                 $("div.header-label").html(
@@ -1825,7 +1826,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         `<button type="button" class="btn btn-success" id="submit-profession-form">
                             <i class="bx bx-save"></i>
                             ثبت اطلاعات
-                        </button>`
+                        </button>`,
                 );
             } else {
                 $("div.header-label").html(
@@ -1833,7 +1834,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         `<button type="button" class="btn btn-success" id="submit-profession-form">
                         <i class="bx bx-save"></i>
                         ثبت اطلاعات
-                    </button>`
+                    </button>`,
                 );
             }
 
@@ -2055,7 +2056,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                     formData.append(
                         "_token",
-                        $('meta[name="csrf-token"]').attr("content")
+                        $('meta[name="csrf-token"]').attr("content"),
                     );
 
                     $.ajax({
@@ -2072,7 +2073,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             const submitButton = document.getElementById(
-                "submit-profession-form"
+                "submit-profession-form",
             );
             const submitBtn = document.getElementById("form-submit-btn");
             if (submitButton && submitBtn) {
@@ -2086,12 +2087,15 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!fieldId) {
                 $.get("/admin2/fields", function (res) {
                     const select = $(
-                        "#form-add-new-record select[name='field_id']"
+                        "#form-add-new-record select[name='field_id']",
                     );
                     select.empty();
                     res.data.forEach((field) => {
                         select.append(
-                            $("<option>", { value: field.id, text: field.name })
+                            $("<option>", {
+                                value: field.id,
+                                text: field.name,
+                            }),
                         );
                     });
                 });
@@ -2119,7 +2123,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             type: "DELETE",
                             data: {
                                 _token: $('meta[name="csrf-token"]').attr(
-                                    "content"
+                                    "content",
                                 ),
                             },
                             success: function (res) {
@@ -2208,7 +2212,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 type: "POST",
                                 data: {
                                     _token: $('meta[name="csrf-token"]').attr(
-                                        "content"
+                                        "content",
                                     ),
                                     ids: ids,
                                 },
@@ -2266,7 +2270,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <strong class="me-2">تاریخ تدوین: </strong> ${
                                     data.draft_date
                                         ? new Date(
-                                              data.draft_date
+                                              data.draft_date,
                                           ).toLocaleDateString("fa-IR")
                                         : "-"
                                 }
@@ -2467,7 +2471,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             return data
                                 ? $('<table class="table"/><tbody />').append(
-                                      data
+                                      data,
                                   )
                                 : false;
                         },
@@ -2480,7 +2484,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             $("#bulk-actions").appendTo(".bulk-holder");
             $("div.head-label").html(
-                '<h5 class="card-title mb-0">شهریه ها</h5>'
+                '<h5 class="card-title mb-0">شهریه ها</h5>',
             );
             // add new record-------------------------------------------------------------------------------------------------------------
             // فرم افزودن شهریه جدید
@@ -2521,7 +2525,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         isNaN(endDate.getTime())
                     ) {
                         alert(
-                            "لطفاً تاریخ شروع و پایان را به درستی وارد کنید."
+                            "لطفاً تاریخ شروع و پایان را به درستی وارد کنید.",
                         );
                         return;
                     }
@@ -2534,7 +2538,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // اضافه کردن CSRF token
                     values._token = $('meta[name="csrf-token"]').attr(
-                        "content"
+                        "content",
                     );
 
                     // ارسال Ajax
@@ -2552,18 +2556,18 @@ document.addEventListener("DOMContentLoaded", function () {
             // گرفتن لیست شهرها برای select
             $.get("/admin2/cities", function (res) {
                 const citySelect = $(
-                    "#form-add-new-record select[name='city_id']"
+                    "#form-add-new-record select[name='city_id']",
                 );
                 citySelect.empty();
                 citySelect.append(
-                    '<option value="" disabled selected>انتخاب کنید...</option>'
+                    '<option value="" disabled selected>انتخاب کنید...</option>',
                 );
                 res.data.forEach((city) => {
                     citySelect.append(
                         $("<option>", {
                             value: city.id,
                             text: city.title,
-                        })
+                        }),
                     );
                 });
             });
@@ -2589,7 +2593,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             type: "DELETE",
                             data: {
                                 _token: $('meta[name="csrf-token"]').attr(
-                                    "content"
+                                    "content",
                                 ),
                             },
                             success: function (res) {
@@ -2678,7 +2682,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 type: "POST",
                                 data: {
                                     _token: $('meta[name="csrf-token"]').attr(
-                                        "content"
+                                        "content",
                                     ),
                                     ids: ids,
                                 },
@@ -2710,7 +2714,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         if (popups.length) {
             // add new record-------------------------------------------------------------------------------------------------------------
-            // فرم افزودن شهریه جدید
+            // فرم افزودن پاپ آپ جدید
             initOffcanvasForm({
                 formId: "form-add-new-record",
                 // offcanvasId: "add-new-record",
@@ -2728,13 +2732,18 @@ document.addEventListener("DOMContentLoaded", function () {
                     },
                     start_date: {
                         label: "تاریخ شروع",
-                        required: true,
+                        required: false,
                         type: "date",
                     },
                     end_date: {
                         label: "تاریخ پایان",
-                        required: true,
+                        required: false,
                         type: "date",
+                    },
+                    sort: {
+                        label: "ترتیب چیدمان",
+                        required: true,
+                        type: "number",
                     },
                     status: {
                         label: "وضعیت",
@@ -2751,15 +2760,64 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // اضافه کردن CSRF token
                     values._token = $('meta[name="csrf-token"]').attr(
-                        "content"
+                        "content",
                     );
 
                     // ارسال Ajax
                     $.post("/admin2/popups", values, function (res) {
                         console.log("Server Response:", res);
                         // offCanvasEl.hide();
-                        Swal.fire({ icon: "success", title: "موفق!", text: res.success, timer: 1500, showConfirmButton: false });
+                        Swal.fire({
+                            icon: "success",
+                            title: "موفق!",
+                            text: res.success,
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
                         dt_popups.ajax.reload(); // اگر میخوای جدول بروز بشه
+                    });
+                },
+            });
+        }
+        if (articles.length) {
+            // add new record-------------------------------------------------------------------------------------------------------------
+            initOffcanvasForm({
+                formId: "form-add-new-record",
+                // offcanvasId: "add-new-record",
+                triggerSelector: ".create-new",
+                fields: {
+                    title: {
+                        label: "عنوان صفحه",
+                        required: true,
+                        type: "text",
+                    },
+                    body: {
+                        label: "محتوای صفحه",
+                        required: true,
+                        type: "text",
+                    },
+                },
+                onSubmit: function (values) {
+                    // console.log("Form Data:", values);
+
+                    // اضافه کردن CSRF token
+                    values._token = $('meta[name="csrf-token"]').attr(
+                        "content",
+                    );
+
+                    // ارسال Ajax
+                    $.post("/admin2/articles/store", values, function (res) {
+                        // console.log("Server Response:", res);
+                        // offCanvasEl.hide();
+                        Swal.fire({
+                            icon: "success",
+                            title: "موفق!",
+                            text: res.success,
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+
+                        dt_basic.ajax.reload(); // اگر میخوای جدول بروز بشه
                     });
                 },
             });
@@ -2920,7 +2978,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 hiddenInput.value = miladiDate;
                                 input.setAttribute(
                                     "data-miladi-date",
-                                    miladiDate
+                                    miladiDate,
                                 );
                             } else {
                                 hiddenInput.value = "";
@@ -2936,7 +2994,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 hiddenInput.value = miladiDate;
                                 input.setAttribute(
                                     "data-miladi-date",
-                                    miladiDate
+                                    miladiDate,
                                 );
                             }
                         },
@@ -3037,7 +3095,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // ریست کردن تمام فیلدهای input
             const inputs = formEl.querySelectorAll(
-                'input:not([type="hidden"]), textarea, select'
+                'input:not([type="hidden"]), textarea, select',
             );
             inputs.forEach((input) => {
                 switch (input.type) {
@@ -3099,7 +3157,8 @@ document.addEventListener("DOMContentLoaded", function () {
             plugins: {
                 trigger: new FormValidation.plugins.Trigger(),
                 bootstrap5: new FormValidation.plugins.Bootstrap5({
-                    rowSelector: ".col-sm-12, .col-sm-6, .col-12, col-md-6, form-group",
+                    rowSelector:
+                        ".col-sm-12, .col-sm-6, .col-sm-3, .col-12, col-md-6, form-group",
                 }),
                 submitButton: new FormValidation.plugins.SubmitButton(),
                 autoFocus: new FormValidation.plugins.AutoFocus(),
@@ -3107,12 +3166,12 @@ document.addEventListener("DOMContentLoaded", function () {
             init: (instance) => {
                 instance.on("plugins.message.placed", function (e) {
                     const parent = e.element.closest(
-                        ".input-group, .fv-row, .form-group"
+                        ".input-group, .fv-row, .form-group",
                     );
                     if (parent) {
                         parent.insertAdjacentElement(
                             "afterend",
-                            e.messageElement
+                            e.messageElement,
                         );
                     }
                 });
@@ -3145,7 +3204,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // برای select2 مقادیر را از المنت اصلی می‌خوانیم
                 if (fields[fieldName].type === "select2") {
                     const select = formEl.querySelector(
-                        `[name="${fieldName}"]`
+                        `[name="${fieldName}"]`,
                     );
                     if (select) {
                         values[fieldName] = select.value;

@@ -29,18 +29,23 @@
                 </div>
 
                 {{-- تاریخ شروع و پایان --}}
-                <div class="col-sm-6">
+                <div class="col-sm-3">
                     <label class="form-label" for="start_date">تاریخ شروع</label>
                     <input type="date" id="start_date" name="start_date" class="form-control">
                 </div>
 
-                <div class="col-sm-6">
+                <div class="col-sm-3">
                     <label class="form-label" for="end_date">تاریخ پایان</label>
                     <input type="date" id="end_date" name="end_date" class="form-control">
                 </div>
 
+                <div class="col-sm-3">
+                    <label class="form-label" for="sort">ترتیب نمایش</label>
+                    <input type="number" id="sort" name="sort" value="{{ $last + 1 }}" readonly class="form-control">
+                </div>
+
                 {{-- وضعیت --}}
-                <div class="col-sm-6">
+                <div class="col-sm-3">
                     <label class="form-label" for="status">وضعیت</label>
                     <select id="status" name="status" class="form-select">
                         <option value="1">فعال</option>
@@ -130,6 +135,10 @@
                         title: "شناسه"
                     },
                     {
+                        data: "sort",
+                        title: "چیدمان"
+                    },
+                    {
                         data: "title",
                         title: "عنوان"
                     },
@@ -200,9 +209,9 @@
                         searchable: false,
                         render: function(data, type, full) {
                             return `
-                            <button class="btn btn-sm btn-info manage-files" data-id="${full.id}">مدیریت عکس‌ها</button>
-                            <a href="/admin2/popups/edit/${full.id}" class="btn btn-sm btn-primary">ویرایش</a>
-                            <button class="btn btn-sm btn-danger item-delete" data-id="${full.id}">حذف</button>
+                            <button class="btn btn-sm btn-info manage-files" data-id="${full.id}"><i class="bx bxs-image"></i></button>
+                            <a href="/admin2/popups/edit/${full.id}" class="btn btn-sm btn-primary"><i class="bx bxs-edit"></i></a>
+                            <button class="btn btn-sm btn-danger item-delete" data-id="${full.id}"><i class="bx bxs-trash"></i></button>
                         `;
                         }
                     }

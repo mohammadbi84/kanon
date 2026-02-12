@@ -158,7 +158,7 @@
             </ul>
         </li>
         <li class="menu-item @if (Route::currentRouteName() == 'admin.popups.index' ||
-                Route::currentRouteName() == 'test' ||
+                Route::currentRouteName() == 'admin.articles.index' ||
                 Route::currentRouteName() == 'test') open @endif">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-grid-alt"></i>
@@ -168,6 +168,11 @@
                 <li class="menu-item @if (Route::currentRouteName() == 'admin.popups.index') active @endif">
                     <a href="{{ route('admin.popups.index') }}" class="menu-link">
                         <div>پاپ آپ</div>
+                    </a>
+                </li>
+                <li class="menu-item @if (Route::currentRouteName() == 'admin.articles.index') active @endif">
+                    <a href="{{ route('admin.articles.index') }}" class="menu-link">
+                        <div>صفحات داخلی</div>
                     </a>
                 </li>
                 <li class="menu-item @if (Route::currentRouteName() == 'test') active @endif">

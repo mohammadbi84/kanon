@@ -14,11 +14,26 @@ class Popup extends Model
         'start_date',
         'end_date',
         'status',
+        'link',
+        'sort',
     ];
 
     // رابطه چندریختی با فایل‌ها
     public function files()
     {
-        return $this->morphMany(File::class, 'fileable');
+        return $this->morphMany(File::class, 'fileable'); 
+    }
+    /**
+     * پاپ‌آپ فعال و در بازه زمانی معتبر
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 1)
+            ->where(function ($q) {
+                $q->whereNull('start_date')->orWhere('start_date', '<=', jdate()->now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('end_date')->orWhere('end_date', '>=', jdate()->now());
+            });
     }
 }

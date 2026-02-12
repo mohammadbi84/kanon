@@ -20,7 +20,9 @@ class PopupController extends Controller
             return response()->json(['data' => $popups]);
         }
 
-        return view('admin.popups.index');
+        $last = Popup::orderByDesc('sort')->first()->sort;
+
+        return view('admin.popups.index', compact('last'));
     }
 
     /**
@@ -32,8 +34,9 @@ class PopupController extends Controller
             'title'       => 'required|string|max:255',
             'text'        => 'required|string',
             'status'      => 'required|in:0,1',
-            'start_date'  => 'required|date',
-            'end_date'    => 'required|date|after_or_equal:start_date',
+            'start_date'  => 'nullable|date',
+            'end_date'    => 'nullable|date|after_or_equal:start_date',
+            'sort' => 'required|unique:popups,sort',
         ], [
             'title.required'      => 'عنوان پاپ‌آپ الزامی است.',
             'text.required'       => 'متن پاپ‌آپ الزامی است.',
@@ -41,6 +44,8 @@ class PopupController extends Controller
             'start_date.required' => 'تاریخ شروع الزامی است.',
             'end_date.required'   => 'تاریخ پایان الزامی است.',
             'end_date.after_or_equal' => 'تاریخ پایان باید بعد از تاریخ شروع باشد.',
+            'sort.required' => 'ترتیب نمایش الزامی است.',
+            'sort.uniqe' => 'ترتیب نمایش تکراری است.',
         ]);
 
         if ($validator->fails()) {
@@ -58,7 +63,7 @@ class PopupController extends Controller
     public function edit($id)
     {
         $popup = Popup::findOrFail($id);
-        return response()->json(['data' => $popup]);
+        return view('admin.popups.edit',compact('popup'));
     }
 
     /**
@@ -72,8 +77,8 @@ class PopupController extends Controller
             'title'       => 'required|string|max:255',
             'text'        => 'required|string',
             'status'      => 'required|in:0,1',
-            'start_date'  => 'required|date',
-            'end_date'    => 'required|date|after_or_equal:start_date',
+            'start_date'  => 'nullable|date',
+            'end_date'    => 'nullable|date|after_or_equal:start_date',
         ], [
             'title.required'      => 'عنوان الزامی است.',
             'text.required'       => 'متن الزامی است.',
@@ -84,12 +89,12 @@ class PopupController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return redirect()->back()->withInput()->withErrors($validator->errors());
         }
 
         $popup->update($validator->validated());
 
-        return response()->json(['success' => 'پاپ‌آپ با موفقیت ویرایش شد.']);
+        return redirect()->back()->with('success','پاپ آپ با موفقیت ویرایش شد.');
     }
 
     /**

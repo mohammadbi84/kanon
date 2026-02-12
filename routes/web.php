@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\ClusterController;
@@ -44,7 +45,6 @@ Route::get('/states/{cityId}', [SiteController::class, 'states']);
 
 
 // site pages
-// فثسف زخئئثدف
 Route::get('/', [SiteController::class, 'index'])->middleware('senddata')->name('home');
 Route::get('/school', [SiteController::class, 'school'])->name('school');
 Route::get('/maps', [SiteController::class, 'map'])->name('map');
@@ -79,6 +79,19 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::post('/{id}', [KardaneshController::class, 'update'])->name('kardanesh.update');
     });
 
+    // ================== Tuitions ==================
+    Route::prefix('/tuitions')->name('tuitions.')->group(function () {
+        Route::get('/', [TuitionController::class, 'index'])->name('index');
+        Route::post('/store', [TuitionController::class, 'store'])->name('store');
+        Route::get('/{tuition}/edit', [TuitionController::class, 'edit'])->name('edit');
+        Route::put('/{tuition}', [TuitionController::class, 'update'])->name('update');
+        Route::delete('/delete/{id}', [TuitionController::class, 'delete'])->name('delete');
+        Route::post('/bulk-delete', [TuitionController::class, 'bulkDelete'])->name('bulkDelete');
+        // professions
+        Route::get('{tuition}/professions', [TuitionProfessionController::class, 'index'])->name('professions.index');
+        Route::post('{tuition}/professions/update', [TuitionProfessionController::class, 'update'])->name('professions.update');
+    });
+
     // ================== Categories ==================
     Route::prefix('/categories')->group(function () {
         Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
@@ -99,7 +112,7 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::post('/{id}', [ClusterController::class, 'update'])->name('clusters.update');
     });
 
-    // ================== Fields ==================
+    // ================== Fields ====================
     Route::prefix('/fields')->group(function () {
         Route::get('/', [FieldController::class, 'index'])->name('fields.index');
         Route::post('/store', [FieldController::class, 'store'])->name('fields.store');
@@ -118,28 +131,28 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::get('/{id}', [ProfessionController::class, 'edit'])->name('professions.edit');
         Route::put('/{id}', [ProfessionController::class, 'update'])->name('professions.update');
     });
-    // ================== Tuitions ==================
-    Route::prefix('/tuitions')->name('tuitions.')->group(function () {
-        Route::get('/', [TuitionController::class, 'index'])->name('index');
-        Route::post('/store', [TuitionController::class, 'store'])->name('store');
-        Route::get('/{tuition}/edit', [TuitionController::class, 'edit'])->name('edit');
-        Route::put('/{tuition}', [TuitionController::class, 'update'])->name('update');
-        Route::delete('/delete/{id}', [TuitionController::class, 'delete'])->name('delete');
-        Route::post('/bulk-delete', [TuitionController::class, 'bulkDelete'])->name('bulkDelete');
-        // professions
-        Route::get('{tuition}/professions', [TuitionProfessionController::class, 'index'])->name('professions.index');
-        Route::post('{tuition}/professions/update', [TuitionProfessionController::class, 'update'])->name('professions.update');
-    });
+
     Route::get('/cities', [CityController::class, 'index'])->name('cities.index');
-    // ================== Popups ==================
-    Route::resource('popups', PopupController::class)->except('show','create');
+    // ================== Popups =====================
+    Route::resource('popups', PopupController::class)->except('show', 'create','edit','update');
     Route::prefix('popups')->name('popups.')->group(function () {
+        Route::get('/{id}', [PopupController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [PopupController::class, 'update'])->name('update');
         Route::post('/bulk-delete', [PopupController::class, 'bulkDelete'])->name('bulkDelete');
         // images
         Route::get('/showImages/{id}', [PopupController::class, 'showImages'])->name('showImages');
         Route::post('/upload/{id}', [PopupController::class, 'uploadImage'])->name('upload');
         Route::post('/status/{id}', [PopupController::class, 'toggleImageStatus'])->name('status');
         Route::delete('/image/{id}', [PopupController::class, 'deleteImage'])->name('image.delete');
+    });
+    // ================== Articles ==================
+    Route::prefix('/articles')->group(function () {
+        Route::get('/', [ArticleController::class, 'index'])->name('articles.index');
+        Route::post('/store', [ArticleController::class, 'store'])->name('articles.store');
+        Route::delete('/delete/{id}', [ArticleController::class, 'delete'])->name('articles.delete');
+        Route::post('/bulk-delete', [ArticleController::class, 'bulkDelete'])->name('articles.bulkDelete');
+        Route::get('/{id}', [ArticleController::class, 'edit'])->name('articles.edit');
+        Route::post('/{id}', [ArticleController::class, 'update'])->name('articles.update');
     });
 });
 
@@ -469,8 +482,8 @@ Route::prefix('/dashboard')->middleware('auth')->group(function () {
     Route::get('/register-message', [RegisterMessageController::class, 'edit'])->name('register_message.edit');
     Route::post('/register-message', [RegisterMessageController::class, 'update'])->name('register_message.update');
     // pop-up
-    Route::get('/popup', [\App\Http\Controllers\PopupController::class, 'edit'])->name('popup.edit');
-    Route::post('/popup', [\App\Http\Controllers\PopupController::class, 'update'])->name('popup.update');
+    Route::get('/popup', [PopupController::class, 'edit'])->name('popup.edit');
+    Route::post('/popup', [PopupController::class, 'update'])->name('popup.update');
     // alert_register
     Route::get('/register_alert', [RegisterAlertController::class, 'edit'])->name('register_alert.edit');
     Route::post('/register_alert', [RegisterAlertController::class, 'update'])->name('register_alert.update');
