@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ArticleController;
+use App\Http\Controllers\Admin\BookmarkController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\ClusterController;
@@ -153,6 +154,15 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::post('/bulk-delete', [ArticleController::class, 'bulkDelete'])->name('articles.bulkDelete');
         Route::get('/{id}', [ArticleController::class, 'edit'])->name('articles.edit');
         Route::post('/{id}', [ArticleController::class, 'update'])->name('articles.update');
+    });
+    // ================== Bookmark ==================
+    Route::prefix('/bookmark')->group(function () {
+        Route::get('/', [BookmarkController::class, 'index'])->name('bookmark.index');
+        Route::post('/store', [BookmarkController::class, 'store'])->name('bookmark.store');
+        Route::delete('/delete/{id}', [BookmarkController::class, 'delete'])->name('bookmark.delete');
+        Route::post('/bulk-delete', [BookmarkController::class, 'bulkDelete'])->name('bookmark.bulkDelete');
+        Route::get('/{id}', [BookmarkController::class, 'edit'])->name('bookmark.edit');
+        Route::put('/{id}', [BookmarkController::class, 'update'])->name('bookmark.update');
     });
 });
 

@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
             fields = $(".fields"),
             popups = $(".popups"),
             articles = $(".articles"),
+            bookmark = $(".bookmark"),
             professions = $(".professions"),
             tuitions = $(".tuitions"),
             kardanesh = $(".kardanesh");
@@ -2807,6 +2808,69 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // ارسال Ajax
                     $.post("/admin2/articles/store", values, function (res) {
+                        // console.log("Server Response:", res);
+                        // offCanvasEl.hide();
+                        Swal.fire({
+                            icon: "success",
+                            title: "موفق!",
+                            text: res.success,
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+
+                        dt_basic.ajax.reload(); // اگر میخوای جدول بروز بشه
+                    });
+                },
+            });
+        }
+        if (bookmark.length) {
+            // add new record-------------------------------------------------------------------------------------------------------------
+            initOffcanvasForm({
+                formId: "form-add-new-record",
+                // offcanvasId: "add-new-record",
+                triggerSelector: ".create-new",
+                fields: {
+                    title: {
+                        label: "عنوان صفحه",
+                        required: true,
+                        type: "text",
+                    },
+                    body: {
+                        label: "محتوای صفحه",
+                        required: true,
+                        type: "text",
+                    },
+                    start_at: {
+                        label: "تاریخ شروع",
+                        required: false,
+                        type: "date",
+                    },
+                    end_at: {
+                        label: "تاریخ پایان",
+                        required: false,
+                        type: "date",
+                    },
+                    active: {
+                        label: "وضعیت",
+                        required: true,
+                        type: "select",
+                    },
+                    duration: {
+                        label: "تایمر",
+                        required: false,
+                        type: "number",
+                    },
+                },
+                onSubmit: function (values) {
+                    // console.log("Form Data:", values);
+
+                    // اضافه کردن CSRF token
+                    values._token = $('meta[name="csrf-token"]').attr(
+                        "content",
+                    );
+
+                    // ارسال Ajax
+                    $.post("/admin2/bookmark/store", values, function (res) {
                         // console.log("Server Response:", res);
                         // offCanvasEl.hide();
                         Swal.fire({

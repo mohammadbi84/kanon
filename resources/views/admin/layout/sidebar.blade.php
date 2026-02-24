@@ -176,8 +176,8 @@
                     </a>
                 </li>
                 <li class="menu-item @if (Route::currentRouteName() == 'test') active @endif">
-                    <a href="#" class="menu-link">
-                        <div>پیشنهاد ویژه (بوکمارک بالای سایت)</div>
+                    <a href="{{route('admin.bookmark.index')}}" class="menu-link">
+                        <div>بوکمارک</div>
                     </a>
                 </li>
             </ul>
