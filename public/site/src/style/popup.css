@@ -43,7 +43,7 @@
 }
 
 .popup-image-slider .swiper-pagination {
-    display: flex !important;
+    display: none !important;
     /* justify-self: baseline !important; */
     justify-content: center;
     align-items: center;
@@ -129,6 +129,9 @@
         padding: 1.5rem 0.7rem !important;
         padding-top: 0 !important;
     }
+    .popup-pagination-numbers{
+        top: 164px !important;
+    }
 }
 
 .popup-pagination-numbers {
@@ -141,9 +144,9 @@
 }
 
 .popup-page-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
     border: 1px solid transparent;
     background-color: #e9efea9d;
     color: #6a6a6a;
@@ -152,8 +155,67 @@
 }
 
 .popup-page-btn.is-active {
-    background-color: #8ed55724;
+    background-color: var(--primary-color);
     border-color: transparent;
     color: var(--primary-color);
     transform: scale(1);
+}
+
+
+.popup-pagination-numbers {
+        display: flex !important;
+    /* justify-self: baseline !important; */
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    padding: 0px 25px;
+    min-height: 26px;
+    position: absolute !important;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    /* transform: translateX(-50%); */
+    z-index: 1;
+    background: white;
+    border-radius: 30px 30px 0 0;
+    position: relative;
+    overflow: visible;
+    bottom: auto;
+    width: fit-content;
+    top: 364px;
+}
+
+.presentation:only-child {
+    display: block !important;
+}
+
+/* مثلث سمت چپ */
+.popup-pagination-numbers::before {
+    content: "";
+    position: absolute;
+    left: -22px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-top: 22px solid transparent;
+    border-right: 34px solid white;
+    border-bottom: 0 solid transparent;
+}
+
+/* مثلث سمت راست */
+.popup-pagination-numbers::after {
+    content: "";
+    position: absolute;
+    right: -22px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-top: 22px solid transparent;
+    border-left: 34px solid white;
+    border-bottom: 0 solid transparent;
+}
+
+#popup-pagination-holder {
+    width: 100%;
+    /* position: relative; */
 }

@@ -143,8 +143,9 @@
     @if ($popups->count() > 0)
         <div class="modal fade" id="customModal" tabindex="-1" aria-hidden="true" dir="rtl">
             <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content">
-
+                <div class="modal-content position-relative">
+                    <!-- 👇 pagination بیاد اینجا -->
+                    <div id="popup-pagination-holder"></div>
                     <button type="button" class="btn btn-light position-absolute top-0 start-0 modal-close-btn"
                         data-bs-dismiss="modal">
                         <i class="fa-solid fa-xmark"></i>
@@ -160,12 +161,12 @@
                                         {{-- IMAGE SLIDER (قدیمی – دست نخورده) --}}
                                         <div class="swiper popup-image-slider">
                                             <div class="swiper-wrapper">
-                                                @foreach ($popup->files as $image)
-                                                    <div class="swiper-slide"
-                                                        data-delay="{{ $image->duration ?? 5000 }}">
-                                                        <img src="{{ asset($image->url) }}">
-                                                    </div>
-                                                @endforeach
+                                                {{-- @foreach ($popup->files as $image) --}}
+                                                <div class="swiper-slide"
+                                                    data-delay="{{ $popup->files()->first()->duration ?? 5000 }}">
+                                                    <img src="{{ asset($popup->files()->first()->url) }}">
+                                                </div>
+                                                {{-- @endforeach --}}
                                             </div>
                                             <!-- pagination -->
                                             <div class="swiper-pagination popup-pagination"></div>
@@ -173,10 +174,10 @@
                                         {{-- CONTENT --}}
                                         <div class="p-4 px-5 pb-0">
                                             <h2 class="fw-bold text-center">
-                                                {{ app()->getLocale() == 'fa' ? $popup->title_fa : $popup->title_en }}
+                                                {{ $popup->title }}
                                             </h2>
                                             <p class="text-muted text-center mb-4">
-                                                {{ app()->getLocale() == 'fa' ? $popup->description_fa : $popup->description_en }}
+                                                {{ $popup->text }}
                                             </p>
                                         </div>
                                     </li>
@@ -193,8 +194,7 @@
                             </svg>
                             اطلاعات بیشتر
                         </a>
-                        <!-- 👇 pagination بیاد اینجا -->
-                        <div id="popup-pagination-holder"></div>
+
                         <button class="btn btn-text-link" data-bs-dismiss="modal">
                             بعدا چک میکنم
                         </button>
@@ -227,9 +227,9 @@
                 popupSplide.on('pagination:mounted', function(data) {
                     data.list.classList.add('popup-pagination-numbers');
 
-                    data.items.forEach(function(item, index) {
-                        item.button.textContent = index + 1; // ← عددی کردن
-                    });
+                    // data.items.forEach(function(item, index) {
+                    //     item.button.textContent = index + 1; // ← عددی کردن
+                    // });
                     // 👇 انتقال به جای دلخواه
                     document
                         .getElementById('popup-pagination-holder')
@@ -256,6 +256,7 @@
                     document.querySelectorAll('.popup-image-slider').forEach(function(el) {
 
                         let swiper = new Swiper(el, {
+                            allowTouchMove: false,
                             loop: true,
                             speed: 600,
                             autoplay: {
