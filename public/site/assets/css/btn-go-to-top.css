@@ -1,0 +1,113 @@
+/* #btn-go-to-top {
+    --width: 48px;
+    --height: 48px;
+    --stroke-width: 10px;
+
+
+    width: var(--width);
+    height: var(--height);
+
+    background-color: #F3F4F8;
+    border-radius: 50%;
+
+    position: fixed;
+    bottom: 10px;
+    left: 48px;
+    opacity: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(-90deg);
+
+    color: black;
+} */
+
+/* #btn-go-to-top.show {
+    bottom: 48px;
+    opacity: 1;
+} */
+
+#btn-go-to-top:hover {
+    background-color: var(--primary-color);
+    color: var(--on-primary-color);
+}
+
+
+#btn-go-to-top svg {
+    overflow: visible;
+    width: calc(var(--width) - calc(var(--stroke-width) / 2));
+    height: calc(var(--height) - calc(var(--stroke-width) / 2));
+}
+
+#btn-go-to-top span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(90deg); /*چرخش فلش برای اصلاح چرخش والد*/
+
+}
+
+
+/*dash-offset guide from: https://codepen.io/Griezzi/pen/mdOzrWP*/
+#btn-go-to-top .outer_circle {
+    stroke-width: var(--stroke-width);
+    stroke-dasharray: 410;
+    stroke-dashoffset: 410; /*no stroke*/
+    stroke-linecap: square;
+    stroke: var(--primary-color);
+
+    transition: all .4s ease-out;
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#btn-go-to-top:hover .outer_circle {
+    /*stroke-dashoffset: 0;*/
+    /*transition: stroke .7s .4s ease-out, stroke-dashoffset .4s ease-out*/
+    stroke: var(--on-primary-color);
+}
+
+
+
+
+
+
+
+#btn-go-to-top {
+    --width: 48px;
+    --height: 48px;
+    --stroke-width: 10px;
+
+    width: var(--width);
+    height: var(--height);
+
+    background-color: #F3F4F8;
+    border-radius: 50%;
+
+    position: fixed;
+    bottom: 10px; /* حالت پیش‌فرض */
+    left: 68px;
+    opacity: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(-90deg);
+    color: black;
+
+    transition: bottom 0.3s ease, opacity 0.3s ease;
+}
+
+#btn-go-to-top.show {
+    bottom: 47px; /* وقتی اسکرول کردی کمی بالا بیاد */
+    opacity: 1;
+}
+
+#btn-go-to-top.at-bottom {
+    bottom: 47px; /* وقتی رسیدی پایین‌تر، فاصله بیشتری بگیره */
+}

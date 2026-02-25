@@ -1,0 +1,1611 @@
+/* General Styles */
+body {
+    /* font-family: sans-serif; */
+
+}
+
+.search-button {
+    background-color: #e69926;
+    color: white;
+    border: none;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+}
+
+.map-button {
+    background-color: #b3d7ff;
+    color: white;
+    border: 2px solid white;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+    box-shadow: 0 0 0 2px #b3d7ff;
+}
+
+.map-button span {
+    color: #333;
+}
+
+.map-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    display: none;
+    /* Initially hidden */
+}
+
+.map-fullscreen {
+    overflow: hidden;
+}
+
+/* --- Filter Box Styles (Draggable) --- */
+#filter-box {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    z-index: 1002;
+    /* Above the map */
+    min-width: 200px;
+    cursor: grab;
+    /* Initial cursor */
+    overflow-y: auto;
+    user-select: none;
+    /* Prevent text selection */
+}
+
+#filter-box h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    cursor: move;
+    /* Cursor for the header */
+}
+
+#filter-box label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    flex-direction: row-reverse;
+    /* Reverse the order */
+    justify-content: flex-start;
+    /* Align to the start (right in RTL) */
+}
+
+#filter-box input[type="checkbox"] {
+    margin-left: 0;
+    /*Remove margin Left */
+    margin-right: 10px;
+    /* Add margin to the right */
+    order: 1;
+    /* Checkbox first */
+
+}
+
+#filter-box .filter-icon {
+    width: 24px;
+    height: 24px;
+    margin-left: 10px;
+    /* Space between icon and text*/
+    margin-right: 0;
+    /*Remove margin Right */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    order: 3;
+    /* Icon last */
+}
+
+#filter-box label span:not(.filter-icon) {
+    order: 2;
+    /* Text in the middle */
+}
+
+#search-bar {
+    z-index: 10;
+    /* Higher than the map*/
+}
+
+/*Coordinates display*/
+.coordinates-display {
+    margin-top: 10px;
+    z-index: 1001;
+    position: relative;
+}
+
+.custom-marker {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+    border: 2px solid white;
+}
+
+/* Leaflet controls positioning */
+.leaflet-top.leaflet-right {
+    position: absolute;
+    /* Ensure absolute positioning */
+    top: 0.5em;
+    /* Adjust as needed for spacing */
+    right: 0.5em;
+    /* Adjust for spacing */
+}
+
+
+
+/* Style for the location chooser (if you add it back)*/
+.leaflet-control-choose-location {
+    background-color: white;
+    width: 26px;
+    /* Match default Leaflet control size */
+    height: 26px;
+    line-height: 26px;
+    /* Center the icon vertically */
+    text-align: center;
+    /* Center the icon horizontally */
+    cursor: pointer;
+    /* Change cursor on hover */
+    border-radius: 4px;
+    /* Rounded corners (Leaflet style) */
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
+    /* Leaflet-style shadow */
+    display: block;
+    /* Important for consistent sizing*/
+    margin-bottom: 5px;
+}
+
+.leaflet-control-choose-location:hover {
+    background-color: #f4f4f4;
+}
+
+.leaflet-control-choose-location i {
+    font-size: 16px;
+    /* Adjust icon size as needed */
+    color: #333;
+    /* A dark gray, like Leaflet's default */
+    display: block;
+    /* Fill the container */
+}
+
+/* Style for the close button */
+.leaflet-control-close-map {
+    background-color: white;
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 4px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
+    display: block;
+    /* Important */
+}
+
+.leaflet-control-close-map:hover {
+    background-color: #f4f4f4;
+}
+
+.leaflet-control-close-map i {
+    font-size: 16px;
+    color: #333;
+}
+
+.countdown-timer {
+    display: flex;
+    justify-content: space-around;
+}
+
+.timer-col {
+    /*  اختیاری: استایل‌دهی به هر ستون تایمر */
+    text-align: center;
+    padding: 5px;
+    width: 100%;
+}
+
+
+
+.btn-news {
+    text-decoration: none;
+    position: fixed;
+    top: 50%;
+    right: -20;
+    transform: translateY(-50%);
+    width: 35px;
+    height: 120px;
+    background: #fff;
+    border: 1px solid #333;
+    border-right: none;
+    border-radius: 200px 0 0 200px;
+    transition: background 0.4s ease-in-out, transform 0.4s ease-in-out;
+    clip-path: polygon(0 0,
+            100% 0,
+            100% 50%,
+            100% 100%,
+            0 100%,
+            0 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    writing-mode: vertical-rl;
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 24px;
+    color: #000;
+}
+
+.btn-news:hover {
+    background: linear-gradient(to bottom, #e8e8e8, #e8e8e8);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.btn-news span {
+    writing-mode: vertical-rl;
+    text-align: center;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+}
+
+.right-nav {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    background-color: #fff;
+    border-top-left-radius: 50px;
+    border-bottom-left-radius: 50px;
+    width: 30px;
+    height: 99px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* .right-nav:hover {
+            background-color: #e69926;
+        } */
+
+.right-nav:hover p {
+    color: #e69926 !important;
+}
+
+/* .right-nav:hover::before {
+            border-color: transparent #e69926 transparent transparent;
+
+        }
+
+        .right-nav:hover::after {
+            border-color: #e69926 transparent transparent transparent;
+        } */
+
+.right-nav::before,
+.right-nav::after {
+    content: "";
+    position: absolute;
+    right: -30px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    z-index: -1;
+
+}
+
+.right-nav::before {
+    top: -53px;
+    border-width: 68px 56px 0px 0px;
+    border-color: transparent white transparent transparent;
+}
+
+.right-nav::after {
+    bottom: -55px;
+    border-width: 68px 0px 0 55px;
+    border-color: white transparent transparent transparent;
+}
+
+.right-nav p {
+    position: relative;
+    top: 37%;
+    rotate: 270deg;
+    cursor: pointer;
+}
+
+.bottom-icons {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+}
+
+.bottom-icons span {
+    font-size: 14px;
+    color: #555;
+    display: flex;
+    align-items: center;
+}
+
+.bottom-icons span i {
+    margin-left: 5px;
+    color: #e74c3c;
+}
+
+/* Placeholder styles (optional, but recommended) */
+.lazy-placeholder {
+    background-color: #f0f0f0;
+    /* Light gray background */
+    min-height: 50px;
+    /* Minimum height for placeholders */
+    /* Add other styles as needed (e.g., borders, animations) */
+}
+
+img.lazy-placeholder {
+    min-height: 100px;
+    /* Maybe a different min-height for images */
+}
+
+#close-map-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--primary-color);
+    color: #333;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 1000;
+    /* برای اطمینان از اینکه دکمه روی نقشه نمایش داده شود */
+    border-radius: 5px;
+}
+
+#close-map-button:hover {
+    background-color: var(--primary-color-hover);
+}
+
+/* پس‌زمینه تار برای زیبایی بیشتر */
+.modal-backdrop {
+    background: rgba(0, 0, 0, 0.75);
+}
+
+/* افکت باز شدن پاپ‌آپ */
+.modal.fade .modal-dialog {
+    transform: translateY(-50px);
+    opacity: 0;
+    transition: all 0.5s ease-in-out;
+}
+
+.modal.show .modal-dialog {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+body {
+    direction: rtl;
+    background: #f2f2f2;
+    /* font-family: 'Tahoma', sans-serif; */
+}
+
+.card-custom {
+    width: 300px;
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    background: #fff;
+    position: relative;
+}
+
+.card-img-container {
+    position: relative;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+/* استایل روبان تخفیف */
+.discount-badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 500px;
+    height: 500px;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.card-title {
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.card-text {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.info-row .info-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+}
+
+.info-row .info-item i {
+    margin-left: 5px;
+    color: rgba(235, 166, 7, 1);
+    padding: 5px;
+}
+
+.bottom-icons {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+}
+
+.bottom-icons span {
+    font-size: 14px;
+    color: #555;
+    display: flex;
+    align-items: center;
+}
+
+.bottom-icons span i {
+    margin-left: 5px;
+    color: rgba(235, 166, 7, 1);
+}
+
+.discount-label {
+    position: absolute;
+    top: 0;
+    right: 0;
+    /* قرار گرفتن در سمت راست */
+    width: 500px;
+    height: 500px;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.discount-label span {
+    position: absolute;
+    display: block;
+    width: 154px;
+    padding: 5px 0;
+    background: rgba(235, 166, 7, 1);
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    transform: rotate(-313deg);
+    /* تنظیم جهت چرخش */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    top: 30px;
+    right: -35px;
+    /* تنظیم موقعیت */
+}
+
+#show-map-button {
+    width: 100%;
+    height: 48px;
+    margin-top: 2px;
+    /* میتونی با inspect ارتفاع دکمه جستجو رو دقیقا برداری و اینجا بذاری */
+    padding: 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f0f0f0;
+    background-image: url(https://tile.openstreetmap.org/0/0/0.png);
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.3s;
+    overflow: hidden;
+    padding-top: 11px !important;
+}
+
+#show-map-button::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+#show-map-button span {
+    position: relative;
+    z-index: 1;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+fieldset,
+legend {
+    all: revert;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.top-slider-thumbs-body::-webkit-scrollbar-track {
+    -webkit-box-shadow: none;
+    background-color: transparent;
+    border-radius: 10px;
+}
+
+.top-slider-thumbs-body::-webkit-scrollbar {
+    width: 4px;
+    background-color: transparent;
+}
+
+.top-slider-thumbs-body::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: transparent;
+    background-image: -webkit-gradient(linear,
+            40% 0%,
+            75% 84%,
+            from(var(--primary-color)),
+            to(var(--primary-color)),
+            color-stop(.6, var(--primary-color)));
+}
+
+
+
+select:focus {
+    border-top: none !important;
+    /* border-color: #86b7fe; */
+    box-shadow: 0 0.25rem .25rem rgba(13, 110, 253, .25) !important;
+}
+
+.nameInput {
+    border-top-right-radius: 5px !important;
+    border-bottom-right-radius: 5px !important;
+}
+
+.autocomplete {
+    position: relative;
+    /* width: 300px; */
+}
+
+.autocomplete input {
+    font-size: 14px;
+    outline: 0px solid transparent !important;
+
+    width: 100%;
+    padding: 10px 30px 10px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.autocomplete .dropdown .active {
+    background-color: #F2F9FF;
+}
+
+.autocomplete label {
+    position: absolute;
+    right: 15px;
+    top: 27%;
+    transition: 0.2s;
+    pointer-events: none;
+    color: #666;
+    font-size: 14px;
+}
+
+.autocomplete input:focus+label,
+.autocomplete.filled label {
+    outline: none !important;
+    border: none !important;
+    top: 1px;
+    right: 10px;
+    background: transparent;
+    padding: 0 5px;
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.autocomplete .clear-btn {
+    display: none;
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-weight: bold;
+    color: #888;
+}
+
+.autocomplete .dropdown {
+    /* padding-bottom: 50px; */
+    position: absolute;
+    top: 110%;
+    border-radius: 5px;
+    right: 0;
+    left: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 250px;
+    overflow-y: auto;
+    background: white;
+    z-index: 2;
+}
+
+.autocomplete .dropdown::-webkit-scrollbar {
+    background-color: #ffffff;
+    width: 3px;
+}
+
+.autocomplete .dropdown::-webkit-scrollbar-thumb {
+    background-color: #bfbfbf;
+    border-radius: 10px;
+    width: 6px;
+}
+
+.autocomplete .dropdown div {
+    padding: 8px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.autocomplete .dropdown div:hover {
+    background: #f0f0f0;
+}
+
+.input {
+    height: 98%;
+    width: 100%;
+    padding-right: 8px;
+}
+
+.search-box-horizontal {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translateY(-50%) translateX(10px);
+    width: 200px;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 100;
+    background: #D0E8FF;
+}
+
+.search-box-horizontal.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(-50%) translateX(0);
+}
+
+.search-box-horizontal input {
+    border-radius: 0px 4px 4px 0px;
+    border: 2px solid #ccc;
+}
+
+.search-box-horizontal input.focus {
+    border-radius: 0px 4px 4px 0px;
+    outline: 2px solid #D0E8FF !important;
+    border: none;
+    /* outline: none; */
+}
+
+.container {
+    padding-right: 20px !important;
+    padding-left: 20px !important;
+}
+
+/* footer */
+.contact-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    text-align: center;
+}
+
+.info-icons {
+    font-size: 30px !important;
+}
+
+.footer-icon {
+    font-size: 26px;
+    color: #ffae00;
+    /* margin-left: 6px; */
+}
+
+.icon-box-footer {
+    background-color: #f7cd734a;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+.map-container iframe {
+    width: 100%;
+    height: 300px;
+    border-radius: 12px;
+    border: none;
+}
+
+.contact-btn {
+    border: none;
+    background-color: #e9f5ee;
+    color: #0d6efd;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+/* .splide,
+.splide__list,
+.splide__track {
+    position: static
+}
+
+
+
+.splide__slide {
+    position: static !important;
+    z-index: 0 !important;
+}
+
+.splide,
+.splide__list,
+.splide__track {
+    position: relative;
+    z-index: -1 !important;
+} */
+
+#main-container {
+    position: relative;
+    z-index: -10;
+}
+
+body {
+    position: relative;
+    z-index: -9;
+}
+
+#main {
+    position: relative;
+    z-index: -9;
+}
+
+#vije {
+    z-index: 9999 !important;
+    direction: ltr;
+
+}
+
+#special-offers .splide__pagination {
+    direction: ltr;
+}
+
+#vije2 {
+    z-index: 9999 !important;
+
+}
+
+#special-offers {
+    z-index: 9999 !important;
+}
+
+.leaflet-touch .leaflet-control-attribution {
+    display: none !important;
+}
+
+.text-normal {
+    text-align: justify;
+    line-height: 1.9;
+    font-size: 16px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.flip-card {
+    perspective: 1200px;
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+    min-height: 400px;
+}
+
+.flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    backface-visibility: hidden;
+    background-color: #cb8c3a;
+    align-items: center;
+    /* box-shadow: 0 5px 10px rgba(212, 212, 212, 0.3); */
+    transform-style: preserve-3d;
+}
+
+.flip-card-front {
+    background-color: #fff;
+    z-index: 2;
+}
+
+
+.flip-card-back {
+    background-color: #ffffff;
+    color: #121212;
+    transform: rotateY(180deg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 26px;
+    text-align: right;
+}
+
+.flip-card-front .image-badge {
+    width: 100%;
+    transform: translateZ(1px);
+    padding: 1px;
+}
+
+.flip-card-front .image-details {
+    transform: translateZ(1px);
+}
+
+.flip-card-front .details {
+    width: 100%;
+    padding: 8px 16px !important;
+    transform: translateZ(100px);
+    height: 225px !important;
+    transform: translateZ(1px);
+    text-align: center;
+}
+
+.flip-card-back .bottom-icons2 {
+    transform: translateZ(80px);
+}
+
+.flip-card-back h4 {
+    transform: translateZ(80px);
+}
+
+.flip-card-back .time {
+    transform: translateZ(80px);
+}
+
+.flip-card-back p {
+    transform: translateZ(80px);
+}
+
+.flip-card-back .adv-btn {
+    transform: translateZ(80px);
+}
+
+.flip-card-back .discount-squer {
+    transform: translateZ(80px);
+}
+
+.flip-card-front .image-and-badge {
+    /* position: relative;
+            display: flex; */
+    transform: translateZ(100px);
+    text-align: center;
+}
+
+
+
+
+
+
+
+/* استایل روبان تخفیف */
+.discount-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 500px;
+    /* height: 500px; */
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.discount-badge span {
+    position: absolute;
+    display: block;
+    width: 160px;
+    padding: 10px 0;
+    background: rgba(235, 166, 7, 1);
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    transform: rotate(313deg);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    top: 20px;
+    left: -40px;
+}
+
+.details {
+    padding: 1rem;
+}
+
+.details h5 {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.details p {
+    font-size: 0.9rem;
+    color: #444;
+    margin-bottom: 0.5rem;
+}
+
+.bottom-icons2 {
+    position: absolute;
+    bottom: 12px;
+    left: 16px;
+    right: 16px;
+    padding: 0.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #666;
+    border-top: 1px solid #ddd;
+    /* padding-top: 0.5rem; */
+}
+
+.bottom-icons2 i {
+    margin-left: 4px;
+    margin-top: 3px !important;
+    color: #f59e0b;
+}
+
+
+
+.adv-btn {
+    font-size: 14px;
+}
+
+/* .adv-btn .bi-exclamation-triangle{
+        color: #c00000 !important;
+} */
+.adv-btn:hover {
+    background-color: #111f4c;
+    color: #fff !important;
+}
+
+.adv-btn:hover span {
+    color: #fff !important;
+}
+
+.adv-btn:hover i {
+    color: #fff !important;
+}
+
+.btn-takhalof:hover i {
+    color: #ffffff !important;
+    /* background-color: #ffc7ce !important; */
+}
+
+
+
+
+.khabar-container {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    margin-bottom: 20px;
+    padding: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.khabar-item {
+    display: flex;
+    /* gap: 15px; */
+}
+
+.khabar-image-main-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.khabar-content {
+    flex: 1;
+}
+
+.khabar-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.khabar-text {
+    font-size: 14px;
+    color: #555;
+}
+
+.khabar-images-small {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.khabar-image-small img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.khabar-media-small {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.khabar-media-item {
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    overflow: hidden;
+}
+
+.khabar-media-item img,
+.khabar-media-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+
+.khabar-text-box {
+    border-radius: 8px;
+    padding: 10px;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    word-break: break-word;
+}
+
+.khabar-text-box .full-text,
+.khabar-text-box .short-text {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+}
+
+.khabar-actions {
+    margin-top: 10px;
+}
+
+.khabar-actions .btn {
+    margin-top: 5px;
+    padding: 8px 15px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.khabar-actions .btn:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.khabar-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.khabar-meta i {
+    margin-right: 5px;
+}
+
+.copy-notification {
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.copy-notification.show {
+    opacity: 1;
+}
+
+.copy-notification span {
+    font-weight: bold;
+}
+
+.khabar-gallery-row {
+    direction: ltr;
+    max-height: 192px;
+    overflow-y: scroll;
+}
+
+.khabar-gallery-row::-webkit-scrollbar {
+    background-color: #ffffff;
+    width: 3px;
+}
+
+.khabar-gallery-row::-webkit-scrollbar-thumb {
+    background-color: #bfbfbf;
+    border-radius: 10px;
+    width: 6px;
+}
+
+/* pagination */
+.page-item {
+    margin: 10px;
+    margin-top: 0px;
+    border-radius: 15px;
+}
+
+.page-item a {
+    color: #171717;
+    font-size: 15px;
+    border-width: 2px;
+    border-radius: 5px;
+}
+
+.page-item.active a {
+    color: #ffffff;
+    background-color: #EBA607 !important;
+    border-color: #EBA607 !important;
+    font-size: 15px;
+    border-width: 2px;
+    border-radius: 5px;
+}
+
+.page-item a:hover {
+    border-color: #EBA607;
+    background-color: white;
+    color: #171717;
+}
+
+.this-page a {
+    background-color: #EBA607;
+    border-color: #EBA607;
+    color: #ffffff;
+}
+
+
+
+/* modal pup up */
+.modal-close-btn:hover i {
+    color: #e69926;
+}
+
+.modal-close-btn:hover {
+    background-color: #f8f9fa !important;
+}
+
+.modal-image-container {
+    position: relative;
+    height: 100%;
+}
+
+.modal-content {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.btn-text-link {
+    color: #6c757d;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0;
+    background: none;
+    border: none;
+}
+
+.btn-text-link:hover {
+    color: #EBA607;
+    text-decoration: underline;
+}
+
+.btn-close {
+    z-index: 2;
+    background-color: #f7f7f7 !important;
+    opacity: 1 !important;
+}
+
+/* #modal-slider .splide__pagination {
+    display: flex !important;
+    bottom: -4px;
+    left: auto !important;
+    padding: 5px 5px !important;
+    position: absolute !important;
+    right: auto;
+    z-index: 1 !important;
+    justify-self: anchor-center !important;
+    border-radius: 15px 15px 0 0 !important;
+    background-color: white !important;
+} */
+#modal-slider .splide__pagination {
+    display: flex !important;
+    /* justify-self: baseline !important; */
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 25px;
+    position: absolute !important;
+    bottom: -7px;
+    /* left: auto !important;
+    right: auto; */
+    left: 50%;
+    transform: translateX(-50%);
+    /* transform: translateX(-50%); */
+    z-index: 1;
+    background: white;
+    border-radius: 30px 30px 0 0;
+    position: relative;
+    overflow: visible;
+    width: fit-content;
+}
+
+/* مثلث سمت چپ */
+#modal-slider .splide__pagination::before {
+    content: "";
+    position: absolute;
+    left: -24px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-top: 22px solid transparent;
+    border-right: 34px solid white;
+    border-bottom: 0 solid transparent;
+}
+
+/* مثلث سمت راست */
+#modal-slider .splide__pagination::after {
+    content: "";
+    position: absolute;
+    right: -24px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-top: 22px solid transparent;
+    border-left: 34px solid white;
+    border-bottom: 0 solid transparent;
+}
+
+
+
+
+
+
+#modal-slider .splide__arrow {
+    background: rgba(255, 255, 255, 0.7);
+    opacity: 1;
+}
+
+#modal-slider .splide__arrow svg {
+    fill: #333;
+}
+
+
+
+
+
+/* استایل‌های پایه */
+/* استایل‌های پایه */
+.img-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px 0 0 8px;
+    transition: all 0.3s ease;
+}
+
+/* دیوی که می‌خواهید با هاور نمایش داده شود */
+.hover-reveal {
+    position: absolute;
+    bottom: -100px;
+    /* شروع از خارج کادر */
+    left: 0;
+    width: 100%;
+    background: #F3F4F8;
+    opacity: 0.8;
+    padding: 6px;
+    transition: all 0.4s ease-out;
+    z-index: 10;
+    border-radius: 0;
+}
+
+/* انیمیشن هنگام هاور */
+.anno-card:hover .hover-reveal {
+    bottom: 0;
+    /* حرکت به موقعیت نهایی */
+}
+
+/* برای جلوگیری از لرزش */
+.ads-img-col {
+    position: relative;
+    overflow: hidden;
+}
+
+
+
+/* custom chekbox */
+@supports (-webkit-appearance: none) or (-moz-appearance: none) {
+    .checkbox-wrapper-13 input[type=checkbox] {
+        --active: #e69926;
+        --active-inner: #fff;
+        --focus: 1px #e69926;
+        --border: #e69926;
+        --border-hover: #e69926;
+        --background: #fff;
+        --disabled: #F6F8FF;
+        --disabled-inner: #E1E6F9;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        height: 21px;
+        outline: none;
+        display: inline-block;
+        vertical-align: top;
+        position: relative;
+        margin: 0;
+        cursor: pointer;
+        border: 1px solid var(--bc, var(--border));
+        background: var(--b, var(--background));
+        transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
+    }
+
+    .checkbox-wrapper-13 input[type=checkbox]:after {
+        content: "";
+        display: block;
+        left: 0;
+        top: 0;
+        position: absolute;
+        transition: transform var(--d-t, 0.3s) var(--d-t-e, ease), opacity var(--d-o, 0.2s);
+    }
+
+    .checkbox-wrapper-13 input[type=checkbox]:checked {
+        --b: var(--active);
+        --bc: var(--active);
+        --d-o: .3s;
+        --d-t: .6s;
+        --d-t-e: cubic-bezier(.2, .85, .32, 1.2);
+    }
+
+    .checkbox-wrapper-13 input[type=checkbox]:disabled {
+        --b: var(--disabled);
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
+
+    .checkbox-wrapper-13 input[type=checkbox]:disabled:checked {
+        --b: var(--disabled-inner);
+        --bc: var(--border);
+    }
+
+    .checkbox-wrapper-13 input[type=checkbox]:disabled+label {
+        cursor: not-allowed;
+    }
+
+    .checkbox-wrapper-13 input[type=checkbox]:hover:not(:checked):not(:disabled) {
+        --bc: var(--border-hover);
+    }
+
+    .checkbox-wrapper-13 input[type=checkbox]:focus {
+        /* box-shadow: 0 0 0 var(--focus); */
+    }
+
+    .checkbox-wrapper-13 input[type=checkbox]:not(.switch) {
+        width: 15px;
+        height: 15px;
+    }
+
+    .checkbox-wrapper-13 input[type=checkbox]:not(.switch):after {
+        opacity: var(--o, 0);
+    }
+
+    .checkbox-wrapper-13 input[type=checkbox]:not(.switch):checked {
+        --o: 1;
+    }
+
+    .checkbox-wrapper-13 input[type=checkbox]+label {
+        display: inline-block;
+        vertical-align: middle;
+        cursor: pointer;
+        margin-right: 4px;
+        font-size: 14px;
+    }
+
+    .checkbox-wrapper-13 input[type=checkbox]:not(.switch) {
+        border-radius: 4px;
+    }
+
+    .checkbox-wrapper-13 input[type=checkbox]:not(.switch):after {
+        width: 5px;
+        height: 9px;
+        border: 2px solid var(--active-inner);
+        border-top: 0;
+        border-left: 0;
+        left: 4px;
+        top: 1px;
+        transform: rotate(var(--r, 20deg));
+    }
+
+    .checkbox-wrapper-13 input[type=checkbox]:not(.switch):checked {
+        --r: 43deg;
+    }
+}
+
+.checkbox-wrapper-13 * {
+    box-sizing: inherit;
+}
+
+.checkbox-wrapper-13 *:before,
+.checkbox-wrapper-13 *:after {
+    box-sizing: inherit;
+}
+
+
+.comp-btn {
+    background-color: transparent;
+    /* transition: background-color 0.3s ease; */
+}
+
+.comp-btn:hover {
+    background-color: #fff;
+}
+
+.comp-btn .badge {
+    position: absolute;
+    left: 7.5px;
+    padding: 0;
+    width: 15px;
+    height: 15px;
+    top: 8.5px;
+    font-size: 12px;
+    border-radius: 50%;
+    background-color: #848484;
+    transition: all 0.2s ease;
+    align-content: center;
+}
+
+.comp-btn i {
+    transition: all 0.4s;
+    display: inline-block;
+    font-size: 39px;
+    bottom: 10px;
+    left: 4px;
+    color: #848484;
+    z-index: 2;
+    /* برای عملکرد بهتر transform */
+}
+
+.comp-btn:hover .badge {
+    /* top: -9.5px; */
+    background-color: #e69926;
+    width: 25px;
+    height: 25px;
+    left: 2.5px;
+    top: 3px;
+    /* transform: rotate(180deg); */
+}
+
+
+
+
+
+
+
+.cours-tel-icon::before {
+    transform: scaleX(-1);
+}
+
+
+
+/* cours hover */
+.hover-reveal2 {
+    position: absolute;
+    bottom: -100px;
+    /* شروع از خارج کادر */
+    left: 0;
+    width: 100%;
+    background: #F3F4F8;
+    opacity: 0.8;
+    padding: 6px;
+    transition: all 0.4s ease-out;
+    z-index: 10;
+    border-radius: 0;
+}
+
+/* انیمیشن هنگام هاور */
+.course-card:hover .hover-reveal2 {
+    bottom: 32%;
+    /* حرکت به موقعیت نهایی */
+}
+
+
+
+
+
+
+
+#vertical-slider .splide__pagination {
+    left: 10px !important;
+    /* فاصله از ستون */
+    right: auto !important;
+}
+
+#vertical-slider .splide__pagination .splide__pagination__page {
+    width: 10px !important;
+    height: 10px !important;
+}
+

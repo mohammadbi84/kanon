@@ -1,346 +1,624 @@
-@php
-    // دریافت زمان حال با منطقه زمانی تنظیم شده در برنامه
-    $now = \Carbon\Carbon::now();
+<header>
+    <!-- بوکمارک -->
+    @php
+        $bookmarks = App\Models\Bookmark::active()->orderBy('sort', 'asc')->get();
+    @endphp
+    @if ($bookmarks->count() > 0)
+        <div class="bookmark-container">
+            <div class="bookmark expanded" id="bookmark">
+                <div class="swiper" id="bookmarkSlider">
+                    <div class="swiper-wrapper">
+                        @foreach ($bookmarks as $bookmark)
+                            <div class="swiper-slide bookmark-content px-0" style="height: {{ $bookmark->height }}px;"
+                                data-height="{{ $bookmark->height }}" data-delay="{{ $bookmark->duration }}">
+                                <div class="bookmark-item">
+                                    <!-- محتوای body که می‌تواند شامل عکس یا بک‌گراند باشد -->
+                                    <div class="bookmark-media">
+                                        {!!  $bookmark->body !!}
+                                    </div>
 
-    // دریافت تبلیغات فعال از دیتابیس
-    $advs = App\Models\topadv::where('start_date', '<=', $now)
-        ->where('end_date', '>=', $now)
-        ->orderBy('id', 'desc')
-        ->get();
-
-    $organs = App\Models\Organ::latest()->take(3)->get();
-    $register_message = App\Models\RegisterMessage::first();
-@endphp
-
-@if ($advs->isNotEmpty())
-    <div id="top-bar-container" style="width: 100%; position: fixed; top: 0; z-index: 2000;">
-        @foreach ($advs as $adv)
-            @php
-                // تبدیل تاریخ شروع و پایان به Carbon
-                $start_date_carbon = \Carbon\Carbon::parse($adv->start_date);
-                $end_date_carbon = \Carbon\Carbon::parse($adv->end_date);
-                $is_in_range = $now->isBetween($start_date_carbon, $end_date_carbon);
-            @endphp
-
-            @if ($is_in_range)
-                <div class="top-bar-item" id="top-bar-item-{{ $loop->index }}"
-                    @if ($adv->page_link) onclick="handleLink('{{ $adv->page_link }}', '{{ $adv->page_link_type }}')"
-                        style="cursor: pointer; display: none; min-height: var(--top-bar-height, 50px); padding-top: var(--top-bar-height, 50px); background-color: {{ $adv->background_color ?? 'var(--top-bar-color, #f0f0f0)' }};"
-                    @else
-                            style="display: none; min-height: var(--top-bar-height, 50px); padding-top: var(--top-bar-height, 50px); background-color: {{ $adv->background_color ?? 'var(--top-bar-color, #f0f0f0)' }};" @endif>
-                    <div class="top-ad-container"
-                        style="background-image: url('{{ asset($adv->background_image) }}'); background-size: cover; background-position: center; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: {{ $adv->text_color ?? '#333' }};">
-                        <span class="text {{ $adv->animation_type ? 'animate__animated ' . $adv->animation_type : '' }}">
-                            <span class="mx-3">اطلاعیه!</span>
-                            {{ $adv->text }}
-                        </span>
-                        <!-- دکمه ضربدر برای بستن تبلیغ -->
-                        <button class="btn-close" onclick="event.stopPropagation(); closeTopBar()"
-                            style="background: none; border: none; color: inherit; font-size: 1.5rem; cursor: pointer; opacity: 0.7; margin-left: 10px;">
-                            ×
-                        </button>
+                                    <!-- عنوان روی محتوا -->
+                                    {{-- @if ($bookmark->show_title)
+                                        <div class="bookmark-title-overlay">
+                                            {{ app()->getLocale() == 'fa' ? $bookmark->title_fa : $bookmark->title_en }}
+                                        </div>
+                                    @endif --}}
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
-            @endif
-        @endforeach
-
-
-
-
-        <!-- نوار جایگزین (Fallback) که پس از بستن تبلیغ نمایش داده می‌شود -->
-        <div id="top-bar-fallback"
-            style="display: none; width: 100%; min-height: var(--top-bar-height); position: fixed; top: 0; z-index: 2000; padding-top: var(--top-bar-height); background-color: var(--top-bar-color)">
-            <div class="top-ad-container-close"></div>
+                <button class="btn btn-close bg-light" id="bookmarkToggle"></button>
+            </div>
         </div>
-    </div>
 
-    <script>
-        // تابع جهت هدایت لینک بر اساس page_link_type
-        function handleLink(url, target) {
-            if (target && target.trim() !== '') {
-                window.open(url, target);
-            } else {
-                window.location.href = url;
-            }
-        }
+        @if ($bookmarks->count() == 1)
+            @php
+                $height = $bookmarks->first()->height;
+            @endphp
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    fixedHeight = {{ $height }};
+                    setCssVar("--bookmark-height", `${fixedHeight}px`, );
+                });
+            </script>
+        @endif
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // تنظیم ارتفاع و موقعیت بر اساس محتوا
+                const bookmarkMedia = document.querySelectorAll('.bookmark-media');
 
-        // تعریف یک متغیر برای نگهداری تایمر نمایش تبلیغات
-        var adRotationTimeout;
+                bookmarkMedia.forEach(media => {
+                    const content = media.innerHTML.trim();
 
-        document.addEventListener('DOMContentLoaded', function() {
-            var topBarContainer = document.getElementById('top-bar-container');
-            var topBarItems = topBarContainer.querySelectorAll('.top-bar-item');
-            var fallbackBar = document.getElementById('top-bar-fallback');
-            var currentItemIndex = 0;
-            var advsData = @json(
-                $advs->map(function ($adv) {
-                    return ['duration' => $adv->duration];
-                }));
+                    // اگر محتوا عکس یا ویدیو است
+                    if (content.startsWith('<img') || content.startsWith('<video')) {
+                        media.style.position = 'relative';
+                        media.style.overflow = 'hidden';
+                    }
 
-            function showNextAd() {
-                // اگر نوار fallback نمایش داده شده باشد، نمایش تبلیغات متوقف می‌شود
-                if (fallbackBar.style.display === 'block') return;
+                    // اگر محتوا div با بک‌گراند است
+                    if (content.includes('background:')) {
+                        const div = media.querySelector('div');
+                        if (div) {
+                            div.style.width = '100%';
+                            div.style.height = '100%';
+                            div.style.backgroundSize = 'cover';
+                            div.style.backgroundPosition = 'center';
+                        }
+                    }
+                });
+            });
+            let swiper = new Swiper("#bookmarkSlider", {
+                loop: true,
+                speed: 600,
+                effect: "fade",
+                fadeEffect: {
+                    crossFade: true
+                },
+                autoplay: {
+                    delay: 3000, // مقدار اولیه دلخواه
+                    disableOnInteraction: false,
+                },
+                pagination: false,
+                watchOverflow: false,
+                on: {
+                    init: function() {
+                        // وقتی swiper mount شد، delay اولین اسلاید رو اعمال کن
+                        let firstSlide = this.slides[this.activeIndex];
+                        let delay = firstSlide.dataset.delay;
+                        let height = firstSlide.dataset.height;
+                        setCssVar("--bookmark-height", `${height}px`, );
+                        if (delay) {
+                            this.params.autoplay.delay = parseInt(delay);
+                            this.autoplay.start();
+                        }
+                    },
+                    slideChangeTransitionEnd: function() {
+                        let activeSlide = this.slides[this.activeIndex];
+                        let delay = activeSlide.dataset.delay;
+                        let height = activeSlide.dataset.height;
+                        setCssVar("--bookmark-height", `${height}px`, );
 
-                // مخفی کردن تمام تبلیغات
-                topBarItems.forEach(item => item.style.display = 'none');
-
-                if (currentItemIndex < topBarItems.length) {
-                    topBarItems[currentItemIndex].style.display = 'block';
-                    let duration = advsData[currentItemIndex]['duration'] * 1000;
-                    adRotationTimeout = setTimeout(showNextAd, duration);
-                    currentItemIndex++;
-                } else {
-                    currentItemIndex = 0;
-                    showNextAd();
+                        if (delay) {
+                            this.params.autoplay.delay = parseInt(delay);
+                            this.autoplay.start();
+                        }
+                    }
                 }
-            }
-
-            if (topBarItems.length > 0) {
-                showNextAd();
-            }
-        });
-
-        // تابع برای بستن تبلیغ و نمایش نوار fallback
-        function closeTopBar() {
-            clearTimeout(adRotationTimeout);
-            var topBarItems = document.querySelectorAll('.top-bar-item');
-            topBarItems.forEach(item => item.style.display = 'none');
-            var fallback = document.getElementById('top-bar-fallback');
-            fallback.style.display = 'block';
-        }
-    </script>
-@else
-    <!-- در صورت عدم وجود تبلیغ فعال، نوار fallback به صورت پیش‌فرض نمایش داده می‌شود -->
-    <div id="top-bar"
-        style="width: 100%; min-height: var(--top-bar-height); position: fixed; top: 0; z-index: 2000; padding-top: var(--top-bar-height); background-color: var(--top-bar-color)">
-        <div class="top-ad-container-close"></div>
-    </div>
-@endif
-<style>
-    .input {
-        height: 98%;
-        width: 100%;
-        padding-right: 8px;
-    }
-
-    .search-box-horizontal {
-        position: absolute;
-        top: 50%;
-        left: 100%;
-        transform: translateY(-50%) translateX(10px);
-        width: 200px;
-        height: 100%;
-        opacity: 0;
-        pointer-events: none;
-        transition: all 0.3s ease;
-        z-index: 100;
-        background: #D0E8FF;
-    }
-
-    .search-box-horizontal.show {
-        opacity: 1;
-        pointer-events: auto;
-        transform: translateY(-50%) translateX(0);
-    }
-
-    .search-box-horizontal input {
-        border-radius: 4px;
-        border: 2px solid #ccc;
-    }
-
-    .search-box-horizontal input.focus {
-        border-radius: 4px;
-        outline: 2px solid #D0E8FF !important;
-        border: none;
-        /* outline: none; */
-    }
-</style>
-@php
-    $request = request();
-    $previousUrl = url()->previous(); // آدرس کامل صفحه قبلی
-    $currentUrl = $request->fullUrl(); // آدرس کامل صفحه فعلی
-
-    // گرفتن نام روت قبلی
-    $previousRoute = app('router')
-        ->getRoutes()
-        ->match(app('request')->create($previousUrl))
-        ->getName();
-@endphp
-@if ($register_message->status != 2)
-    @if (Route::currentRouteName() == 'register' and !$previousRoute or
-            Route::currentRouteName() == 'register' and $previousRoute != 'home' or
-            Route::currentRouteName() == 'register' and !$errors->any() and $register_message->status)
-        <div class="modal fade" id="registermessageModal" tabindex="-1" dir="rtl">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content text-center">
-                    <div class="modal-header bg-primary text-white">
-                        {{-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button> --}}
-                        <h5 class="modal-title" id="customModalLabel">قبل از ثبت نام بخوانید</h5>
-                    </div>
-                    <div class="modal-body">
-                        <p class="text-start" style="text-align: justify;">{{ $register_message->text }}</p>
-                    </div>
-                    <div class="modal-footer d-flex justify-content-end">
-                        <a href="/" class="btn btn-danger">لغو</a>
-                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">تایید</button>
+            });
+        </script>
+    @else
+        <div class="bookmark-container">
+            <div class="bookmark collapsed" style="height: 5px;background: var(--primary-color);" id="bookmark">
+                <div class="bookmark-content">
+                    <div class="bookmark-text d-flex align-items-center justify-content-start h-100 gap-3">
+                        <button class="btn btn-close bg-light" id="bookmarkToggle"></button>
                     </div>
                 </div>
             </div>
         </div>
     @endif
-@endif
-<div class="container" id="navbar_container">
-    <header style="position: relative;z-index:+50">
-        <div class="main-menu small">
-            <nav class="navbar navbar-expand-lg">
-                <div class="container">
-                    <a class="navbar-brand fw-bold" href="/">
-                        <img src="{{ asset('site/public/img/logo-yazdskill2.png') }}" alt="website logo">
-                    </a>
-
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
-                        <ul class="navbar-nav mb-2 mb-lg-0 column-gap-2">
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="/">صفحه نخست</a>
-                            </li>
-
-                            <li class="nav-item btn-group">
-                                <a class="nav-link dropdown-toggle" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    آموزشگاه ها
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    @foreach ($organs as $organ)
-                                        <li><a class="dropdown-item" href="{{route('school')}}" disabled>{{ $organ->name }}</a>
-                                        </li>
-                                    @endforeach
-                                    <li><a class="dropdown-item" href="{{route('school')}}">آیتم 1</a></li>
-                                    <li><a class="dropdown-item" href="{{route('school')}}">آیتم 2</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="nav-item btn-group">
-                                <a class="nav-link dropdown-toggle" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    دوره ها
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#special-offers">پیشنهاد ویژه</a></li>
-                                    <li><a class="dropdown-item" href="#courses">جدیدترین ها</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="nav-item btn-group">
-                                <a class="nav-link dropdown-toggle" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    خبر ها
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#annos">جدیدترین خبر ها</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#footer">درباره ما</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('job-opportunity.categories') }}">فرصت های شغلی</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#footer">مدرس شوید</a>
-                            </li>
-                        </ul>
-                        <!--  بخشی از HTML که دکمه ها را شامل می شود.  -->
-                        {{-- <div class="d-flex gap-2 align-items-stretch justify-content-center">
-                            <a href="#search-bar" class="btn btn-icon">
+    <!-- navbar -->
+    <div class="main-menu rounded-3">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container position-relative" id="navbar_container">
+                <a class="navbar-brand fw-bold d-flex align-items-center" href="/">
+                    <img src="{{ asset('site/public/img/logo-yazdskill2.png') }}" alt="website logo">
+                </a>
+                <button class="navbar-toggler" type="button" id="mobileMenuToggle">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+                    <ul class="navbar-nav mb-2 mb-lg-0 px-0">
+                        <!-- دکمه دسته‌بندی‌ها -->
+                        <div class="categories-dropdown d-flex" id="categoryTrigger">
+                            <button class="categories-btn">
+                                <i class="fas fa-bars"></i>
+                                آموزشگاه ها
+                            </button>
+                        </div>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">دوره ها</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">خبر ها</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">درباره ما</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">فرصت های شغلی</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">مدرس شوید</a>
+                        </li>
+                    </ul>
+                    <!-- cart language, favorites and login ================================================================================================================== -->
+                    <div class="d-flex gap-1 align-items-center justify-content-center position-relative">
+                        <div class="compare-container">
+                            <a href="#" class="cart-btn">
                                 <span class="bi bi-search"></span>
                             </a>
-                            <a href="#" class="btn btn-icon"><span class="bi bi-basket"></span></a>
-                            <div class="button-container">
-                                <a href="/dashboard/login" class="btn btn-text">ورود</a>
-                                <a data-bs-toggle="modal" data-bs-target="#registermessageModal"
-                                    class="btn btn-icon btn-primary">ثبت نام</a>
-                            </div>
-                        </div> --}}
-                        <div class="d-flex gap-2 align-items-center justify-content-center position-relative">
-                            <!-- دکمه سرچ -->
-                            <div id="toggleSearch" class="btn btn-icon position-relative align-items-center"
-                                type="button">
-                                <span class="bi bi-search"></span>
-
-                                <!-- اینپوت کنار آیکون (سمت راست باز میشه) -->
-                                <div id="searchInputWrapper" class="search-box-horizontal p-0 ">
-                                    <input type="text" class="input" placeholder="جستجو..." />
-                                </div>
-                            </div>
-
-                            <!-- آیکون‌های دیگر -->
-                            <a href="#" class="btn btn-icon"><span class="bi bi-basket"></span></a>
-                            {{-- <div class="button-container">
-                                <a href="/login" class="btn btn-icon btn-primary login_btn">ورود</a>
-                                @if (Route::currentRouteName() == 'register' and !$previousRoute or Route::currentRouteName() == 'register' and $previousRoute != 'home' or Route::currentRouteName() == 'register' and !$errors->any() and $register_message->status)
+                        </div>
+                        @php
+                            if (session()->has('cart')) {
+                                $cart = session('cart');
+                                $sum = 0;
+                                $list = ['products' => [], 'models' => [], 'quantities' => []];
+                                foreach ($cart as $productID => $value) {
+                                    foreach ($value as $model => $data) {
+                                        $class = 'App\\' . $model;
+                                        $product = $class::find($productID);
+                                        // if ($product->visibility == 1) {
+                                        array_push($list['products'], $product);
+                                        array_push($list['models'], $model);
+                                        array_push($list['quantities'], $data['quantity']);
+                                        $sum = $sum + $data['quantity'];
+                                        // }
+                                    }
+                                }
+                            }
+                        @endphp
+                        <!-- منوی دراپ‌داون با انیمیشن -->
+                        <div class="cart-container">
+                            <a href="#" class="cart-btn">
+                                <span class="cart-badge shopping-cart-badge">{{ $sum ?? 0 }}</span>
+                                <span class="bi bi-basket"></span>
+                            </a>
+                        </div>
+                        <!-- ورود و ثبت نام -->
+                        <div class="d-flex justify-content-center align-items-center">
+                            <div class="button-container d-flex justify-content-center align-items-center">
+                                <a href="/login" class="btn btn-icon login-btn">ورود</a>
+                                @if (isset($register_message) and $register_message->status == 1)
                                     <a data-bs-toggle="modal" data-bs-target="#registermessageModal"
-                                        class="btn btn-icon btn-primary register_btn">ثبت نام</a>
+                                        class="btn btn-icon register-btn">ثبت نام</a>
                                 @else
-                                    <a href="{{ route('register') }}"
-                                        class="btn btn-icon btn-primary register_btn">ثبت نام</a>
+                                    <a href="{{ route('register') }}" class="btn btn-icon register-btn">ثبت نام</a>
                                 @endif
-                            </div> --}}
-                            <div class="flex justify-center items-center">
-                                <div class="button-container">
-                                    <a href="/login" class="btn btn-icon login-btn login_btn">ورود</a>
-                                    @if (Route::currentRouteName() == 'register' and !$previousRoute or
-                                            Route::currentRouteName() == 'register' and $previousRoute != 'home' or
-                                            Route::currentRouteName() == 'register' and !$errors->any() and $register_message->status)
-                                        <a data-bs-toggle="modal" data-bs-target="#registermessageModal"
-                                            class="btn btn-icon register-btn register_btn">ثبت نام</a>
-                                    @else
-                                        <a href="{{ route('register') }}"
-                                            class="btn btn-icon register-btn register_btn">ثبت
-                                            نام</a>
-                                    @endif
-                                    <div class="background-slide"></div>
-                                </div>
+                                <div class="background-slide"></div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </nav>
-        </div>
-    </header>
-</div>
+                {{-- منوی سبد خرید --}}
+                <div class="cart-dropdown">
+                    <div class="cart-header">
+                        <span class="mb-0">سبد خرید</span>
+                        <span class="text-muted cart-items-count">{{ $sum ?? 0 }} کالا</span>
+                    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+                    <div class="cart-items" id="navbarCartList">
+                        @php
+                            $price = 0;
+                            $off = 0;
+                            $totalQuantity = 0;
+                        @endphp
+                        @isset($cart)
+
+                            @foreach ($cart as $productId => $productData)
+                                @foreach ($productData as $model => $item)
+                                    @php
+                                        $class = 'App\\' . $model;
+                                        $product = $class::find($productId);
+
+                                        if (!$product) {
+                                            continue;
+                                        }
+
+                                        $quantity = $item['quantity'];
+                                        $totalQuantity += $quantity;
+
+                                        // محاسبه قیمت
+                                        $p = $product->prices->where('local', 'تومان')->first();
+                                        $cartPrice = 0;
+                                        $cartOff = 0;
+
+                                        if ($p->offPrice > 0) {
+                                            if ($p->offType == 'مبلغ') {
+                                                $cartPrice = $p->price - $p->offPrice;
+                                                $cartOff = $p->offPrice;
+                                                $price += ($p->price - $p->offPrice) * $quantity;
+                                                $off += $cartOff * $quantity;
+                                            } elseif ($p->offType == 'درصد') {
+                                                $cartPrice = $p->price - $p->price * ($p->offPrice / 100);
+                                                $cartOff = $p->price * ($p->offPrice / 100);
+                                                $price += ($p->price - $p->price * ($p->offPrice / 100)) * $quantity;
+                                                $off += $cartOff * $quantity;
+                                            }
+                                        } else {
+                                            $cartPrice = $p->price;
+                                            $price += $p->price * $quantity;
+                                        }
+
+                                        // تولید عنوان محصول
+                                        $title = $product->title;
+                                        if (isset($product->color_design->design->title)) {
+                                            $title .= ' طرح ' . $product->color_design->design->title;
+                                        }
+                                        if (isset($product->color_design->color->color)) {
+                                            $title .= ' رنگ ' . $product->color_design->color->color;
+                                        }
+
+                                        // آدرس تصویر
+                                        $image = $product->images->first()
+                                            ? asset('storage/images/' . $product->images->first()->name)
+                                            : '/images/no-image.png';
+
+                                        // لینک محصول
+                                        $productUrl = '#';
+                                        switch ($model) {
+                                            case 'Tablecloth':
+                                                $productUrl = route('tablecloth.show', [$product->id]);
+                                                break;
+                                        }
+
+                                        $basePrice = $p->price;
+                                        $baseOffPrice = $p->offPrice;
+                                        $offType = $p->offType;
+
+                                        if ($p->offPrice > 0) {
+                                            if ($p->offType == 'مبلغ') {
+                                                $cartPrice = $p->price - $p->offPrice;
+                                            } elseif ($p->offType == 'درصد') {
+                                                $cartPrice = $p->price - $p->price * ($p->offPrice / 100);
+                                            }
+                                        } else {
+                                            $cartPrice = $p->price;
+                                        }
+                                    @endphp
+
+                                    <div class="cart-item" data-id="{{ $productId }}"
+                                        data-model="{{ $model }}" data-base-price="{{ $basePrice }}"
+                                        data-base-off-price="{{ $baseOffPrice }}" data-off-type="{{ $offType }}">
+                                        <img src="{{ $image }}" alt="{{ $title }}"
+                                            class="cart-item-image">
+                                        <div class="cart-item-content">
+                                            <div class="cart-item-title">{{ Str::limit($title, 22) }}</div>
+                                            <div class="cart-item-price">
+                                                @if ($cartOff > 0)
+                                                    <span class="cart-item-old-price">{{ $p->offPrice }}</span>
+                                                @endif <small class="fs-10 text-muted">جمع
+                                                    جزء : </small>
+                                                {{ number_format($cartPrice * $quantity) }} تومان
+                                            </div>
+                                            <div class="quantity-controls">
+                                                <button class="decrease" data-model="{{ $model }}"
+                                                    data-id="{{ $productId }}">-</button>
+                                                <span class="count item-quantity">{{ $quantity }}</span>
+                                                <button class="increase" data-model="{{ $model }}"
+                                                    data-id="{{ $productId }}">+</button>
+                                                <a href="#" class="delete-item me-3" data-id="{{ $productId }}"
+                                                    data-model="{{ $model }}">
+                                                    <i class="fa-solid fa-close text-danger"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @endforeach
+                        @endisset
+                    </div>
+
+                    <div class="cart-footer">
+                        <div class="cart-actions justify-content-between align-items-center">
+                            <span class="cart-total-price">
+                                <span class="text-muted fs-10">مبلغ قابل پرداخت</span><br>
+                                {{ number_format($price ?? 0) }}
+                                تومان</span>
+                            <a href="#" class="btn-checkout">مشاهده سبد خرید</a>
+                        </div>
+                    </div>
+                </div>
+                {{-- منوی پروفایل --}}
+                <div class="profile-dropdown">
+                    <div class="profile-items px-4 py-3" id="navbarprofileList">
+                        <li class=" list-unstyled mb-3">
+                            <a class="dropdown-item" href="#">
+                                <i class="fa-solid fa-user ms-1 top-0"></i>
+                                <span>{{ __('menu.profile') }}</span>
+                            </a>
+                        </li>
+                        <li class=" list-unstyled">
+                            <a class="dropdown-item text-danger" href="#"
+                                onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                                <i class="fa-solid fa-arrow-right-from-bracket ms-1 top-0"></i>
+                                <span>{{ __('menu.logout') }}</span>
+                            </a>
+                            <form id="logout-form" action="#" method="POST"
+                                style="display: none;">
+                                @csrf
+                            </form>
+                        </li>
+                    </div>
+                </div>
+                {{-- منوی مقایسه ها --}}
+                <div class="compare-dropdown">
+                    <div class="favorites-header">
+                        <span class="mb-0">لیست مقایسه</span>
+                        <span class="text-muted compare-items-count" id="compare-items-count">
+                            @if (session()->has('compares'))
+                                {{ count(session('compares')['product']) }} کالا
+                            @else
+                                0 کالا
+                            @endif
+                        </span>
+                    </div>
+
+                    <div class="compare-items" id="navbarCompareList">
+                        @if (session('compares') != null)
+                            @foreach (session('compares')['product'] as $compare)
+                                <div class="compare-item" data-id="{{ $compare->id }}"
+                                    data-model="{{ substr($compare->category->model, 4) }}">
+                                    @php $image = $compare->images->first(); @endphp
+                                    <img src="{{ asset('storage/images/thumbnails/' . $image['name']) }}"
+                                        alt="product" class="favorites-item-image">
+                                    <div class="favorites-item-content">
+                                        <div class="favorites-item-title">
+                                            {{ $compare->category->title }} طرح
+                                            {{ $compare->color_design->design->title }} رنگ
+                                            {{ $compare->color_design->color->color }}
+                                        </div>
+                                        <div class="favorites-item-price">
+                                            @if ($compare->quantity > 0)
+                                                @php
+                                                    $price = $compare->prices->where('local', 'تومان')->first();
+                                                @endphp
+                                                @if ($price->offPrice > 0)
+                                                    @if ($price->offType == 'مبلغ')
+                                                        <span
+                                                            class="favorites-item-old-price">{{ number_format($price->price - $price->offPrice) }}</span>
+                                                    @elseif($price->offType == 'درصد')
+                                                        <span
+                                                            class="favorites-item-old-price">{{ number_format($price->price - $price->price * ($price->offPrice / 100)) }}</span>
+                                                    @endif
+                                                    {{ number_format($price->price) }}
+                                                    تومان
+                                                @else
+                                                    {{ number_format($price->price) }}
+                                                    تومان
+                                                @endif
+                                            @else
+                                                ناموجود
+                                            @endif
+                                        </div>
+                                        <div
+                                            class="d-flex justify-content-start gap-2 align-items-center w-100 bg-white">
+                                            <button class="delete-btn close" data-id="{{ $compare->id }}"><i
+                                                    class="fa-solid fa-close text-danger"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+
+                    <div class="cart-footer">
+                        <div class="cart-actions justify-content-end align-items-center">
+                            <a href="#" class="btn-checkout">مشاهده لیست</a>
+                        </div>
+                    </div>
+                </div>
+                {{-- منوی علاقه مندی ها --}}
+                @if (Auth::check())
+                    <div class="favorites-dropdown">
+                        <div class="favorites-header">
+                            <span class="mb-0">{{ __('menu.favorites') }}</span>
+                            <span class="text-muted favorites-items-count"
+                                id="favorites-items-count">0 کالا</span>
+                        </div>
+
+                        <div class="favorites-items" id="navbarFavoritesList">
+
+                        </div>
+
+                        <div class="cart-footer">
+                            <div class="cart-actions justify-content-end align-items-center">
+                                <a href="#" class="btn-checkout">مشاهده
+                                    لیست</a>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                <!-- منوی دسته‌بندی برای دسکتاپ -->
+                <div class="category-menu" id="categoryMenu">
+                    <div class="category-content">
+                        <div class="row">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <!-- آکاردئون موبایل -->
+    <div class="mobile-category-menu" id="mobileCategoryMenu">
+        <div class="mobile-category-header">
+            <span>{{ __('main.title') }}</span>
+            <button type="button" id="closeMobileMenu" class="btn-close"></button>
+        </div>
+        <div class="mobile-category-content">
+            <!-- ورود و ثبت نام -->
+            <div class="flex justify-center items-center mb-2">
+                <div class="button-container border border-secondary rounded text-center p-2">
+                    @if (!Auth::check())
+                        <a href="#" class="text-muted text-decoration-none px-1">
+                            {{ __('menu.login') }}
+                        </a>
+                        |
+                        <a href="#" class="text-muted text-decoration-none px-1">
+                            {{ __('menu.register') }}
+                        </a>
+                        <i class="fa-solid fa-arrow-right-to-bracket me-1"></i>
+                    @else
+                        <a href="#" class="text-muted text-decoration-none px-1">
+                            <i class="fa-solid fa-user me-1"></i>
+                            {{ Auth::user()->name }} {{ Auth::user()->family }}
+                        </a>
+                    @endif
+                </div>
+            </div>
+            <div class="mobile-main-category py-3">
+                <a href="#" class="text-reset text-decoration-none fw-bold">
+                    <img src="{{ asset('shop/assets/svgs/cart.svg') }}" alt="cart" width="24">
+                    {{ __('menu.cart') }}
+                </a>
+            </div>
+            <div class="mobile-main-category py-3">
+                <a class="nav-link fw-bold" href="#specials">
+                    <img src="{{ asset('shop/assets/svgs/badge-percent.svg') }}" alt="hots" width="18">
+                    {{ __('menu.amazing') }}</a>
+            </div>
+            <div class="mobile-main-category py-3">
+                <a class="nav-link fw-bold"
+                    href="http://www.termehsalari.com/store#newest">{{ __('menu.newest') }}</a>
+
+            </div>
+            <div class="mobile-main-category py-3">
+                <a class="nav-link fw-bold"
+                    href="http://www.termehsalari.com/store#products">{{ __('menu.bestSeller') }}</a>
+
+            </div>
+            <div class="mobile-main-category py-3">
+                <a class="nav-link fw-bold"
+                    href="http://www.termehsalari.com/store#branchs">{{ __('menu.branchs') }}</a>
+            </div>
+            <div class="mobile-main-category py-3">
+                <a class="nav-link fw-bold" href="#">{{ __('menu.aboutUs') }}</a>
+            </div>
+        </div>
+    </div>
+    <!-- overlay برای بستن منوی موبایل -->
+    <div class="overlay" id="overlay"></div>
+</header>
+
 
 <script>
-    const searchBtn = document.getElementById('toggleSearch');
-    const searchBox = document.getElementById('searchInputWrapper');
-
-    searchBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        searchBox.classList.toggle('show');
-        if (searchBox.classList.contains('show')) {
-            searchBox.querySelector('.input').focus();
-            searchBox.querySelector('.input').classList.add('focus');
+    // مدیریت هاور روی سبد خرید
+    let cartTimeout;
+    $('.cart-container').hover(
+        function() {
+            clearTimeout(cartTimeout);
+            $('.cart-dropdown').css({
+                'opacity': '1',
+                'visibility': 'visible',
+                'transform': 'translateY(0)'
+            });
+        },
+        function() {
+            cartTimeout = setTimeout(function() {
+                $('.cart-dropdown').css({
+                    'opacity': '0',
+                    'visibility': 'hidden',
+                    'transform': 'translateY(10px)'
+                });
+            }, 200);
         }
-    });
-
-    document.addEventListener('click', function(e) {
-        if (!searchBox.contains(e.target) && !searchBtn.contains(e.target)) {
-            searchBox.classList.remove('show');
+    );
+    // جلوگیری از بستن وقتی هاور روی منو است
+    $('.cart-dropdown').hover(
+        function() {
+            clearTimeout(cartTimeout);
+        },
+        function() {
+            cartTimeout = setTimeout(function() {
+                $('.cart-dropdown').css({
+                    'opacity': '0',
+                    'visibility': 'hidden',
+                    'transform': 'translateY(10px)'
+                });
+            }, 200);
         }
-    });
-
-    $(document).ready(function() {
-        $('#registermessageModal').modal({
-            backdrop: 'static', // کلیک روی بک‌گراند کار نکنه
-            keyboard: false // دکمه Escape کار نکنه
-        });
-        $('#registermessageModal').modal('show');
-    });
+    );
+    let profileTimeout;
+    $('.profile-container').hover(
+        function() {
+            clearTimeout(profileTimeout);
+            $('.profile-dropdown').css({
+                'opacity': '1',
+                'visibility': 'visible',
+                'transform': 'translateY(0)'
+            });
+        },
+        function() {
+            profileTimeout = setTimeout(function() {
+                $('.profile-dropdown').css({
+                    'opacity': '0',
+                    'visibility': 'hidden',
+                    'transform': 'translateY(10px)'
+                });
+            }, 200);
+        }
+    );
+    // جلوگیری از بستن وقتی هاور روی منو است
+    $('.profile-dropdown').hover(
+        function() {
+            clearTimeout(profileTimeout);
+        },
+        function() {
+            profileTimeout = setTimeout(function() {
+                $('.profile-dropdown').css({
+                    'opacity': '0',
+                    'visibility': 'hidden',
+                    'transform': 'translateY(10px)'
+                });
+            }, 200);
+        }
+    );
+    let compareTimeout;
+    $('.compare-container').hover(
+        function() {
+            clearTimeout(compareTimeout);
+            $('.compare-dropdown').css({
+                'opacity': '1',
+                'visibility': 'visible',
+                'transform': 'translateY(0)'
+            });
+        },
+        function() {
+            compareTimeout = setTimeout(function() {
+                $('.compare-dropdown').css({
+                    'opacity': '0',
+                    'visibility': 'hidden',
+                    'transform': 'translateY(10px)'
+                });
+            }, 200);
+        }
+    );
+    // جلوگیری از بستن وقتی هاور روی منو است
+    $('.compare-dropdown').hover(
+        function() {
+            clearTimeout(compareTimeout);
+        },
+        function() {
+            compareTimeout = setTimeout(function() {
+                $('.compare-dropdown').css({
+                    'opacity': '0',
+                    'visibility': 'hidden',
+                    'transform': 'translateY(10px)'
+                });
+            }, 200);
+        }
+    );
 </script>

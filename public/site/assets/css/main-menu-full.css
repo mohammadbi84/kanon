@@ -1,0 +1,128 @@
+:root {
+    --main-menu-back: white;
+    --main-menu-back-small: rgba(255, 255, 255, 0.8);
+    --main-menu-margin-top: calc(20px + var(--top-bar-height));
+    --main-menu-margin: 20px;
+    --main-menu-padding-default: 15px;
+    --main-menu-padding-small: 0px;
+    /*  اگر متغیر --raduis را تعریف نکرده اید، این خط را اضافه کنید: */
+    --raduis: 5px;
+    /* یا هر مقدار دلخواه دیگر */
+}
+
+.main-menu {
+    background-color: var(--main-menu-back);
+    position: fixed;
+    height: fit-content;
+    z-index: 1000;
+    left: 0;
+    right: 0;
+    top: 5px;
+    padding: 0px 120px;
+    transition: 500ms;
+    box-sizing: content-box !important;
+    box-shadow: 0 0 5px #595959;
+}
+
+.main-menu.small {
+    left: 0;
+    right: 0;
+    top: 5px;
+    padding: 0px 120px;
+    /*background-color: var(--main-menu-back-small);  اگر می خواهید پس زمینه نیمه شفاف باشد */
+    /*backdrop-filter: blur(2px); اگر می خواهید پس زمینه محو باشد */
+    box-shadow: 0 0 5px #595959;
+    /*border-radius: 10px; اگر می خواهید گوشه ها گرد باشند */
+}
+
+.main-menu.with-top-ad {
+    top: calc(var(--main-menu-margin-top) + var(--top-ad-height));
+}
+
+.main-menu.small .navbar .container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.main-menu .navbar .container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.main-menu .navbar .navbar-brand {
+    margin-right: 0;
+}
+
+.main-menu .navbar .navbar-brand img {
+    height: 40px;
+    margin-right: 0;
+    margin-left: 0;
+    transform: scale(1.2);
+    -ms-transform: scale(1.2);
+}
+
+.main-menu.small .navbar .navbar-brand img {
+    margin-right: 0;
+    margin-left: 0;
+    transform: scale(1.2);
+    -ms-transform: scale(1.2);
+}
+
+/*  سبک های مربوط به دکمه های آیکون دار (مهمترین بخش) */
+.main-menu .navbar .btn-icon {
+    background-color: #9DCCFF4D;
+    color: black;
+    display: flex;
+    /*  برای وسط چین کردن ضروری است */
+    align-items: center;
+    /*  وسط چین کردن عمودی */
+    justify-content: center;
+    /*  وسط چین کردن افقی */
+    border-radius: var(--raduis);
+    /*  اعمال گردی گوشه ها */
+    /*  اختیاری: اگر می خواهید کمی padding هم داشته باشد: */
+    padding: 10px;
+    /*  مقدار را به دلخواه تنظیم کنید */
+}
+
+.main-menu .navbar .btn-icon:hover {
+    background-color: rgba(101, 179, 255, 0.3);
+}
+
+.main-menu .navbar .btn-text {
+    color: var(--bs-nav-link-color) !important;
+    padding: 4px 10px;
+    border-radius: var(--raduis);
+    /* added border-radius */
+
+}
+
+.main-menu .navbar .btn-text:hover {
+    /*background-color: var(--primary-color--50); */
+    color: white !important;
+}
+
+.main-menu .navbar .nav-item .dropdown-menu .dropdown-item {
+    text-align: center;
+}
+.navbar-expand-lg .container {
+    padding: 0 20px !important;
+}
+
+/*  سبک های مربوط به بخش دکمه ها در منو */
+.main-menu .navbar .button-container {
+    background-color: rgba(157, 204, 255, 0.3) !important;
+    border-radius: var(--raduis) !important;
+    padding: 5px !important;
+    display: flex !important;
+    /* Make the container a flex container */
+    align-items: center !important;
+    /* Center items vertically */
+    gap: 4px !important;
+    position: relative;
+    z-index: 0;
+    /* Add some gap between buttons */
+}
+
+
+

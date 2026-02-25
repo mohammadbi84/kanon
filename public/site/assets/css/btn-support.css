@@ -1,0 +1,353 @@
+#btn-support {
+    position: fixed;
+    bottom: 10px;
+    /* حالت پیش‌فرض */
+    opacity: 0;
+    transition: bottom 0.3s ease, opacity 0.3s ease;
+}
+
+#btn-support.show {
+    bottom: 47px;
+    /* وقتی اسکرول کردی کمی بیاد بالا */
+    opacity: 1;
+}
+
+#btn-support.at-bottom {
+    bottom: 47px;
+    /* وقتی رسیدی پایین‌تر، فاصله بیشتری بگیره */
+}
+
+
+
+/* Chat button styles */
+.chat-container {
+    position: fixed;
+    bottom: 47px;
+    right: 68px;
+    z-index: 1000;
+    /* border: 8px solid #d6d6d675; */
+    border-radius: 50%;
+    /* background-color: #d6d6d675; */
+    outline: 0px solid #d6d6d680;
+}
+
+.chat-btn {
+    width: 48px;
+    height: 48px;
+    background: #fff;
+    color: rgb(0, 0, 0);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    /* transition: all 0.3s ease; */
+    border: none;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 1001;
+    box-shadow: -6px 2px 16px #00000026 !important;
+}
+
+.chat-btn i {
+    font-size: 1.5rem;
+    /* transition: all 0.3s ease; */
+    position: relative;
+    top: 1px;
+}
+
+.chat-btn:hover {
+    background: #eba607;
+    color: #fff;
+    /* transform: scale(1.05); */
+}
+
+/* Chat box styles */
+.chat-box {
+    width: 48px;
+    height: 48px;
+    background: #f8f9fa;
+    border-radius: 25px;
+    /* box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); */
+    overflow: hidden;
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.chat-header {
+    background: #fff;
+    color: rgb(39, 39, 39);
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    height: 0;
+    overflow: hidden;
+    z-index: 1;
+    box-shadow: 0px 0px 10px 4px #ababab;
+}
+
+.chat-header h5 {
+    margin: 0;
+    font-weight: 400;
+    font-size: 1rem !important;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: rgb(39, 39, 39);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chat-body {
+    flex: 1;
+    padding: 15px;
+    margin-left: 8px;
+    overflow-y: auto;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    height: 0;
+    overflow: hidden;
+}
+
+.chat-body::-webkit-scrollbar {
+    background-color: #ffffff;
+    width: 6px;
+}
+
+.chat-body::-webkit-scrollbar-thumb {
+    margin-left: 5px;
+    background-color: #eba607;
+    border-radius: 10px;
+    width: 10px;
+}
+
+.message {
+    font-size: 14px;
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    animation: fadeIn 0.3s ease;
+}
+
+.received {
+    background: white;
+    border: 1px solid #e0e0e0;
+    align-self: flex-start;
+    border-top-right-radius: 3px;
+}
+
+.sent {
+    background: #eba60730;
+    border: 1px solid #eba607;
+    color: #000000;
+    align-self: flex-end;
+    border-top-left-radius: 3px;
+}
+
+.chat-footer {
+    /* padding: 11px 70px 11px 15px; */
+    padding: 11px;
+    border-top: 1px solid #e0e0e0;
+    background: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    height: 0;
+    overflow: hidden;
+}
+
+.chat-footer input {
+    border-top-right-radius: 5px !important;
+    border-bottom-right-radius: 5px !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    font-size: 14px;
+}
+
+.chat-footer input:focus {
+    box-shadow: none;
+    outline: none;
+    border: 1px solid #eba607;
+    border-left: none;
+}
+
+.chat-footer .btn {
+    border-top-left-radius: 5px !important;
+    border-bottom-left-radius: 5px !important;
+}
+
+.input-group {
+    display: flex;
+}
+
+.send-btn {
+    border-radius: 20px 0 0 20px;
+    border-right: none;
+    background: #eba607;
+    color: white;
+}
+
+.send-btn:hover {
+    background: #ecb128c1;
+    color: white;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.expand-width {
+    animation: expandWidth 0.4s ease forwards;
+    width: 320px;
+}
+
+.expand-height {
+    animation: expandHeight 0.4s ease forwards;
+}
+
+.collapse-height {
+    animation: collapseHeight 0.4s ease forwards;
+}
+
+.collapse-width {
+    animation: collapseWidth 0.4s ease forwards;
+}
+
+@keyframes expandWidth {
+    from {
+        width: 48px;
+    }
+
+    to {
+        width: 320px;
+    }
+}
+
+@keyframes expandHeight {
+    from {
+        height: 48px;
+        border-radius: 10px;
+    }
+
+    to {
+        height: 500px;
+        border-radius: 10px 10px 10px 10px;
+    }
+}
+
+@keyframes collapseHeight {
+    from {
+        height: 500px;
+        border-radius: 10px 10px 10px 10px;
+    }
+
+    to {
+        height: 48px;
+        border-radius: 10px;
+    }
+}
+
+@keyframes collapseWidth {
+    from {
+        width: 320px;
+    }
+
+    to {
+        width: 48px;
+    }
+}
+
+.show-content {
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: auto !important;
+}
+
+/* RTL specific adjustments */
+.form-control,
+.input-group-text,
+.btn {
+    direction: rtl;
+}
+
+.message-time {
+    font-size: 0.7rem;
+    display: block;
+    margin-top: 5px;
+    opacity: 0.8;
+}
+
+/* Demo content */
+.feature-list {
+    list-style: none;
+    padding: 0;
+}
+
+.feature-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+}
+
+.feature-list li:before {
+    content: "✓";
+    color: #eba607;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .chat-container {
+        right: 10px;
+        bottom: 10px;
+    }
+
+    @keyframes expandWidth {
+        from {
+            width: 48px;
+        }
+
+        to {
+            width: 300px;
+        }
+    }
+
+    @keyframes collapseWidth {
+        from {
+            width: 300px;
+        }
+
+        to {
+            width: 48px;
+        }
+    }
+}

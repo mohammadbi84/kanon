@@ -3,7 +3,7 @@
 @include('site.layout.head')
 
 <body>
-    <script src="{{ asset('site/assets/js/sweetalert.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if (Session::has('success'))
         <script>
             Swal.fire({
@@ -38,7 +38,7 @@
 
     @include('site.layout.footer')
     @yield('script')
-
+    
 </body>
 
 </html>

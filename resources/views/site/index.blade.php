@@ -1,144 +1,35 @@
-<!doctype html>
-<html lang="fa" dir="rtl">
+@extends('site.layout.master')
+@section('head')
+    <title>یزد اسکیل</title>
+    {{-- top-slider --}}
+    <link rel="stylesheet" href="{{ asset('site/assets/css/top-slider.css') }}">
+    <script src="{{ asset('site/assets/js/top-slider.js') }}"></script>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {{-- video --}}
+    <link rel="stylesheet" href="{{ asset('site/assets/css/video.css') }}">
+    <script src="{{ asset('site/assets/js/video.js') }}"></script>
 
-    <title>کانون</title>
-
-    {{-- <link rel="stylesheet" href="{{ asset('site/src/style/font-awesome.css') }}"> --}}
-    <link href="https://v1.fontapi.ir/css/VazirFD" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Vazir FD', sans-serif !important;
-            /* Or 'Vazirmatn', 'Vazir', depending on the CDN/version */
-        }
-    </style>
-
-
-    <!-- BOOTSTRAP 5 -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/bootstrap.css') }}">
-    <script src="{{ asset('site/src/js/bootstrap.js') }}"></script>
-
-    <!--icons-->
-    <link rel="stylesheet" href="{{ asset('site/src/style/bootstrap-icons.css') }}" />
-    <!-- BOOTSTRAP 5 -->
-
-    <!-- SLIDER LIBRARY (Splide) -->
-    <script src="{{ asset('site/src/js/splide.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('site/src/style/splide.css') }}">
-
-    <!-- intersection extension for slider autoplay only when slider is visible in viewport -->
-    <script src="{{ asset('site/src/js/splide-extension-intersection.js') }}"></script>
-    <!-- SLIDER LIBRARY (Splide) -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/styles.css') }}">
-    <script src="{{ asset('site/src/js/utils.js') }}"></script>
-    <!-- main menu -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/main-menu.css') }}">
-    <script src="{{ asset('site/src/js/main-menu.js') }}"></script>
-    <!-- main menu -->
-
-    <!-- top slider -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/top-slider.css') }}">
-    <script src="{{ asset('site/src/js/top-slider.js') }}"></script>
-    <!-- top slider -->
-
-    <!-- top ad -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/top-ad.css') }}">
-    <script src="{{ asset('site/src/js/top-ad.js') }}"></script>
-    <!-- top ad -->
-
-    <!-- forms -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/forms.css') }}">
-    <!-- forms -->
-
-    <!-- btn-play with pulse -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/btn-play-pulse.css') }}">
-    <!-- btn-play with pulse -->
-
-
-    <!-- btn support -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/btn-support.css') }}">
-    <script src="{{ asset('site/src/js/btn-support.js') }}"></script>
-    <!-- btn go-to-top -->
-
-    <!-- btn go-to-top -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/btn-go-to-top.css') }}">
-    <script src="{{ asset('site/src/js/btn-go-to-top.js') }}"></script>
-    <!-- btn go-to-top -->
-
-    <!-- switch element -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/switch.css') }}">
-    <!-- switch element -->
     <!-- wave overlay -->
-    <script src="{{ asset('site/src/js/wave-overlay.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('site/src/style/wave-overlay.css') }}">
+    <link rel="stylesheet" href="{{ asset('site/assets/css/wave-overlay.css') }}">
+    <script src="{{ asset('site/assets/js/wave-overlay.js') }}"></script>
     <!-- wave overlay -->
 
-    <script src="{{ asset('site/src/js/init.js') }}"></script>
-    <link href="{{ asset('site/src/style/animate.css') }}" rel="stylesheet">
-    <!-- Leaflet Marker Cluster CSS and JS -->
-    <link rel="stylesheet" href="{{ asset('site/src/style/leaflet.css') }}" />
-    <script src="{{ asset('site/src/js/leaflet.js') }}"></script>
+    {{-- main-scripts --}}
+    <script src="{{ asset('site/assets/js/scripts.js') }}"></script>
 
-    <!-- Leaflet Marker Cluster CSS and JS -->
-    <script src="{{ asset('site/src/js/leaflet-markercluster.js') }}"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    {{-- home-style --}}
+    <link rel="stylesheet" href="{{ asset('site/assets/css/home_style.css') }}">
+    {{-- popup --}}
+    <link rel="stylesheet" href="{{ asset('site/assets/css/popup.css') }}">
+    {{-- search form --}}
+    <link rel="stylesheet" href="{{ asset('site/assets/css/forms.css') }}">
 
 
-    {{-- <link rel="stylesheet" href="{{asset('site/src/style/leaflet.css')}}" /> --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="{{ asset('site/src/style/home_style.css') }}">
-    <style>
-        .modal-backdrop {
-            background-color: #000000 !important;
-            opacity: 0.7 !important;
-        }
-
-        html,
-        body {
-            height: 100% !important;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .wrapper {
-            flex: 1;
-            /* فضای باقی‌مانده رو پر می‌کنه */
-        }
-
-        .footer {
-            background-color: #f1f1f1;
-            /* به دلخواه */
-            padding: 20px;
-            text-align: center;
-        }
-    </style>
     <script src="https://kit.fontawesome.com/fbc05d3d5f.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tiny-slider@2.9.4/dist/min/tiny-slider.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tiny-slider@2.9.4/dist/tiny-slider.css">
 
-
-    <style>
-        .leaflet-popup-content {
-            font-family: 'Vazir FD';
-        }
-    </style>
-    <!-- swiper slider -->
-    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" /> --}}
-    <link rel="stylesheet" href="https://lib.arvancloud.ir/Swiper/9.0.5/swiper-bundle.min.css" />
-    {{-- <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script> --}}
-    <script src="https://lib.arvancloud.ir/Swiper/9.0.5/swiper-bundle.min.js"></script>
-    <link rel="stylesheet" href="{{ asset('site/src/style/popup.css') }}">
-</head>
-
-<body>
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+@endsection
+@section('content')
     <!-- start popup -->
     @if ($popups->count() > 0)
         <div class="modal fade" id="customModal" tabindex="-1" aria-hidden="true" dir="rtl">
@@ -202,7 +93,6 @@
                 </div>
             </div>
         </div>
-
     @endif
     @if ($popups->count() > 0)
         <script>
@@ -306,304 +196,6 @@
     @endif
     <!-- end popup -->
 
-
-
-
-
-    <div class="modal fade" id="registermessageModal" tabindex="-1" dir="ltr">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content text-center">
-                <div class="modal-header d-block p-0 bg-primary text-white">
-                    <div class="row g-0 p-3" dir="rtl">
-                        <div class="col" style="text-align: right;">
-                            <h5 class="" id="customModalLabel">قبل از ثبت نام بخوانید</h5>
-                        </div>
-                        <div class="col" style="text-align: left;"> <button type="button" class="btn-close"
-                                data-bs-dismiss="modal" aria-label="بستن"></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-body" dir="rtl">
-                    <p class="text-start" style="text-align: justify;">متن تستی</p>
-                </div>
-                <div class="modal-footer d-flex justify-content-start">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">لغو</button>
-                    <a href="{{ route('register') }}" class="btn btn-success"
-                        onclick="closeModal('registermessageModal')">تایید</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function closeModal(modalId) {
-            var modalElement = document.getElementById(modalId);
-            var modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) {
-                modal.hide();
-            }
-        }
-    </script>
-
-
-    @php
-        // دریافت زمان حال با منطقه زمانی تنظیم شده در برنامه
-        $now = \Carbon\Carbon::now();
-
-        // دریافت تبلیغات فعال از دیتابیس
-        $advs = App\Models\topadv::where('start_date', '<=', $now)
-            ->where('end_date', '>=', $now)
-            ->orderBy('id', 'desc')
-            ->get();
-    @endphp
-    @if ($advs->isNotEmpty())
-        <div id="top-bar-container" style="width: 100%; position: sticky; top: 0; z-index: 2000;">
-            @foreach ($advs as $adv)
-                @php
-                    // تبدیل تاریخ شروع و پایان به Carbon
-                    $start_date_carbon = \Carbon\Carbon::parse($adv->start_date);
-                    $end_date_carbon = \Carbon\Carbon::parse($adv->end_date);
-                    $is_in_range = $now->isBetween($start_date_carbon, $end_date_carbon);
-                @endphp
-
-                @if ($is_in_range)
-                    <div class="top-bar-item" id="top-bar-item-{{ $loop->index }}"
-                        @if ($adv->page_link) onclick="handleLink('{{ $adv->page_link }}', '{{ $adv->page_link_type }}')"
-                        style="cursor: pointer; display: none; min-height: var(--top-bar-height, 50px); padding-top: var(--top-bar-height, 50px); background-color: {{ $adv->background_color ?? 'var(--top-bar-color, #f0f0f0)' }};"
-                    @else
-                            style="display: none; min-height: var(--top-bar-height, 50px); padding-top: var(--top-bar-height, 50px); background-color: {{ $adv->background_color ?? 'var(--top-bar-color, #f0f0f0)' }};" @endif>
-                        <div class="top-ad-container"
-                            style="background-image: url('{{ asset($adv->background_image) }}'); background-size: cover; background-position: center; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: {{ $adv->text_color ?? '#333' }};">
-                            <span
-                                class="text {{ $adv->animation_type ? 'animate__animated ' . $adv->animation_type : '' }}">
-                                <span class="mx-3">اطلاعیه!</span>
-                                {{ $adv->text }}
-                            </span>
-                            <!-- دکمه ضربدر برای بستن تبلیغ -->
-                            <button class="btn-close" onclick="event.stopPropagation(); closeTopBar()"
-                                style="background: none; border: none; color: inherit; font-size: 1.5rem; cursor: pointer; opacity: 0.7; margin-left: 10px;">
-                                ×
-                            </button>
-                        </div>
-                    </div>
-                @endif
-            @endforeach
-
-
-
-
-            <!-- نوار جایگزین (Fallback) که پس از بستن تبلیغ نمایش داده می‌شود -->
-            <div id="top-bar-fallback"
-                style="display: none; width: 100%; min-height: var(--top-bar-height); position: fixed; top: 0; z-index: 2000; padding-top: var(--top-bar-height); background-color: var(--top-bar-color)">
-                <div class="top-ad-container-close"></div>
-            </div>
-        </div>
-
-        <script>
-            // تابع جهت هدایت لینک بر اساس page_link_type
-            function handleLink(url, target) {
-                if (target && target.trim() !== '') {
-                    window.open(url, target);
-                } else {
-                    window.location.href = url;
-                }
-            }
-
-            // تعریف یک متغیر برای نگهداری تایمر نمایش تبلیغات
-            var adRotationTimeout;
-
-            document.addEventListener('DOMContentLoaded', function() {
-                var topBarContainer = document.getElementById('top-bar-container');
-                var topBarItems = topBarContainer.querySelectorAll('.top-bar-item');
-                var fallbackBar = document.getElementById('top-bar-fallback');
-                var currentItemIndex = 0;
-                var advsData = @json(
-                    $advs->map(function ($adv) {
-                        return ['duration' => $adv->duration];
-                    }));
-
-                function showNextAd() {
-                    // اگر نوار fallback نمایش داده شده باشد، نمایش تبلیغات متوقف می‌شود
-                    if (fallbackBar.style.display === 'block') return;
-
-                    // مخفی کردن تمام تبلیغات
-                    topBarItems.forEach(item => item.style.display = 'none');
-
-                    if (currentItemIndex < topBarItems.length) {
-                        topBarItems[currentItemIndex].style.display = 'block';
-                        let duration = advsData[currentItemIndex]['duration'] * 1000;
-                        adRotationTimeout = setTimeout(showNextAd, duration);
-                        currentItemIndex++;
-                    } else {
-                        currentItemIndex = 0;
-                        showNextAd();
-                    }
-                }
-
-                if (topBarItems.length > 0) {
-                    showNextAd();
-                }
-            });
-
-            // تابع برای بستن تبلیغ و نمایش نوار fallback
-            function closeTopBar() {
-                clearTimeout(adRotationTimeout);
-                var topBarItems = document.querySelectorAll('.top-bar-item');
-                topBarItems.forEach(item => item.style.display = 'none');
-                var fallback = document.getElementById('top-bar-fallback');
-                fallback.style.display = 'block';
-            }
-        </script>
-    @else
-        <!-- در صورت عدم وجود تبلیغ فعال، نوار fallback به صورت پیش‌فرض نمایش داده می‌شود -->
-        <div id="top-bar"
-            style="width: 100%; min-height: var(--top-bar-height); position: fixed; top: 0; z-index: 9999; padding-top: var(--top-bar-height); background-color: var(--top-bar-color)">
-            <div class="top-ad-container-close"></div>
-        </div>
-    @endif
-
-    <header style="position: relative;z-index:+50">
-        <div class="main-menu">
-            <nav class="navbar navbar-expand-lg">
-                <div class="container">
-                    <a class="navbar-brand fw-bold" href="/">
-                        <img src="{{ asset('site/public/img/logo-yazdskill2.png') }}" alt="website logo">
-                    </a>
-
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
-                        <ul class="navbar-nav mb-2 mb-lg-0 column-gap-2">
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="/">صفحه نخست</a>
-                            </li>
-
-                            <li class="nav-item btn-group">
-                                <a class="nav-link dropdown-toggle" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    آموزشگاه ها
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="{{ route('school') }}">آیتم 1</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('school') }}">آیتم 2</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="nav-item btn-group">
-                                <a class="nav-link dropdown-toggle" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    دوره ها
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#special-offers">پیشنهاد ویژه</a></li>
-                                    <li><a class="dropdown-item" href="#courses">جدیدترین ها</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="nav-item btn-group">
-                                <a class="nav-link dropdown-toggle" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    خبر ها
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#annos">جدیدترین خبر ها</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#footer">درباره ما</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('job-opportunity.categories') }}">فرصت های
-                                    شغلی</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#footer">مدرس شوید</a>
-                            </li>
-                        </ul>
-                        <!--  بخشی از HTML که دکمه ها را شامل می شود.  -->
-                        {{-- <div class="d-flex gap-2 align-items-stretch justify-content-center">
-                            <a href="#search-bar" class="btn btn-icon">
-                                <span class="bi bi-search"></span>
-                            </a>
-                            <a href="#" class="btn btn-icon"><span class="bi bi-basket"></span></a>
-                            <div class="button-container">
-                                <a href="/dashboard/login" class="btn btn-text">ورود</a>
-                                <a data-bs-toggle="modal" data-bs-target="#registermessageModal"
-                                    class="btn btn-icon btn-primary">ثبت نام</a>
-                            </div>
-                        </div> --}}
-                        <div class="d-flex gap-2 align-items-center justify-content-center position-relative">
-                            <!-- دکمه سرچ -->
-                            <button id="toggleSearch" class="btn btn-icon position-relative align-items-center"
-                                type="button">
-                                <span class="bi bi-search"></span>
-
-                                <!-- اینپوت کنار آیکون (سمت راست باز میشه) -->
-                                <div id="searchInputWrapper" class="search-box-horizontal p-0 ">
-                                    <input type="text" class="input" placeholder="جستجو..." />
-                                </div>
-                            </button>
-
-                            <!-- آیکون‌های دیگر -->
-                            <a href="#" class="btn btn-icon"><span class="bi bi-basket"></span></a>
-                            {{-- <div class="button-container">
-                                <a href="/login" class="btn btn-text">ورود</a>
-                                @if (isset($register_message) and $register_message->status == 1)
-                                    <a data-bs-toggle="modal" data-bs-target="#registermessageModal"
-                                        class="btn btn-icon btn-primary">ثبت نام</a>
-                                @else
-                                    <a href="{{ route('register') }}" class="btn btn-icon btn-primary">ثبت نام</a>
-                                @endif
-                            </div> --}}
-                            {{-- <div class="button-container d-flex gap-3 align-items-center">
-                                <a href="/login" class="btn btn-icon login-btn">ورود</a>
-                                <a href="{{ route('register') }}" class="btn btn-icon btn-primary register-btn">ثبت
-                                    نام</a>
-
-                            </div> --}}
-                            <div class="flex justify-center items-center">
-                                <div class="button-container">
-                                    <a href="/login" class="btn btn-icon login-btn">ورود</a>
-                                    @if (isset($register_message) and $register_message->status == 1)
-                                        <a data-bs-toggle="modal" data-bs-target="#registermessageModal"
-                                            class="btn btn-icon register-btn">ثبت نام</a>
-                                    @else
-                                        <a href="{{ route('register') }}" class="btn btn-icon register-btn">ثبت
-                                            نام</a>
-                                    @endif
-                                    <div class="background-slide"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </div>
-        <script>
-            const searchBtn = document.getElementById('toggleSearch');
-            const searchBox = document.getElementById('searchInputWrapper');
-
-            searchBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                searchBox.classList.toggle('show');
-                if (searchBox.classList.contains('show')) {
-                    searchBox.querySelector('.input').focus();
-                    searchBox.querySelector('.input').classList.add('focus');
-                }
-            });
-
-            document.addEventListener('click', function(e) {
-                if (!searchBox.contains(e.target) && !searchBtn.contains(e.target)) {
-                    searchBox.classList.remove('show');
-                }
-            });
-        </script>
-
-    </header>
     {{-- slider --}}
     <header style="position: relative;z-index:-50">
         <div class="top-slider-wrapper d-flex gap-3">
@@ -613,22 +205,18 @@
                     @foreach ($sliders as $slider)
                         <div class="item" data-duration="{{ $slider->show_time * 1000 }}">
                             @if ($slider->video)
-                                <div class="video-container position-relative w-100 h-100">
-                                    <img src="{{ asset($slider->image ?? 'no-image.png') }}"
-                                        class="img-fluid video-cover w-100 h-100" style="object-fit: cover;"
-                                        alt="">
-                                    <video class="d-none w-100 h-100 slider-video" style="object-fit: cover;"
-                                        preload="metadata">
+                                <div class="video-full-container video-full-container-slider mb-5 px-0">
+                                    <video class="slider-video" poster="{{ asset($slider->image ?? 'no-image.png') }}"
+                                        preload="none">
+                                        <!-- منبع ویدیو - میتوانید آدرس ویدیوی خود را جایگزین کنید -->
                                         <source src="{{ asset($slider->video) }}" type="video/mp4">
+                                        مرورگر شما از تگ ویدیو پشتیبانی نمی‌کند.
                                     </video>
-                                    <div
-                                        class="video-overlay position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
-                                        <button id="btn-stop" class="btn-stop">
-                                            <span class="bi bi-pause-fill"></span>
-                                        </button>
-                                        <button class="btn btn-primary btn-play">
-                                            <span class="bi bi-play-fill"></span>
-                                        </button>
+
+                                    <div class="video-overlay"></div>
+
+                                    <div class="play-pause-btn d-flex">
+                                        <i class="fas fa-play"></i>
                                     </div>
                                 </div>
                             @else
@@ -642,12 +230,11 @@
 
             <!-- Vertical Thumbnails -->
             <div class="top-slider-thumbs-container" style="width: 100%;">
-                <div class="top-slider-thumbs rounded-2 d-flex flex-column gap-0"
-                    style="left: var(--main-menu-margin);">
+                <div class="top-slider-thumbs rounded-2 d-flex flex-column gap-0" style="left: var(--main-menu-margin);">
                     <div class="top-slider-thumbs-header d-flex justify-content-between align-items-center text-light">
                         <div class="slider-nav d-flex align-items-center gap-0">
                             <button class="btn btn-sm btn-light next-slide">
-                                << /button>
+                                < </button>
                                     <span class="current-slide position-relative" style="bottom: 1px;">1</span>
                                     <button class="btn btn-sm btn-light prev-slide">></button>
                         </div>
@@ -657,8 +244,7 @@
                         @foreach ($sliders as $key => $slider)
                             <div class="thumb-item d-flex justify-content-between gap-2 align-items-center p-2"
                                 data-index="{{ $key }}" dir="ltr">
-                                <img src="{{ asset($slider->image ?? 'no-image.png') }}"
-                                    class="img-thumbnail border-0 p-0"
+                                <img src="{{ asset($slider->image ?? 'no-image.png') }}" class="img-thumbnail border-0 p-0"
                                     style="width: 80px; height: 80px; object-fit: cover;">
                                 <div class="thumb-info d-flex flex-column text-end">
                                     <span class="thumb-title">{{ $slider->name }}</span>
@@ -671,6 +257,20 @@
             </div>
         </div>
     </header>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     {{-- main --}}
     <main id="main">
@@ -1126,15 +726,13 @@
 
                                                 <p class="text-justify text-end" style="padding-right: 6px;">
                                                     {{ $advertisement->text }}</p>
-                                                <div
-                                                    class="bottom-icons2 mt-3 align-self-end d-flex align-items-center">
+                                                <div class="bottom-icons2 mt-3 align-self-end d-flex align-items-center">
 
                                                     <small>
                                                         <a type="button" id="like-btn2{{ $advertisement->id }}"
                                                             class="like-btn2 text-decoration-none text-reset"
                                                             data-id="{{ $advertisement->id }}">
-                                                            <small class="like-count"
-                                                                style="font-size: 11.9px">0</small>
+                                                            <small class="like-count" style="font-size: 11.9px">0</small>
                                                             <i class="bi bi-heart ms-1"
                                                                 style="position: relative;top: 2px;font-size:14px !important;"></i>
                                                         </a>
@@ -1158,8 +756,7 @@
                                             @if ($advertisement->discount_percent > 0)
                                                 <div class="discount-squer"
                                                     style="position: absolute;top: 8px;left: 26px;">
-                                                    <img src="{{ asset('Group 1.svg') }}" width="90"
-                                                        alt="discount">
+                                                    <img src="{{ asset('Group 1.svg') }}" width="90" alt="discount">
                                                     <span class="d-flex"
                                                         style="font-size: 12px;font-weight: 800;position: absolute;right: 12px;top: 7px;">
                                                         <span class="me-1" style="font-size: 13px;">تخفیف</span>
@@ -1175,11 +772,9 @@
                                             <div class="border rounded-2 bg-light p-1 time">
                                                 <p class="text-center m-0"
                                                     style="font-size: 14px;direction: rtl;font-weight:bold;margin-bottom:4px">
-                                                    <span class="text-primary"
-                                                        style="font-size: 14px">1403/05/08</span>
+                                                    <span class="text-primary" style="font-size: 14px">1403/05/08</span>
                                                     <span class="text-dark" style="font-size: 14px;">الی</span>
-                                                    <span class="text-primary"
-                                                        style="font-size: 14px">1403/05/20</span>
+                                                    <span class="text-primary" style="font-size: 14px">1403/05/20</span>
                                                 </p>
                                             </div>
                                             {{-- <button class="adv-btn btn btn-light text-primary border w-100 mb-2">
@@ -1211,8 +806,7 @@
                                                     </small>
                                                 </a>
 
-                                                <small> <a type="button"
-                                                        class="like-btn text-decoration-none text-reset"
+                                                <small> <a type="button" class="like-btn text-decoration-none text-reset"
                                                         data-id="{{ $advertisement->id }}">
                                                         <i class="bi bi-heart me-1"
                                                             style="position: relative;top: 2px;font-size:14px !important;"></i>
@@ -1516,29 +1110,21 @@
         </div>
 
         {{-- vodeo --}}
-        <div class="container-fluid p-0 mt-4" id="full-width-video" style="box-shadow: 0 0 1rem #919191;">
-            <div class="video" style="height: 92vh; position: relative; overflow: hidden;">
-                <img id="video-cover" src="{{ asset('site/public/img/1.png') }}" class="img"
-                    style="width:100%; height:100%; object-fit:cover;" alt="">
-                <video src="{{ asset('fazel.mp4') }}" id="video-player" class="d-none"
-                    style="width:100%; height:100%; object-fit:cover;"></video>
+        <section>
+            <div class="video-full-container video-full-container-main mb-5 px-0">
+                <video id="fullscreen-video" poster="{{ asset('site/public/img/1.png') }}">
+                    <!-- منبع ویدیو - میتوانید آدرس ویدیوی خود را جایگزین کنید -->
+                    <source src="{{ asset('site/public/vid/fazel.mp4') }}" type="video/mp4">
+                    مرورگر شما از تگ ویدیو پشتیبانی نمی‌کند.
+                </video>
 
-                <!-- دکمه Stop که فقط با هاور نمایش داده می‌شود -->
-                <div id="btn-stop-container" class="btn-stop-container"
-                    style="position:absolute; top:50%; left:50%; display:none;transform:translate(-50%, -50%);">
-                    <button id="btn-stop" class="btn-play btn-stop">
-                        <span class="bi bi-pause-fill"></span>
-                    </button>
-                </div>
-                <!-- دکمه Play وسط -->
-                <div id="btn-play-container" class="btn-play-container"
-                    style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);">
-                    <button id="btn-play" class="btn-play pulse">
-                        <span class="bi bi-play-fill"></span>
-                    </button>
+                <div class="video-overlay video-overlay2"></div>
+
+                <div class="play-pause-btn" id="play-pause-btn">
+                    <i class="fas fa-play"></i>
                 </div>
             </div>
-        </div>
+        </section>
 
 
         {{-- courses --}}
@@ -1775,8 +1361,7 @@
                                                 </a>
 
                                             </div>
-                                            <div style="font-size: 11.9px;" class="text-center fw-bold"
-                                                dir="rtl">
+                                            <div style="font-size: 11.9px;" class="text-center fw-bold" dir="rtl">
                                                 <i class="bi bi-clock ms-1 text-primary d-block"
                                                     style="position: relative;top: 2px;"></i>
                                                 50 ساعت
@@ -1825,15 +1410,13 @@
                                                         style="font-size: 12px;background-color:#e69926">20%</span><del
                                                         style="font-size: 14px"
                                                         class="text-primary">5,000,000</del></span>
-                                                <span class="d-block" style="font-size: 14px"
-                                                    dir="rtl">4,000,000 <span
-                                                        style="padding-right: 6px;font-size:14px">تومان</span></span>
+                                                <span class="d-block" style="font-size: 14px" dir="rtl">4,000,000
+                                                    <span style="padding-right: 6px;font-size:14px">تومان</span></span>
                                             </div>
                                         </div>
                                         <div class="col-6 p-0">
                                             <div class="countdown-timer timer-short justify-content-between"
-                                                id="countdown-{{ $item->id }}"
-                                                data-end-date="{{ $item->date }}">
+                                                id="countdown-{{ $item->id }}" data-end-date="{{ $item->date }}">
                                                 <div class="timer-col">
                                                     <span class="timer-number days">12
                                                     </span>
@@ -2124,8 +1707,7 @@
             </div>
             <div class="chat-footer" id="chatFooter">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="پیام خود را بنویسید..."
-                        id="messageInput">
+                    <input type="text" class="form-control" placeholder="پیام خود را بنویسید..." id="messageInput">
                     <button class="btn send-btn" id="sendBtn">
                         <i class="bi bi-send" style="position: relative;top: 3px;"></i>
                     </button>
@@ -2155,21 +1737,19 @@
         <defs>
             <clipPath id="roundedClip">
                 <path d="M 6.32 19.12
-                     L 24.68 4.88
-                     A 8 8 0 0 1 31 8
-                     L 31 110
-                     A 8 8 0 0 1 24.68 113.12
-                     L 0 86
-                     A 8 8 0 0 1 6.32 98.88
-                     L 0 32
-                     A 8 8 0 0 1 6.32 19.12
-                     Z" />
+                    L 24.68 4.88
+                    A 8 8 0 0 1 31 8
+                    L 31 110
+                    A 8 8 0 0 1 24.68 113.12
+                    L 0 86
+                    A 8 8 0 0 1 6.32 98.88
+                    L 0 32
+                    A 8 8 0 0 1 6.32 19.12
+                    Z" />
             </clipPath>
         </defs>
     </svg>
-    {{-- <a href="#" id="btn-news" class="btn-news">
-        <span>اخبار</span>
-    </a> --}}
+    
     <div class="right-nav" id="btn-news">
         <p><a href="#" class="text-decoration-none text-dark">اخبار</a></p>
     </div>
@@ -2367,8 +1947,7 @@
                                                     alt="تصویر خبر"></a>
                                         @elseif(in_array(strtolower($extension), ['mp4', 'webm', 'ogg']))
                                             <video controls>
-                                                <source src="{{ asset($mediaItem) }}"
-                                                    type="video/{{ $extension }}">
+                                                <source src="{{ asset($mediaItem) }}" type="video/{{ $extension }}">
                                                 مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
                                             </video>
                                         @endif
@@ -2705,86 +2284,6 @@
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const playButton = document.getElementById('btn-play');
-            const video = document.getElementById('video-player');
-            const previewImage = document.getElementById('video-cover');
-            const btnPlayContainer = document.getElementById('btn-play-container');
-            const stopButton = document.getElementById('btn-stop');
-
-            let isPlaying = false;
-            const videoSrc = '/public/vid/1.mp4'; // مسیر ویدیو
-
-            // دکمه Play وسط
-            playButton.addEventListener('click', function(e) {
-                e.stopPropagation();
-
-                if (!isPlaying) {
-                    if (video.src === '') {
-                        video.src = videoSrc;
-                    }
-                    previewImage.classList.add('d-none');
-                    video.classList.remove('d-none');
-                    video.play();
-                    btnPlayContainer.classList.add('d-none');
-                    isPlaying = true;
-                } else {
-                    video.pause();
-                    btnPlayContainer.classList.remove('d-none');
-                    isPlaying = false;
-                }
-            });
-
-            // کلیک روی خود ویدیو
-            video.addEventListener('click', function() {
-                if (isPlaying) {
-                    video.pause();
-                    btnPlayContainer.classList.remove('d-none');
-                    isPlaying = false;
-                } else {
-                    video.play();
-                    btnPlayContainer.classList.add('d-none');
-                    isPlaying = true;
-                }
-            });
-
-            // دکمه Stop که فقط با هاور ظاهر می‌شود
-            stopButton.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (isPlaying) {
-                    video.pause();
-                    btnPlayContainer.classList.remove('d-none');
-                    isPlaying = false;
-                } else {
-                    video.play();
-                    btnPlayContainer.classList.add('d-none');
-                    isPlaying = true;
-                }
-            });
-
-            // وقتی ویدیو تمام شد → دکمه Play نمایش داده شود
-            video.addEventListener('ended', function() {
-                isPlaying = false;
-                btnPlayContainer.classList.remove('d-none');
-            });
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            new Splide('#modal-slider', {
-                type: 'slide',
-                perPage: 1,
-                pagination: true,
-                arrows: false,
-                rewind: true,
-                height: '400px',
-                cover: true,
-                autoplay: true,
-            }).mount();
-        });
-    </script>
-
-    <script>
         document.addEventListener("DOMContentLoaded", function() {
             const lat = 31.879293;
             const lng = 54.373840;
@@ -2800,7 +2299,6 @@
                 .openPopup();
         });
     </script>
-
-</body>
-
-</html>
+@endsection
+@section('script')
+@endsection

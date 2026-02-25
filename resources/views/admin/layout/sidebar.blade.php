@@ -159,7 +159,7 @@
         </li>
         <li class="menu-item @if (Route::currentRouteName() == 'admin.popups.index' ||
                 Route::currentRouteName() == 'admin.articles.index' ||
-                Route::currentRouteName() == 'test') open @endif">
+                Route::currentRouteName() == 'admin.bookmark.index') open @endif">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-grid-alt"></i>
                 <div>بخش های سایت</div>
@@ -175,7 +175,7 @@
                         <div>صفحات داخلی</div>
                     </a>
                 </li>
-                <li class="menu-item @if (Route::currentRouteName() == 'test') active @endif">
+                <li class="menu-item @if (Route::currentRouteName() == 'admin.bookmark.index') active @endif">
                     <a href="{{route('admin.bookmark.index')}}" class="menu-link">
                         <div>بوکمارک</div>
                     </a>
