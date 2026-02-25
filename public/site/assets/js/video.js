@@ -9,11 +9,13 @@ document.addEventListener("DOMContentLoaded", function () {
     // تابع پخش/توقف ویدیو
     function togglePlayPause() {
         if (video.paused) {
+            playPauseBtn.style.display = "none";
             video.play();
             playIcon.classList.remove("fa-play");
             playIcon.classList.add("fa-pause");
             videoContainer.classList.add("playing");
         } else {
+            playPauseBtn.style.display = "flex";
             video.pause();
             playIcon.classList.remove("fa-pause");
             playIcon.classList.add("fa-play");

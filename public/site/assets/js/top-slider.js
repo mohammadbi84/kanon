@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 clearTimeout(timeoutId);
                 video.play();
-                playBtn.classList.remove("d-flex");
+                playBtn.style.display = "none";
                 icon.classList.remove("fa-play");
                 icon.classList.add("fa-pause");
                 container.classList.add("playing");
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 video.pause();
                 icon.classList.remove("fa-pause");
                 icon.classList.add("fa-play");
-                playBtn.classList.add("d-flex");
+                playBtn.style.display = "flex";
                 container.classList.remove("playing");
                 thumbsContainerMain.classList.remove("d-none");
                 activeVideo = null;
@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
             thumbsContainerMain.classList.remove("d-none");
             setTimeout(() => {
                 slider.goTo("next");
-            }, 1000);
+            }, 2000);
         });
     });
 

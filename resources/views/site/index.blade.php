@@ -215,7 +215,7 @@
 
                                     <div class="video-overlay"></div>
 
-                                    <div class="play-pause-btn d-flex">
+                                    <div class="play-pause-btn">
                                         <i class="fas fa-play"></i>
                                     </div>
                                 </div>
@@ -1749,7 +1749,7 @@
             </clipPath>
         </defs>
     </svg>
-    
+
     <div class="right-nav" id="btn-news">
         <p><a href="#" class="text-decoration-none text-dark">اخبار</a></p>
     </div>
