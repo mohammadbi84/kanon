@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\JobtypeController;
 use App\Http\Controllers\Admin\KardaneshController;
 use App\Http\Controllers\Admin\PopupController;
 use App\Http\Controllers\Admin\ProfessionController;
+use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\TuitionController;
 use App\Http\Controllers\Admin\TuitionProfessionController;
 use App\Http\Controllers\Controller;
@@ -163,6 +164,16 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::post('/bulk-delete', [BookmarkController::class, 'bulkDelete'])->name('bookmark.bulkDelete');
         Route::get('/{id}', [BookmarkController::class, 'edit'])->name('bookmark.edit');
         Route::put('/{id}', [BookmarkController::class, 'update'])->name('bookmark.update');
+    });
+
+    // ================== Slider ==================
+    Route::prefix('/slider')->group(function () {
+        Route::get('/', [SliderController::class, 'index'])->name('slider.index');
+        Route::post('/store', [SliderController::class, 'store'])->name('slider.store');
+        Route::delete('/delete/{id}', [SliderController::class, 'delete'])->name('slider.delete');
+        Route::post('/bulk-delete', [SliderController::class, 'bulkDelete'])->name('slider.bulkDelete');
+        Route::get('/{id}', [SliderController::class, 'edit'])->name('slider.edit');
+        Route::put('/{id}', [SliderController::class, 'update'])->name('slider.update');
     });
 });
 
@@ -479,15 +490,15 @@ Route::prefix('/dashboard')->middleware('auth')->group(function () {
     });
 
 
-    Route::prefix('/slider')->group(function () {
-        Route::get('/list', [\App\Http\Controllers\SliderController::class, 'list'])->name('slider.list');
-        Route::post('/add', [\App\Http\Controllers\SliderController::class, 'addPost'])->name('slider.addpost');
-        Route::get('/delete/{id}', [\App\Http\Controllers\SliderController::class, 'delete'])->name('slider.delete');
-        Route::get('/release/{id}/{type}', [\App\Http\Controllers\SliderController::class, 'release'])->name('slider.release');
-        Route::get('/edit/{id}', [\App\Http\Controllers\SliderController::class, 'edit'])->name('slider.edit');
-        Route::post('/edit/{id}', [\App\Http\Controllers\SliderController::class, 'editPost'])->name('slider.editpost');
-        Route::get('/deleteMedia/{id}', [\App\Http\Controllers\SliderController::class, 'deleteMedia'])->name('slider.deleteMedia');
-    });
+    // Route::prefix('/slider')->group(function () {
+    //     Route::get('/list', [\App\Http\Controllers\SliderController::class, 'list'])->name('slider.list');
+    //     Route::post('/add', [\App\Http\Controllers\SliderController::class, 'addPost'])->name('slider.addpost');
+    //     Route::get('/delete/{id}', [\App\Http\Controllers\SliderController::class, 'delete'])->name('slider.delete');
+    //     Route::get('/release/{id}/{type}', [\App\Http\Controllers\SliderController::class, 'release'])->name('slider.release');
+    //     Route::get('/edit/{id}', [\App\Http\Controllers\SliderController::class, 'edit'])->name('slider.edit');
+    //     Route::post('/edit/{id}', [\App\Http\Controllers\SliderController::class, 'editPost'])->name('slider.editpost');
+    //     Route::get('/deleteMedia/{id}', [\App\Http\Controllers\SliderController::class, 'deleteMedia'])->name('slider.deleteMedia');
+    // });
     // register message
     Route::get('/register-message', [RegisterMessageController::class, 'edit'])->name('register_message.edit');
     Route::post('/register-message', [RegisterMessageController::class, 'update'])->name('register_message.update');

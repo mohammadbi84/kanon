@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", function () {
             categories = $(".categories"),
             clusters = $(".clusters"),
             fields = $(".fields"),
-            popups = $(".popups"),
             articles = $(".articles"),
             bookmark = $(".bookmark"),
             professions = $(".professions"),
@@ -2712,73 +2711,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                 });
             }
-        }
-        if (popups.length) {
-            // add new record-------------------------------------------------------------------------------------------------------------
-            // فرم افزودن پاپ آپ جدید
-            initOffcanvasForm({
-                formId: "form-add-new-record",
-                // offcanvasId: "add-new-record",
-                triggerSelector: ".create-new",
-                fields: {
-                    title: {
-                        label: "عنوان پاپ‌آپ",
-                        required: true,
-                        type: "text",
-                    },
-                    text: {
-                        label: "متن پاپ‌آپ",
-                        required: true,
-                        type: "text",
-                    },
-                    start_date: {
-                        label: "تاریخ شروع",
-                        required: false,
-                        type: "date",
-                    },
-                    end_date: {
-                        label: "تاریخ پایان",
-                        required: false,
-                        type: "date",
-                    },
-                    sort: {
-                        label: "ترتیب چیدمان",
-                        required: true,
-                        type: "number",
-                    },
-                    status: {
-                        label: "وضعیت",
-                        required: true,
-                        type: "select",
-                        options: [
-                            { value: 1, text: "فعال" },
-                            { value: 0, text: "غیرفعال" },
-                        ],
-                    },
-                },
-                onSubmit: function (values) {
-                    console.log("Form Data:", values);
-
-                    // اضافه کردن CSRF token
-                    values._token = $('meta[name="csrf-token"]').attr(
-                        "content",
-                    );
-
-                    // ارسال Ajax
-                    $.post("/admin2/popups", values, function (res) {
-                        console.log("Server Response:", res);
-                        // offCanvasEl.hide();
-                        Swal.fire({
-                            icon: "success",
-                            title: "موفق!",
-                            text: res.success,
-                            timer: 1500,
-                            showConfirmButton: false,
-                        });
-                        dt_popups.ajax.reload(); // اگر میخوای جدول بروز بشه
-                    });
-                },
-            });
         }
         if (articles.length) {
             // add new record-------------------------------------------------------------------------------------------------------------
