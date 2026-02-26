@@ -20,8 +20,5 @@ class Field extends Model
         return $this->hasMany(Profession::class);
     }
 
-    public function certificates()
-    {
-        return $this->hasMany(Certificate::class);
-    }
+
 }
