@@ -159,12 +159,18 @@
         </li>
         <li class="menu-item @if (Route::currentRouteName() == 'admin.popups.index' ||
                 Route::currentRouteName() == 'admin.articles.index' ||
+                Route::currentRouteName() == 'admin.positions.index' ||
                 Route::currentRouteName() == 'admin.bookmark.index') open @endif">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-grid-alt"></i>
                 <div>بخش های سایت</div>
             </a>
             <ul class="menu-sub">
+                <li class="menu-item @if (Route::currentRouteName() == 'admin.positions.index') active @endif">
+                    <a href="{{ route('admin.positions.index') }}" class="menu-link">
+                        <div>موقعیت های آگهی</div>
+                    </a>
+                </li>
                 <li class="menu-item @if (Route::currentRouteName() == 'admin.popups.index') active @endif">
                     <a href="{{ route('admin.popups.index') }}" class="menu-link">
                         <div>پاپ آپ</div>
