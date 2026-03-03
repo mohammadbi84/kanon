@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AcademyController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\BookmarkController;
@@ -78,6 +79,17 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::delete('/pricing/{positionPrice}', [PositionPriceController::class, 'destroy'])->name('pricing.destroy');
     });
 
+    // ================== Slider ==================
+    Route::prefix('/academy')->group(function () {
+        Route::get('/', [AcademyController::class, 'index'])->name('academy.index');
+        Route::get('/create', [AcademyController::class, 'create'])->name('academy.create');
+        Route::post('/store', [AcademyController::class, 'store'])->name('academy.store');
+        Route::delete('/delete/{id}', [AcademyController::class, 'delete'])->name('academy.delete');
+        Route::post('/bulk-toggle', [AcademyController::class, 'bulkToggle'])->name('academy.bulkToggle');
+        Route::get('/{id}/edit', [AcademyController::class, 'edit'])->name('academy.edit');
+        Route::put('/{id}', [AcademyController::class, 'update'])->name('academy.update');
+        Route::patch('/{academy}/toggle', [AcademyController::class, 'toggle'])->name('academy.toggle');
+    });
 
 
 

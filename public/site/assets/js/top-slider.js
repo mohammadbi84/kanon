@@ -133,6 +133,17 @@ document.addEventListener("DOMContentLoaded", function () {
         updateActiveThumb(index);
         clearTimeout(timeoutId);
         playNextSlide();
+        videoContainers.forEach((container) => {
+            const video = container.querySelector(".slider-video");
+            // توقف کامل
+            video.pause();
+
+            // ریست زمان
+            video.currentTime = 0;
+
+            // مجبور کردن مرورگر به ریفرش state
+            video.load();
+        });
     });
 
     // شروع اسلاید اول

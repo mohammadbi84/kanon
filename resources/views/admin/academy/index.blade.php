@@ -7,7 +7,7 @@
     <div class="card">
         <div class="card-datatable table-responsive pt-0 p-3">
             {{-- جدول پاپ‌آپ‌ها --}}
-            <table class="dt-select-table positions table mt-4">
+            <table class="dt-select-table academy table mt-4">
                 <thead>
                     <tr></tr>
                 </thead>
@@ -34,12 +34,12 @@
         $('#image').filemanager('file');
     </script>
     <script>
-        let dt_positions;
+        let dt_academy;
 
         $(document).ready(function() {
             // DataTable
-            dt_positions = $('.positions').DataTable({
-                ajax: "{{ route('admin.positions.index') }}",
+            dt_academy = $('.academy').DataTable({
+                ajax: "{{ route('admin.academy.index') }}",
                 columns: [{
                         data: "",
                         title: ""
@@ -58,17 +58,14 @@
                     },
                     {
                         data: "name",
-                        title: "عنوان"
+                        title: "نام آموزشگاه"
                     },
                     {
-                        data: "max_slots",
-                        title: "حداکثر آگهی",
-                        render : function(data){
-                            return data ? `${data} عدد` : '--'
-                        }
+                        data: "phone",
+                        title: "شماره تلفن",
                     },
                     {
-                        data: "is_active",
+                        data: "status",
                         title: "وضعیت",
                     },
                     {
@@ -76,7 +73,8 @@
                         title: "عملیات"
                     },
                 ],
-                columnDefs: [{
+                columnDefs: [
+                    {
                         // For Responsive
                         className: "control",
                         orderable: false,
@@ -115,25 +113,14 @@
                         orderable: false,
                     },
                     {
-                        targets: -2,
-                        title: "وضعیت",
-                        orderable: true,
-                        searchable: false,
-                        render: function(data, type, full) {
-                            return data ?
-                                `<button class="btn btn-sm btn-info item-toggle" data-id="${full.id}">فعال</button>` :
-                                `<button class="btn btn-sm btn-danger item-toggle" data-id="${full.id}">غیرفعال</button>`;
-                        }
-                    },
-                    {
                         targets: -1,
                         title: "عملیات",
                         orderable: false,
                         searchable: false,
                         render: function(data, type, full) {
                             return `
-                            <a href="/admin2/positions/${full.id}/edit" class="btn btn-sm btn-primary"><i class="bx bxs-edit"></i></a>
-                            <a href="/admin2/positions/${full.id}/pricing" class="btn btn-sm btn-success">قیمت گذاری</a>
+                            <a href="/admin2/academy/${full.id}/edit" class="btn btn-sm btn-primary"><i class="bx bxs-edit"></i></a>
+                            <a href="#" class="btn btn-sm btn-success">مشاهده پروفایل</a>
                         `;
 
                         }
@@ -142,7 +129,7 @@
                 order: [
                     [2, "desc"]
                 ],
-                dom: '<"card-header flex-column flex-md-row"<"head-label text-center">><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t' +
+                dom: '<"card-header flex-column flex-md-row"<"head-label text-center d-flex justify-content-between align-items-center w-100">><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t' +
                     "<'row d-flex align-items-center justify-content-between'<'col-md-4'<'bulk-holder'>><'col-md-8 d-flex justify-content-between'i p>>",
                 responsive: {
                     details: {
@@ -189,51 +176,27 @@
             });
             $("#bulk-actions").appendTo(".bulk-holder");
             $("div.head-label").html(
-                '<h5 class="card-title mb-0">موقعیت های آگهی</h5>'
+                '<h5 class="card-title mb-0">آموزشگاه های تایید شده</h5>'
+                +
+                '<a href="/admin2/academy/create" class="btn btn-info">آموزشگاه جدید</a>'
             );
-            // toggle one item----------------------------------------------------------------------------------------------------------------
-            dt_positions.on("click", ".item-toggle", function() {
-                const id = $(this).data("id");
-
-                if (!id) return;
-                $.ajax({
-                    url: "/admin2/positions/" + id + "/toggle",
-                    type: "patch",
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr(
-                            "content"
-                        ),
-                    },
-                    success: function(res) {
-                        dt_positions.ajax.reload(null, false);
-                    },
-                    error: function(err) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "خطا!",
-                            text: "مشکلی در حذف رخ داد.",
-                        });
-                        console.error(err);
-                    },
-                });
-            });
 
             // toggle selected items----------------------------------------------------------------------------------------------------------
             const btnBulk = $(".bulk-toggle");
             if (btnBulk) {
                 // وقتی رکورد انتخاب شد
-                dt_positions.on("select", function(e, dt, type, indexes) {
+                dt_academy.on("select", function(e, dt, type, indexes) {
                     toggleBulkActions();
                 });
 
                 // وقتی رکورد از انتخاب خارج شد
-                dt_positions.on("deselect", function(e, dt, type, indexes) {
+                dt_academy.on("deselect", function(e, dt, type, indexes) {
                     toggleBulkActions();
                 });
 
                 // تابع برای نمایش / مخفی کردن باکس عملیات
                 function toggleBulkActions() {
-                    const selected = dt_positions.rows({
+                    const selected = dt_academy.rows({
                         selected: true
                     }).count();
                     if (selected > 0) {
@@ -246,7 +209,7 @@
 
                 // گرفتن ID ها
                 function getSelectedIds() {
-                    return dt_positions
+                    return dt_academy
                         .rows({
                             selected: true
                         })
@@ -269,7 +232,7 @@
                     }
 
                     $.ajax({
-                        url: "/admin2/positions/bulk-toggle",
+                        url: "/admin2/academy/bulk-toggle",
                         type: "POST",
                         data: {
                             _token: $('meta[name="csrf-token"]').attr(
@@ -279,7 +242,7 @@
                             status: status,
                         },
                         success: function(res) {
-                            dt_positions.ajax.reload(null, false);
+                            dt_academy.ajax.reload(null, false);
                             $("#bulk-actions .bulk-toggle").prop("disabled", true);
                         },
                         error: function(err) {
