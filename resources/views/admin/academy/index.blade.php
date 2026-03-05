@@ -6,7 +6,7 @@
 @section('content')
     <div class="card">
         <div class="card-datatable table-responsive pt-0 p-3">
-            {{-- جدول پاپ‌آپ‌ها --}}
+            {{-- جدول آموزشگاه ها --}}
             <table class="dt-select-table academy table mt-4">
                 <thead>
                     <tr></tr>
@@ -73,8 +73,7 @@
                         title: "عملیات"
                     },
                 ],
-                columnDefs: [
-                    {
+                columnDefs: [{
                         // For Responsive
                         className: "control",
                         orderable: false,
@@ -111,6 +110,17 @@
                     {
                         targets: -2,
                         orderable: false,
+                        render: function(data, type, full) {
+                            if (full.status == 'approved') {
+                                return `<button class="btn btn-sm btn-info item-toggle" data-id="${full.id}">تایید شده</button>`;
+                            } else if (full.status == 'rejected') {
+                                return `<button class="btn btn-sm btn-danger item-toggle" data-id="${full.id}">رد شده</button>`;
+                            } else if (full.status == 'suspended') {
+                                return `<button class="btn btn-sm btn-warning item-toggle" data-id="${full.id}">معلق</button>`;
+                            }else{
+                                return full.status;
+                            }
+                        }
                     },
                     {
                         targets: -1,
@@ -120,6 +130,7 @@
                         render: function(data, type, full) {
                             return `
                             <a href="/admin2/academy/${full.id}/edit" class="btn btn-sm btn-primary"><i class="bx bxs-edit"></i></a>
+                            <button class="btn btn-sm btn-danger item-delete" data-id="${full.id}"><i class="bx bxs-trash"></i></button>
                             <a href="#" class="btn btn-sm btn-success">مشاهده پروفایل</a>
                         `;
 
@@ -176,11 +187,86 @@
             });
             $("#bulk-actions").appendTo(".bulk-holder");
             $("div.head-label").html(
-                '<h5 class="card-title mb-0">آموزشگاه های تایید شده</h5>'
-                +
+                '<h5 class="card-title mb-0">آموزشگاه های تایید شده</h5>' +
                 '<a href="/admin2/academy/create" class="btn btn-info">آموزشگاه جدید</a>'
             );
 
+            // delete one item----------------------------------------------------------------------------------------------------------------
+            dt_academy.on("click", ".item-delete", function() {
+                const id = $(this).data("id");
+
+                if (!id) return;
+
+                Swal.fire({
+                    title: `آیا از حذف این رکورد مطمئن هستید؟`,
+                    text: "این عملیات غیرقابل بازگشت است!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "بله، حذف کن!",
+                    cancelButtonText: "انصراف",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('admin.academy.delete', '') }}/" + id,
+                            type: "DELETE",
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr(
+                                    "content"
+                                ),
+                            },
+                            success: function(res) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "موفق!",
+                                    text: "رکورد با موفقیت حذف شدند.",
+                                    timer: 2000,
+                                    timerProgressBar: true,
+                                    showConfirmButton: false,
+                                });
+                                dt_academy.ajax.reload(null, false);
+                                $("#bulk-actions").addClass("d-none");
+                            },
+                            error: function(err) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "خطا!",
+                                    text: "مشکلی در حذف رخ داد.",
+                                });
+                                console.error(err);
+                            },
+                        });
+                    }
+                });
+            });
+
+            // toggle one item----------------------------------------------------------------------------------------------------------------
+            dt_academy.on("click", ".item-toggle", function() {
+                const id = $(this).data("id");
+
+                if (!id) return;
+                $.ajax({
+                    url: "/admin2/academy/" + id + "/toggle",
+                    type: "patch",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr(
+                            "content"
+                        ),
+                    },
+                    success: function(res) {
+                        dt_academy.ajax.reload(null, false);
+                    },
+                    error: function(err) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "خطا!",
+                            text: "مشکلی در حذف رخ داد.",
+                        });
+                        console.error(err);
+                    },
+                });
+            });
             // toggle selected items----------------------------------------------------------------------------------------------------------
             const btnBulk = $(".bulk-toggle");
             if (btnBulk) {

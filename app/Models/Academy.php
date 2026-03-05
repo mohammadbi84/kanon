@@ -12,6 +12,7 @@ class Academy extends Model
 
     protected $fillable = [
         'name',
+        'manager_id',
         'slug',
         'phone',
         'email',
@@ -56,14 +57,34 @@ class Academy extends Model
         'fax',
         'mobile',
         'address',
+
+        'creator_id',
+        'license_file_front',
+        'license_file_back',
     ];
 
     protected $casts = [
         'extra_data' => 'array',
     ];
 
+    public function manager()
+    {
+        return $this->belongsTo(User::class, 'manager_id');
+    }
+
     public function advertisements()
     {
         return $this->hasMany(Advertisement::class);
+    }
+
+    public function fields()
+    {
+        return $this->belongsToMany(Field::class, 'academy_fields')->withTimestamps();
+    }
+
+    // رابطه چندریختی با فایل‌ها
+    public function files()
+    {
+        return $this->morphMany(File::class, 'fileable');
     }
 }

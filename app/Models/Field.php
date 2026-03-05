@@ -19,6 +19,8 @@ class Field extends Model
     {
         return $this->hasMany(Profession::class);
     }
-
-
+    public function academies()
+    {
+        return $this->belongsToMany(Academy::class,'academy_fields')->withTimestamps();
+    }
 }

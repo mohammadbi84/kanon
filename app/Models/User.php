@@ -27,6 +27,9 @@ class User extends Authenticatable implements LaratrustUser
      */
     protected $fillable = [
         'name',
+        'family',
+        'mobile',
+        'active',
         'sms',
         'email',
         'password',
@@ -54,5 +57,9 @@ class User extends Authenticatable implements LaratrustUser
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+    public function academies()
+    {
+        return $this->hasMany(Academy::class, 'manager_id');
     }
 }

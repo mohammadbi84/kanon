@@ -107,7 +107,6 @@
 
     <script src="{{ asset('admin/assets/vendor/libs/hammer/hammer.js') }}"></script>
 
-    <script src="{{ asset('admin/assets/vendor/libs/i18n/i18n.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/libs/typeahead-js/typeahead.js') }}"></script>
 
     <script src="{{ asset('admin/assets/vendor/js/menu.js') }}"></script>
@@ -122,7 +121,6 @@
 
     <!-- Vendors JS -->
     <script src="{{ asset('admin/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
-    <script src="{{ asset('admin/assets/vendor/libs/datatables-bs5/i18n/fa.js') }}"></script>
     <!-- Flat Picker -->
     <script src="{{ asset('admin/assets/vendor/libs/moment/moment.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/libs/jdate/jdate.js') }}"></script>

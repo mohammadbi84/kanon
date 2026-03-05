@@ -347,7 +347,6 @@ class AuthController extends Controller
                     if ($singleFile) {
                         $pathName = time() . rand(1000, 9999) . '.' . $singleFile->getClientOriginalExtension();
                         $singleFile->move('file/herfe_file', $pathName);
-                        // $organ->file_tasis_back = 'file/herfe_file/' . $pathName;
                         $organfiles = File::create(['organ_id' => $organ->id, 'file' => 'file/herfe_file/' . $pathName]);
                     }
                 }
