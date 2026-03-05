@@ -130,7 +130,6 @@
                         render: function(data, type, full) {
                             return `
                             <a href="/admin2/academy/${full.id}/edit" class="btn btn-sm btn-primary"><i class="bx bxs-edit"></i></a>
-                            <button class="btn btn-sm btn-danger item-delete" data-id="${full.id}"><i class="bx bxs-trash"></i></button>
                             <a href="#" class="btn btn-sm btn-success">مشاهده پروفایل</a>
                         `;
 
@@ -330,6 +329,8 @@
                         success: function(res) {
                             dt_academy.ajax.reload(null, false);
                             $("#bulk-actions .bulk-toggle").prop("disabled", true);
+                            console.log(res);
+
                         },
                         error: function(err) {
                             Swal.fire({

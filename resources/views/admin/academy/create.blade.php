@@ -1043,13 +1043,12 @@
                         </div>
                         <!-- دکمه ارسال -->
                         <div class="row text-center justify-content-center rounded-4 p-4 pt-1">
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-4">
                                 <div class="row">
                                     <div class="col">
                                         <div class="input-group form-label-group in-border">
                                             <input type="text" class="form-control" name="captcha" id="captchatext"
-                                                aria-label="Username" value="{{ old('captcha') }}" placeholder="a">
-                                            <label for="">کد امنیتی</label>
+                                                aria-label="Username" value="{{ old('captcha') }}" placeholder="کد امنیتی">
                                         </div>
                                         @error('captcha')
                                             <span class="text-danger">{{ $message }}</span>
@@ -1069,7 +1068,7 @@
                                 <label for="captcha">کد کپچا را وارد نمایید:</label>
 
 
-                            </div> --}}
+                                </div> --}}
 
                                 <script>
                                     document.getElementById('refresh-captcha').onclick = function() {
@@ -1084,21 +1083,11 @@
                                 </script>
                             </div>
                             <!-- Button to Open the Modal -->
-                            <div class="mt-4 text-start">
-                                <input type="checkbox" class="form-check-input" name="ghanon" value="1"
-                                    id="ghanon" required>
-                                <label for="ghanon" class="form-check-label me-2">
-                                    <p>
-                                        <a type="button" style="text-decoration: none" class="text-primary"
-                                            data-bs-toggle="modal" data-bs-target="#myModal">
-                                            قوانین و مقررات
-                                        </a>
-                                        را مطالعه نموده و با آنها موفق هستم.
-                                    </p>
-                                </label>
+                            <div class="d-flex justify-content-start align-items-center">
+                                <button type="submit" class="btn btn-primary text-white me-4 shadow px-5">ثبت
+                                    درخواست</button>
+                                <a href="{{route('admin.academy.index')}}" class="btn btn-danger text-white shadow px-5">انصراف</a>
                             </div>
-                            <button type="submit" class="btn btn-primary text-white w-100 mx-auto shadow px-5">ثبت
-                                درخواست</button>
                         </div>
                     </div>
                 </div>

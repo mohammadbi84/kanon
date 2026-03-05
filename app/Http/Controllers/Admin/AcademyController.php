@@ -147,7 +147,16 @@ class AcademyController extends Controller
             return response()->json(['success' => false, 'message' => 'هیچ آی‌دی‌ای ارسال نشده است.'], 400);
         }
 
-        Academy::whereIn('id', $ids)->update(['status', 'suspended']);
+        $academies = Academy::whereIn('id', $ids)->get();
+        foreach ($academies as $key => $academy) {
+            if ($request->status) {
+                $academy->status = 'approved';
+                $academy->save();
+            } else {
+                $academy->status = 'suspended';
+                $academy->save();
+            }
+        }
         return response()->json(['success' => true, 'message' => 'وضعیت آموزشگاه ها با موفقیت تغییر کرد..']);
     }
 
