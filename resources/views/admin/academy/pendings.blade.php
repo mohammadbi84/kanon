@@ -15,7 +15,6 @@
 
             <div id="bulk-actions">
                 <button class="btn btn-info bulk-toggle" data-status="1" disabled>فعال کردن</button>
-                <button class="btn btn-danger bulk-toggle" data-status="0" disabled>غیرفعال کردن</button>
             </div>
         </div>
     </div>
@@ -31,7 +30,6 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        $('#image').filemanager('file');
     </script>
     <script>
         let dt_academy;
@@ -39,7 +37,7 @@
         $(document).ready(function() {
             // DataTable
             dt_academy = $('.academy').DataTable({
-                ajax: "{{ route('admin.academy.index') }}",
+                ajax: "{{ route('admin.academy.pending') }}",
                 columns: [{
                         data: "",
                         title: ""
@@ -67,10 +65,6 @@
                     {
                         data: "status",
                         title: "وضعیت",
-                    },
-                    {
-                        data: "",
-                        title: "عملیات"
                     },
                 ],
                 columnDefs: [{
@@ -108,33 +102,22 @@
                         targets: 4,
                     },
                     {
-                        targets: -2,
+                        targets: -1,
                         orderable: false,
                         render: function(data, type, full) {
                             if (full.status == 'approved') {
                                 return `<button class="btn btn-sm btn-info item-toggle" data-id="${full.id}">تایید شده</button>`;
+                            } else if (full.status == 'pending') {
+                                return `<button class="btn btn-sm btn-warning item-toggle" data-id="${full.id}">در انتظار تایید</button>`;
                             } else if (full.status == 'rejected') {
                                 return `<button class="btn btn-sm btn-danger item-toggle" data-id="${full.id}">رد شده</button>`;
                             } else if (full.status == 'suspended') {
                                 return `<button class="btn btn-sm btn-warning item-toggle" data-id="${full.id}">معلق</button>`;
-                            }else{
+                            } else {
                                 return full.status;
                             }
                         }
                     },
-                    {
-                        targets: -1,
-                        title: "عملیات",
-                        orderable: false,
-                        searchable: false,
-                        render: function(data, type, full) {
-                            return `
-                            <a href="/admin2/academy/${full.id}/edit" class="btn btn-sm btn-primary"><i class="bx bxs-edit"></i></a>
-                            <a href="/admin2/academy/${full.id}/show" class="btn btn-sm btn-success">مشاهده پروفایل</a>
-                        `;
-
-                        }
-                    }
                 ],
                 order: [
                     [2, "desc"]
@@ -186,59 +169,8 @@
             });
             $("#bulk-actions").appendTo(".bulk-holder");
             $("div.head-label").html(
-                '<h5 class="card-title mb-0">آموزشگاه های تایید شده</h5>' +
-                '<a href="/admin2/academy/create" class="btn btn-info">آموزشگاه جدید</a>'
+                '<h5 class="card-title mb-0">آموزشگاه های در انتظار تایید</h5>'
             );
-
-            // delete one item----------------------------------------------------------------------------------------------------------------
-            dt_academy.on("click", ".item-delete", function() {
-                const id = $(this).data("id");
-
-                if (!id) return;
-
-                Swal.fire({
-                    title: `آیا از حذف این رکورد مطمئن هستید؟`,
-                    text: "این عملیات غیرقابل بازگشت است!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#d33",
-                    cancelButtonColor: "#3085d6",
-                    confirmButtonText: "بله، حذف کن!",
-                    cancelButtonText: "انصراف",
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('admin.academy.delete', '') }}/" + id,
-                            type: "DELETE",
-                            data: {
-                                _token: $('meta[name="csrf-token"]').attr(
-                                    "content"
-                                ),
-                            },
-                            success: function(res) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "موفق!",
-                                    text: "رکورد با موفقیت حذف شدند.",
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    showConfirmButton: false,
-                                });
-                                dt_academy.ajax.reload(null, false);
-                                $("#bulk-actions").addClass("d-none");
-                            },
-                            error: function(err) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "خطا!",
-                                    text: "مشکلی در حذف رخ داد.",
-                                });
-                                console.error(err);
-                            },
-                        });
-                    }
-                });
-            });
 
             // toggle one item----------------------------------------------------------------------------------------------------------------
             dt_academy.on("click", ".item-toggle", function() {

@@ -87,4 +87,13 @@ class Academy extends Model
     {
         return $this->morphMany(File::class, 'fileable');
     }
+
+    public function state()
+    {
+        return $this->belongsTo(City::class, 'state_id');
+    }
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city_id');
+    }
 }

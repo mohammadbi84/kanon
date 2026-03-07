@@ -26,6 +26,15 @@ class AcademyController extends Controller
         $academies = Academy::latest()->where('status', '!=', 'pending')->get();
         return view('admin.academy.index', compact('academies'));
     }
+    public function pending()
+    {
+        if (request()->ajax()) {
+            $academies = Academy::latest()->where('status', '==', 'pending')->get();
+            return response()->json(['data' => $academies]);
+        }
+        $academies = Academy::latest()->where('status', '==', 'pending')->get();
+        return view('admin.academy.pendings', compact('academies'));
+    }
 
     public function create()
     {
@@ -191,5 +200,9 @@ class AcademyController extends Controller
 
 
         return response()->json(['success' => 'صفحه با موفقیت حذف شد.']);
+    }
+
+    public function show(Academy $academy) {
+        return view("admin.academy.show",compact('academy'));
     }
 }

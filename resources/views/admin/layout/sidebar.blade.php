@@ -189,7 +189,7 @@
             </ul>
         </li>
         <li class="menu-item @if (Route::currentRouteName() == 'admin.academy.index' ||
-                Route::currentRouteName() == 'test') open @endif">
+                Route::currentRouteName() == 'admin.academy.pending') open @endif">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-badge"></i>
                 <div>آموزشگاه ها</div>
@@ -200,8 +200,8 @@
                         <div>آموزشگاه ها</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
+                <li class="menu-item @if (Route::currentRouteName() == 'admin.academy.pending') active @endif">
+                    <a href="{{ route('admin.academy.pending') }}" class="menu-link">
                         <div>درخواست های ثبت نام</div>
                     </a>
                 </li>
