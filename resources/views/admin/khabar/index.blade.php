@@ -44,11 +44,11 @@
                     </select>
                 </div>
                 <div class="col-sm-3">
-                    <label class="form-label" for="image">عکس کاور</label>
+                    <label class="form-label" for="cover">عکس کاور</label>
                     <div class="input-group">
-                        <button class="btn btn-outline-primary" type="button" id="image" data-input="cover"
-                            data-preview="imageHolder">انتخاب عکس</button>
-                        <input type="text" id="cover" name="cover" class="form-control" placeholder="انتخاب عکس"
+                        <button class="btn btn-outline-primary" type="button" id="cover" data-input="cover_input"
+                            data-preview="coverHolder">انتخاب عکس</button>
+                        <input type="text" id="cover_input" name="cover" class="form-control" placeholder="انتخاب عکس"
                             aria-label="انتخاب عکس">
                     </div>
                 </div>
@@ -68,6 +68,33 @@
             </div>
         </div>
     </div>
+    {{-- مدال مدیریت عکس‌ها --}}
+    <div class="modal fade" id="khabarFilesModal" tabindex="-1" aria-labelledby="khabarFilesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="khabarFilesModalLabel">مدیریت تصاویر پاپ‌آپ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="khabar_id">
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <button class="btn btn-outline-primary" type="button" id="image" data-input="khabar_image"
+                                data-preview="imageHolder">عکس جدید</button>
+                            <input type="text" id="khabar_image" name="image" class="form-control"
+                                placeholder="نام کاربری گیرنده" aria-label="Recipient's username"
+                                aria-describedby="button-addon2">
+                        </div>
+                        <div class="text-end">
+                            <button id="uploadImageBtn" class="btn btn-success mt-2">آپلود</button>
+                        </div>
+                    </div>
+                    <div id="popupImagesList" class="row g-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('script')
     <script src="{{ asset('admin/assets/vendor/libs/quill/katex.js') }}"></script>
@@ -81,6 +108,7 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+        $('#cover').filemanager('file');
         $('#image').filemanager('file');
         $('#start_at').flatpickr({
             enableTime: true,
@@ -97,6 +125,7 @@
             disableMobile: true
         });
     </script>
+    {{-- text editor --}}
     <script>
         const fullToolbar = [
             [{
@@ -168,6 +197,7 @@
             hiddenInput.value = fullEditor.root.innerHTML;
         });
     </script>
+    {{-- table --}}
     <script>
         dt_basic = $('.khabar').DataTable({
             ajax: "/admin2/khabar",
@@ -248,25 +278,11 @@
                     orderable: false,
                     searchable: false,
                     render: function(data, type, full, meta) {
-                        return (
-                            // edit
-                            '<a href="/admin2/khabar/' +
-                            full.id +
-                            '"' +
-                            'class="btn btn-sm btn-icon btn-primary item-edit" ' +
-                            'data-id="' +
-                            full.id +
-                            '">' +
-                            '<i class="bx bxs-edit"></i>' +
-                            "</a> " +
-                            // delete
-                            '<button class="btn btn-sm btn-icon btn-danger item-delete" ' +
-                            'data-id="' +
-                            full.id +
-                            '">' +
-                            '<i class="bx bxs-trash"></i>' +
-                            "</button>"
-                        );
+                        return `
+                            <button class="btn btn-sm btn-info manage-files" data-id="${full.id}"><i class="bx bxs-image"></i></button>
+                            <a href="/admin2/khabar/${full.id}" class="btn btn-sm btn-primary"><i class="bx bxs-edit"></i></a>
+                            <button class="btn btn-sm btn-danger item-delete" data-id="${full.id}"><i class="bx bxs-trash"></i></button>
+                        `;
                     },
                 },
             ],
@@ -470,6 +486,112 @@
                 });
             });
         }
+
+
+        // مدیریت عکس‌ها --------------------------------------------------------
+        $(document).on("click", ".manage-files", function() {
+            const id = $(this).data("id");
+            $("#khabar_id").val(id);
+            $("#khabarFilesModal").modal("show");
+
+            loadPopupFiles(id);
+        });
+
+        // آپلود تصویر جدید
+        $("#uploadImageBtn").click(function() {
+            const khabarId = $("#khabar_id").val();
+            const file = $('#khabar_image').val();
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("khabar_id", khabarId);
+            formData.append("_token", $('meta[name="csrf-token"]').attr("content"));
+
+            $.ajax({
+                url: "/admin2/khabar/upload/" + khabarId,
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(res) {
+                    Swal.fire("موفق!", "تصویر با موفقیت آپلود شد.", "success");
+                    $("#khabar_image").val("");
+                    loadPopupFiles(khabarId);
+                },
+                error: function() {
+                    Swal.fire("خطا!", "آپلود تصویر با خطا مواجه شد.", "error");
+                }
+            });
+        });
+
+        // بارگذاری تصاویر پاپ‌آپ
+        function loadPopupFiles(khabarId) {
+            $("#popupImagesList").html('<p class="text-center text-muted">در حال بارگذاری...</p>');
+            $.get(`/admin2/khabar/showImages/${khabarId}`, function(res) {
+                if (res.data.length === 0) {
+                    $("#popupImagesList").html(
+                        '<p class="text-center text-muted">هیچ تصویری وجود ندارد.</p>');
+                    return;
+                }
+
+                let html = "";
+                res.data.forEach(file => {
+                    html += `
+                        <div class="col-md-4 text-center">
+                            <div class="card p-2">
+                                <img src="${file.url}" class="img-fluid rounded mb-2" style="height:150px;object-fit:cover;">
+                                <div>
+                                    ${file.status ? '<button class="btn btn-sm btn-success toggle-status" data-id="'+file.id+'">فعال</button>' : '<button class="btn btn-sm btn-warning toggle-status" data-id="'+file.id+'">غیرفعال</button>'}
+                                    <button class="btn btn-sm btn-danger delete-file" data-id="${file.id}">حذف</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                $("#popupImagesList").html(html);
+            });
+        }
+
+        // تغییر وضعیت عکس
+        $(document).on("click", ".toggle-status", function() {
+            const id = $(this).data("id");
+            $.post(`/admin2/khabar/status/${id}`, {
+                _token: $('meta[name="csrf-token"]').attr("content")
+            }, function() {
+                Swal.fire("موفق!", "وضعیت تصویر تغییر کرد.", "success");
+                loadPopupFiles($("#khabar_id").val());
+            });
+        });
+
+        // حذف عکس
+        $(document).on("click", ".delete-file", function() {
+            const id = $(this).data("id");
+            Swal.fire({
+                title: "حذف تصویر؟",
+                text: "آیا مطمئن هستید؟",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "بله، حذف کن",
+                cancelButtonText: "انصراف"
+            }).then(result => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('admin.khabar.image.delete', '') }}/" + id,
+                        type: "DELETE",
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr("content")
+                        },
+                        success: function() {
+                            Swal.fire("موفق!", "تصویر حذف شد.", "success");
+                            loadPopupFiles($("#khabar_id").val());
+                        },
+                        error: function() {
+                            Swal.fire("خطا!", "مشکلی در حذف تصویر رخ داد.",
+                                "error");
+                        }
+                    });
+                }
+            });
+        });
     </script>
 
     <script>

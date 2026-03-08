@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\File;
 use App\Models\Khabar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -76,5 +77,63 @@ class KhabarController extends Controller
 
         Khabar::whereIn('id', $ids)->delete();
         return response()->json(['success' => true, 'message' => 'رکوردها با موفقیت حذف شدند.']);
+    }
+
+    /**
+     * 📸 مدیریت عکس‌های پاپ‌آپ (Modal)
+     */
+    public function showImages($id)
+    {
+        $khabar = Khabar::findOrFail($id);
+        $images = $khabar->files()->where('type', 'image')->get();
+
+        return response()->json(['data' => $images]);
+    }
+
+    /**
+     * 📤 آپلود عکس برای پاپ‌آپ
+     */
+    public function uploadImage(Request $request, $id)
+    {
+        $khabar = Khabar::findOrFail($id);
+
+        $request->validate([
+            'file' => 'required|string',
+        ], [
+            'file.required' => 'انتخاب عکس الزامی است.',
+        ]);
+
+        $file = $khabar->files()->create([
+            'url' => $request->file,
+            'type' => 'image',
+            'status' => 1,
+        ]);
+
+        return response()->json(['success' => 'عکس با موفقیت آپلود شد.', 'file' => $file]);
+    }
+
+    /**
+     * 🗑 حذف عکس از پاپ‌آپ
+     */
+    public function deleteImage($id)
+    {
+        $file = File::findOrFail($id);
+        // // حذف فایل از دیسک
+        // unlink($file->url);
+        $file->delete();
+
+        return response()->json(['success' => 'عکس با موفقیت حذف شد.']);
+    }
+
+    /**
+     * 🔁 تغییر وضعیت عکس (فعال / غیرفعال)
+     */
+    public function toggleImageStatus($id)
+    {
+        $file = File::findOrFail($id);
+        $file->status = !$file->status;
+        $file->save();
+
+        return response()->json(['success' => 'وضعیت عکس با موفقیت تغییر کرد.']);
     }
 }

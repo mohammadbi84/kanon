@@ -17,6 +17,12 @@ class Khabar extends Model
         'start_at',
         'end_at',
     ];
+
+    public function files()
+    {
+        return $this->morphMany(File::class, 'fileable');
+    }
+    
     public function scopeActive($query)
     {
         return $query->where('status', 1)

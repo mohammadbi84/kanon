@@ -102,6 +102,12 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::post('/bulk-delete', [KhabarController::class, 'bulkDelete'])->name('khabar.bulkDelete');
         Route::get('/{id}', [KhabarController::class, 'edit'])->name('khabar.edit');
         Route::put('/{id}', [KhabarController::class, 'update'])->name('khabar.update');
+
+        // images
+        Route::get('/showImages/{id}', [KhabarController::class, 'showImages'])->name('khabar.showImages');
+        Route::post('/upload/{id}', [KhabarController::class, 'uploadImage'])->name('khabar.upload');
+        Route::post('/status/{id}', [KhabarController::class, 'toggleImageStatus'])->name('khabar.status');
+        Route::delete('/image/{id}', [KhabarController::class, 'deleteImage'])->name('khabar.image.delete');
     });
 
 
