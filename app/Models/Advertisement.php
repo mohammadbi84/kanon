@@ -18,8 +18,6 @@ class Advertisement extends Model
         'image',
         'video',
         'duration',
-        'start_at',
-        'end_at',
         'extra_data',
         'status',
         'rejected_reason',
@@ -33,7 +31,15 @@ class Advertisement extends Model
 
     public function position()
     {
-        return $this->belongsTo(Position::class);
+        return $this->belongsTo(Position::class,'position_id');
+    }
+    public function academy()
+    {
+        return $this->belongsTo(Academy::class,'academy_id');
+    }
+    public function creator()
+    {
+        return $this->belongsTo(User::class,'creator_id');
     }
 
     public function reservations()

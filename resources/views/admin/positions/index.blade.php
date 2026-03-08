@@ -6,7 +6,7 @@
 @section('content')
     <div class="card">
         <div class="card-datatable table-responsive pt-0 p-3">
-            {{-- جدول پاپ‌آپ‌ها --}}
+            {{-- جدول موقعیت ها --}}
             <table class="dt-select-table positions table mt-4">
                 <thead>
                     <tr></tr>

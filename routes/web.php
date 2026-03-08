@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AcademyController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdvertisementController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\BookmarkController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -64,8 +65,6 @@ Route::prefix('/job-opportunity')->group(function () {
 // admin pages
 Route::prefix('/admin2')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('index');
-
-
     // Positions ==============================================================================================================
     Route::prefix('/positions')->group(function () {
         Route::get('/', [PositionController::class, 'index'])->name('positions.index');
@@ -78,7 +77,19 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::post('/{position}/pricing', [PositionPriceController::class, 'store'])->name('pricing.store');
         Route::put('/pricing/{positionPrice}', [PositionPriceController::class, 'update'])->name('pricing.update');
         Route::delete('/pricing/{positionPrice}', [PositionPriceController::class, 'destroy'])->name('pricing.destroy');
+
+        // advertisements
+        Route::get('/{position}/advertisement', [AdvertisementController::class, 'advertisements'])->name('positions.advertisements');
     });
+    // ================== advertisement ==================
+    Route::prefix('/advertisement')->name('advertisement.')->group(function () {
+        Route::get('/', [AdvertisementController::class, 'index'])->name('index');
+        Route::post('/store', [AdvertisementController::class, 'store'])->name('store');
+        Route::patch('/{id}/toggle', [AdvertisementController::class, 'toggle'])->name('toggle');
+    });
+
+
+
 
     // ================== academy ==================
     Route::prefix('/academy')->group(function () {
