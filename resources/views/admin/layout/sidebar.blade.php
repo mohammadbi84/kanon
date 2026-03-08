@@ -207,5 +207,11 @@
                 </li>
             </ul>
         </li>
+        <li class="menu-item @if (Route::currentRouteName() == 'admin.khabar.index') active @endif">
+            <a href="{{ route('admin.khabar.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-news"></i>
+                <div>اخبار</div>
+            </a>
+        </li>
     </ul>
 </aside>

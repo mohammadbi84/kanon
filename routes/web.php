@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ClusterController;
 use App\Http\Controllers\Admin\FieldController;
 use App\Http\Controllers\Admin\JobtypeController;
 use App\Http\Controllers\Admin\KardaneshController;
+use App\Http\Controllers\Admin\KhabarController;
 use App\Http\Controllers\Admin\PopupController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\PositionPriceController;
@@ -93,6 +94,15 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::get('/{academy}/show', [AcademyController::class, 'show'])->name('academy.show');
     });
 
+    // ================== Khabar ==================
+    Route::prefix('/khabar')->group(function () {
+        Route::get('/', [KhabarController::class, 'index'])->name('khabar.index');
+        Route::post('/store', [KhabarController::class, 'store'])->name('khabar.store');
+        Route::delete('/delete/{id}', [KhabarController::class, 'delete'])->name('khabar.delete');
+        Route::post('/bulk-delete', [KhabarController::class, 'bulkDelete'])->name('khabar.bulkDelete');
+        Route::get('/{id}', [KhabarController::class, 'edit'])->name('khabar.edit');
+        Route::put('/{id}', [KhabarController::class, 'update'])->name('khabar.update');
+    });
 
 
 

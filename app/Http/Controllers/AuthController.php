@@ -43,21 +43,14 @@ class AuthController extends Controller
     }
     public function login()
     {
-        $sliders = LoginPageAd::all();
-        return view('auth.login', compact('sliders'));
+        return view('auth.login');
     }
     public function signIn(Request $request)
     {
         $user = User::where('mobile', $request->mobile)->first();
         if ($user) {
-            $organ_id = OrganUser::where('user_id', $user->id)->where('role', 1)->first();
-            if ($organ_id) {
-                $organ = Organ::find($organ_id->organ_id);
-            } else {
-                $organ = null;
-            }
             session()->forget('login_attempts'); // موفقیت: ریست شمارنده
-            return redirect(route('register.status', ['user' => $user, 'organ' => $organ]));
+            return redirect(route('register.status', ['user' => $user]));
         } else {
             return redirect()->back()->withInput()->with('fail', 'شماره موبایل اشتباه است لطفا دوباره تلاش کنید.');
         }
@@ -429,13 +422,11 @@ class AuthController extends Controller
     }
     public function status(Request $request)
     {
-        $sliders = LoginPageAd::all();
         // return $request;
         $user = User::find($request->user);
-        $organ = Organ::find($request->organ);
         $status = $request->status ?? false;
 
-        return view('auth.password', compact('user', 'organ', 'status', 'sliders'));
+        return view('auth.password', compact('user', 'status'));
     }
     public function loginCode_post(Request $request)
     {
