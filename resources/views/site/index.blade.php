@@ -25,8 +25,6 @@
     <link rel="stylesheet" href="{{ asset('site/assets/css/forms.css') }}">
 
 
-    <script src="https://kit.fontawesome.com/fbc05d3d5f.js" crossorigin="anonymous"></script>
-
     <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 @section('content')
@@ -39,7 +37,7 @@
                     <div id="popup-pagination-holder"></div>
                     <button type="button" class="btn btn-light position-absolute top-0 start-0 modal-close-btn"
                         data-bs-dismiss="modal">
-                        <i class="fa-solid fa-xmark"></i>
+                        <i class="bi bi-x-lg"></i>
                     </button>
 
                     {{-- 🔥 POPUP SLIDER --}}
@@ -47,15 +45,13 @@
                         <div class="splide__track">
                             <ul class="splide__list">
                                 @foreach ($popups as $popup)
-                                    <li class="splide__slide"
-                                        data-link="{{ $popup->link ? route('article.show', [$popup->link]) : '#' }}">
+                                    <li class="splide__slide" data-link="#">
                                         {{-- IMAGE SLIDER (قدیمی – دست نخورده) --}}
                                         <div class="swiper popup-image-slider">
                                             <div class="swiper-wrapper">
                                                 {{-- @foreach ($popup->files as $image) --}}
-                                                <div class="swiper-slide"
-                                                    data-delay="{{ $popup->files()->first()->duration ?? 5000 }}">
-                                                    <img src="{{ asset($popup->files()->first()->url) }}">
+                                                <div class="swiper-slide" data-delay="{{ $popup->duration ?? 5000 }}">
+                                                    <img src="{{ asset($popup->image) }}">
                                                 </div>
                                                 {{-- @endforeach --}}
                                             </div>
@@ -68,7 +64,7 @@
                                                 {{ $popup->title }}
                                             </h2>
                                             <p class="text-muted text-center mb-4">
-                                                {{ $popup->text }}
+                                                {{ $popup->description }}
                                             </p>
                                         </div>
                                     </li>
@@ -93,8 +89,6 @@
                 </div>
             </div>
         </div>
-    @endif
-    @if ($popups->count() > 0)
         <script>
             document.addEventListener("DOMContentLoaded", function() {
 
@@ -203,7 +197,7 @@
             <div class="top-slider-container flex-grow-1 position-relative">
                 <div class="top-slider">
                     @foreach ($sliders as $slider)
-                        <div class="item" data-duration="{{ $slider->show_time * 1000 }}">
+                        <div class="item" data-duration="{{ $slider->duration * 1000 }}">
                             @if ($slider->video)
                                 <div class="video-full-container video-full-container-slider mb-5 px-0">
                                     <video class="slider-video" poster="{{ asset($slider->image ?? 'no-image.png') }}"
@@ -216,7 +210,7 @@
                                     <div class="video-overlay"></div>
 
                                     <div class="play-pause-btn">
-                                        <i class="fas fa-play"></i>
+                                        <i class="bi-play-fill"></i>
                                     </div>
                                 </div>
                             @else
@@ -247,8 +241,8 @@
                                 <img src="{{ asset($slider->image ?? 'no-image.png') }}" class="img-thumbnail border-0 p-0"
                                     style="width: 80px; height: 80px; object-fit: cover;">
                                 <div class="thumb-info d-flex flex-column text-end">
-                                    <span class="thumb-title">{{ $slider->name }}</span>
-                                    <span class="thumb-date" style="font-size: 12px;">{{ $slider->time }}</span>
+                                    <span class="thumb-title">{{ $slider->academy?->name ?? $slider->title }}</span>
+                                    <span class="thumb-date" style="font-size: 12px;">{{ Jdate($slider->created_at) }}</span>
                                 </div>
                             </div>
                         @endforeach
@@ -258,22 +252,10 @@
         </div>
     </header>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     {{-- main --}}
     <main id="main">
+
+        {{-- search bar start --}}
         <div id="search-bar" class="container mt-3">
             <form action="/schools" method="get" onkeydown="return event.key != 'Enter';"
                 class="search-bar text-bold-2 align-content-center" autocomplete="false">
@@ -285,12 +267,6 @@
                         }
                     </style>
                     <div class="col pb-0 mb-0 px-1">
-                        {{-- <div class="input-group form-label-group in-border" style="margin-bottom: 0px">
-                            <input type="text" class="form-control nameInput" name="name" id="name" placeholder="j"
-                                style="height: 100%;">
-                            <label for="name">نام آموزشگاه</label>
-                            <span class="clear-btn" onclick="clearInput('state')">×</span>
-                        </div> --}}
                         <div class="autocomplete" id="autocompleteBoxname">
                             <input type="text" id="searchInputname" class="only-persian" name="name"
                                 oninput="nameinput()">
@@ -360,298 +336,11 @@
                 </div>
             </form>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+        {{-- search bar end --}}
 
-        <script>
-            $(document).on("input", ".only-persian", function() {
-                let value = $(this).val();
-                // حذف هر چیزی که فارسی نیست
-                let persianOnly = value.replace(/[^\u0600-\u06FF\s]/g, '');
-                $(this).val(persianOnly);
-                let name = $(this).attr('name');
-                const box = document.getElementById("autocompleteBox" + name);
-                const clearBtn = document.getElementById("clearBtn_" + name);
-                let value2 = $(this).val();
-                if (value2.length > 0) {
-                    box.classList.add("filled");
-                    clearBtn.style.display = 'block';
-                } else {
-                    box.classList.remove("filled");
-                    clearBtn.style.display = 'none';
-                }
-            });
-            const states = [];
-            const reshtes = [];
-            const herves = [];
-
-            function nameinput() {
-                const input = document.getElementById("searchInputname");
-                const box = document.getElementById("autocompleteBoxname");
-                const clearBtn = document.getElementById("clearBtn_name");
-
-                if (input.value.length > 0) {
-                    box.classList.add("filled");
-                    clearBtn.style.display = 'block';
-                } else {
-                    box.classList.remove("filled");
-                    clearBtn.style.display = 'none';
-                }
-            }
-
-            function dropdownshow(id) {
-                filterOptions(id, 0);
-                const dropdown = document.getElementById("dropdownList" + id);
-                dropdown.style.display = 'block';
-            }
-
-            function hideDropdown() {
-                const dropdown = document.getElementById("dropdownList" + id);
-
-                setTimeout(() => dropdown.style.display = 'none', 150);
-            }
-
-            function filterOptions(divId, status) {
-                const dropdown = document.getElementById("dropdownList" + divId);
-                const input = document.getElementById("searchInput" + divId);
-                const box = document.getElementById("autocompleteBox" + divId);
-                const value = input.value.toLowerCase();
-                if (divId == "city") {
-                    city = document.getElementById("selectedIdstate").value;
-                    $.ajax({
-                        url: '/states/' + city, //  URL جدید
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-
-                            if (status == 1) {
-                                const filtered = data.filter(item => item.title.toLowerCase().startsWith(value));
-                                dropdown.innerHTML = filtered.length ?
-                                    filtered.map((item, index) =>
-                                        `<div class="${index === 0 ? 'active' : ''}" onclick="selectItem(${item.id}, '${item.title}','${divId}')">${item.title}</div>`
-                                    ).join('') :
-                                    '<div>نتیجه‌ای یافت نشد</div>';
-                            } else {
-                                const filtered = data;
-                                dropdown.innerHTML = filtered.length ?
-                                    filtered.map((item, index) =>
-                                        `<div class="${index === 0 ? 'active' : ''}" onclick="selectItem(${item.id}, '${item.title}','${divId}')">${item.title}</div>`
-                                    ).join('') :
-                                    '<div>نتیجه‌ای یافت نشد</div>';
-                            }
-
-                            box.classList.toggle("filled", input.value.trim() !== "");
-
-                        }
-                    });
-
-                    box.classList.toggle("filled", input.value.trim() !== "");
-                } else if (divId == "state") {
-
-                    if (status == 1) {
-                        const filtered = states.filter(item => item.title.toLowerCase().includes(value));
-                        dropdown.innerHTML = filtered.length ?
-                            filtered.map(item =>
-                                `<div onclick="selectItem(${item.id}, '${item.title}','${divId}')">${item.title}</div>`)
-                            .join('') :
-                            '<div>نتیجه‌ای یافت نشد</div>';
-                    } else {
-                        const filtered = states;
-                        dropdown.innerHTML = filtered.length ?
-                            filtered.map(item =>
-                                `<div onclick="selectItem(${item.id}, '${item.title}','${divId}')">${item.title}</div>`)
-                            .join('') :
-                            '<div>نتیجه‌ای یافت نشد</div>';
-                    }
-                    box.classList.toggle("filled", input.value.trim() !== "");
-                } else if (divId == "group") {
-                    if (status == 1) {
-                        const filtered = reshtes.filter(item => item.name.toLowerCase().includes(value));
-                        dropdown.innerHTML = filtered.length ?
-                            filtered.map(item =>
-                                `<div onclick="selectItem(${item.id}, '${item.name}','${divId}')">${item.name}</div>`)
-                            .join('') :
-                            '<div>نتیجه‌ای یافت نشد</div>';
-                    } else {
-                        const filtered = reshtes;
-                        dropdown.innerHTML = filtered.length ?
-                            filtered.map(item =>
-                                `<div onclick="selectItem(${item.id}, '${item.name}','${divId}')">${item.name}</div>`)
-                            .join('') :
-                            '<div>نتیجه‌ای یافت نشد</div>';
-                    }
-
-
-                    box.classList.toggle("filled", input.value.trim() !== "");
-                } else if (divId == "herfe") {
-                    if (status == 1) {
-                        const filtered = herves.filter(item => item.name.toLowerCase().includes(value));
-                        dropdown.innerHTML = filtered.length ?
-                            filtered.map(item =>
-                                `<div onclick="selectItem(${item.id}, '${item.name}','${divId}')">${item.name}</div>`)
-                            .join('') :
-                            '<div>نتیجه‌ای یافت نشد</div>';
-                    } else {
-                        const filtered = herves;
-                        dropdown.innerHTML = filtered.length ?
-                            filtered.map(item =>
-                                `<div onclick="selectItem(${item.id}, '${item.name}','${divId}')">${item.name}</div>`)
-                            .join('') :
-                            '<div>نتیجه‌ای یافت نشد</div>';
-                    }
-                    box.classList.toggle("filled", input.value.trim() !== "");
-                }
-                const firstOption = dropdown.querySelector("div");
-                if (firstOption) firstOption.classList.add("active");
-            }
-
-            function selectItem(id, name, divId) {
-                const input = document.getElementById("searchInput" + divId);
-                const box = document.getElementById("autocompleteBox" + divId);
-                const dropdown = document.getElementById("dropdownList" + divId);
-
-
-                if (divId == "state") {
-                    $('selectedId').change(function() { // به تغییرات در لیست *استان* گوش میدیم
-                        var cityId = $(this).val(); //  مقدار (ID) *استان* انتخاب شده
-                        if (cityId) {
-                            $.ajax({
-                                url: '/states/' + cityId, //  URL جدید
-                                type: 'GET',
-                                dataType: 'json',
-                                success: function(data) {
-                                    const filtered = data.filter(item => item.title.toLowerCase().includes(
-                                        value));
-                                    dropdown.innerHTML = filtered.length ?
-                                        filtered.map(item =>
-                                            `<div onclick="selectItem(${item.id}, '${item.title}','${divId}')">${item.title}</div>`
-                                        )
-                                        .join('') :
-                                        '<div>نتیجه‌ای یافت نشد</div>';
-                                    box.classList.toggle("filled", input.value.trim() !== "");
-                                }
-                            });
-                        } else {
-                            $('#state').empty();
-                            $('#state').append(
-                                '<option value="">شهرستان</option>'); //اگر استانی انتخاب *نشد*، شهرستان ها خالی
-                        }
-                    });
-                    clearInput('city');
-                }
-
-                input.value = name;
-                document.getElementById("selectedId" + divId).value = id;
-                box.classList.add("filled");
-                dropdown.style.display = 'none';
-                const clearBtn = document.getElementById("clearBtn_" + divId);
-                clearBtn.style.display = 'block';
-            }
-
-            function clearInput(id) {
-                if (id == 'name') {
-                    const box = document.getElementById("autocompleteBoxname");
-                    box.classList.remove("filled");
-                    const input = document.getElementById("searchInputname");
-                    input.value = "";
-                    const clearBtn = document.getElementById("clearBtn_name");
-                    clearBtn.style.display = 'none';
-                } else {
-                    const box = document.getElementById("autocompleteBox" + id);
-                    const input = document.getElementById("searchInput" + id);
-                    input.value = "";
-                    document.getElementById("selectedId" + id).value = "";
-                    box.classList.remove("filled");
-                    if (id == 'state') {
-                        const box2 = document.getElementById("autocompleteBoxcity");
-                        const input2 = document.getElementById("searchInputcity");
-                        input2.value = "";
-                        document.getElementById("selectedIdcity").value = "";
-                        box2.classList.remove("filled");
-                        const clearBtn2 = document.getElementById("clearBtn_city");
-                        clearBtn2.style.display = 'none';
-                    }
-                    const clearBtn = document.getElementById("clearBtn_" + id);
-                    clearBtn.style.display = 'none';
-                    filterOptions(id, 0);
-                }
-            }
-
-            // بستن لیست با کلیک خارج از آن
-            document.addEventListener("click", function(e) {
-                const box1 = document.getElementById("autocompleteBoxstate");
-                const box2 = document.getElementById("autocompleteBoxcity");
-                const box3 = document.getElementById("autocompleteBoxgroup");
-                const box4 = document.getElementById("autocompleteBoxherfe");
-                const dropdown1 = document.getElementById("dropdownListstate");
-                const dropdown2 = document.getElementById("dropdownListcity");
-                const dropdown3 = document.getElementById("dropdownListgroup");
-                const dropdown4 = document.getElementById("dropdownListherfe");
-
-
-                if (box1 && !box1.contains(e.target)) {
-                    dropdown1.style.display = "none";
-                }
-                if (box2 && !box2.contains(e.target)) {
-                    dropdown2.style.display = "none";
-                }
-                if (box3 && !box3.contains(e.target)) {
-                    dropdown3.style.display = "none";
-                }
-                if (box4 && !box4.contains(e.target)) {
-                    dropdown4.style.display = "none";
-                }
-            });
-
-            document.querySelectorAll("input[id^='searchInput']").forEach(input => {
-                input.addEventListener("keydown", function(e) {
-                    const id = this.id.replace("searchInput", "");
-                    const dropdown = document.getElementById("dropdownList" + id);
-                    const items = dropdown.querySelectorAll("div");
-                    const active = dropdown.querySelector(".active");
-                    let index = Array.from(items).indexOf(active);
-
-                    if (e.key === "ArrowDown") {
-                        e.preventDefault();
-                        if (index < items.length - 1) {
-                            if (active) active.classList.remove("active");
-                            items[index + 1].classList.add("active");
-                            items[index + 1].scrollIntoView({
-                                block: "nearest"
-                            });
-                        }
-                    }
-
-                    if (e.key === "ArrowUp") {
-                        e.preventDefault();
-                        if (index > 0) {
-                            if (active) active.classList.remove("active");
-                            items[index - 1].classList.add("active");
-                            items[index - 1].scrollIntoView({
-                                block: "nearest"
-                            });
-                        }
-                    }
-
-                    if (e.key === "Enter") {
-                        e.preventDefault();
-                        if (active) {
-                            const idValue = getIdFromElement(active); // تابع استخراج id
-                            const name = active.textContent.trim();
-                            selectItem(idValue, name, id);
-                        }
-                    }
-                });
-            });
-
-            function getIdFromElement(el) {
-                // استخراج id از onclick
-                const onclick = el.getAttribute("onclick");
-                const match = onclick.match(/selectItem\((\d+),/);
-                return match ? parseInt(match[1]) : "";
-            }
-        </script>
         {{-- adds --}}
         <div class="container" id="main-container" style="position: relative;bottom: 20px;">
+            {{-- special adds --}}
             <div id="events-slider" class="splide" style="padding: 0 5px !important;">
                 <div class="section-title-container">
                     <div class="section-title">
@@ -669,7 +358,7 @@
 
                 <div class="splide__track fix-shadow-margin px-0 py-2">
                     <ul class="splide__list">
-                        @foreach ($Advertisements as $advertisement)
+                        @foreach ($specialAdds as $advertisement)
                             <li class="splide__slide">
                                 <div class="flip-card">
                                     <div class="flip-card-inner">
@@ -680,13 +369,13 @@
                                                     <img src="{{ asset('site/public/icon/vertical-line.svg') }}"
                                                         class="card-img-top" alt="event image">
                                                 @else
-                                                    <img src="{{ asset($advertisement->image ?? 'site/public/icon/vertical-line.svg') }}"
+                                                    <img src="{{ asset($advertisement->image ?? 'site/public/img/no-image.png') }}"
                                                         class="card-img-top" alt="event image">
                                                 @endif
                                                 @if ($advertisement->discount_percent > 0)
                                                     <div class="discount-squer"
                                                         style="position: absolute;top: -4px;right: 20px;">
-                                                        <img src="{{ asset('Group 1.svg') }}" width="90"
+                                                        <img src="{{ asset('site/public/svgs/Group 1.svg') }}" width="90"
                                                             alt="discount">
                                                         <span class="d-flex"
                                                             style="font-size: 12px;font-weight: 800;position: absolute;right: 16px;top: 7px;">
@@ -701,23 +390,23 @@
                                                 <div class="d-flex justify-content-between mb-2 text-secondary small">
                                                     <small><i class="bi bi-telephone text-warning"
                                                             style="position: relative;top: 2px;"></i>
-                                                        {{ $advertisement->organ?->tel ?? '03512341234' }}
+                                                        {{ $advertisement->academy?->phone ?? '03512341234' }}
                                                     </small>
-                                                    <small>{{ $advertisement->organ?->cityRelation->title ?? 'یزد' }}
+                                                    <small>{{ $advertisement->academy?->city->title ?? 'یزد' }}
                                                         <i class="bi bi-geo-alt text-warning"
                                                             style="position: relative;top: 2px;font-size: 17.5px;"></i></small>
                                                 </div>
                                                 <div
                                                     class="d-flex align-items-center align-content-center justify-content-end mb-2">
                                                     {{-- <h5 class="mt-2 me-2 text-align-center" style="font-size: 16px;">
-                                                        {{ $advertisement->organ?->name ?? 'نام آموزشگاه' }}
+                                                        {{ $advertisement->academy?->name ?? 'نام آموزشگاه' }}
                                                     </h5>
-                                                    <img src="{{ asset($advertisement->organ?->file_logo ?? 'user.svg') }}"
+                                                    <img src="{{ asset($advertisement->academy?->file_logo ?? 'user.svg') }}"
                                                         alt="school" width="35px" height="35px"> --}}
                                                     <div class="section-title d-flex align-content-center align-items-center my-2"
                                                         style="padding-right: 6px;">
                                                         <h5 class="title me-2 mb-0" style="font-size: 16px;">
-                                                            {{ $advertisement->organ?->name ?? 'نام آموزشگاه' }} </h5>
+                                                            {{ $advertisement->academy?->name ?? $advertisement->title }} </h5>
                                                         <img src="{{ asset('site/public/icon/vertical-line.svg') }}"
                                                             aria-hidden="true" class="vertical-line me-0"
                                                             style="height: 25px !important" alt="">
@@ -725,7 +414,7 @@
                                                 </div>
 
                                                 <p class="text-justify text-end" style="padding-right: 6px;">
-                                                    {{ $advertisement->text }}</p>
+                                                    {{ $advertisement->description }}</p>
                                                 <div class="bottom-icons2 mt-3 align-self-end d-flex align-items-center">
 
                                                     <small>
@@ -738,7 +427,7 @@
                                                         </a>
                                                     </small>
                                                     <small>
-                                                        {{ $advertisement->visits()->count() }}
+                                                        0
                                                         <i class="bi bi-eye ms-1"
                                                             style="position: relative;top: 2px;"></i>
                                                     </small>
@@ -756,7 +445,7 @@
                                             @if ($advertisement->discount_percent > 0)
                                                 <div class="discount-squer"
                                                     style="position: absolute;top: 8px;left: 26px;">
-                                                    <img src="{{ asset('Group 1.svg') }}" width="90" alt="discount">
+                                                    <img src="{{ asset('site/public/svgs/Group 1.svg') }}" width="90" alt="discount">
                                                     <span class="d-flex"
                                                         style="font-size: 12px;font-weight: 800;position: absolute;right: 12px;top: 7px;">
                                                         <span class="me-1" style="font-size: 13px;">تخفیف</span>
@@ -825,6 +514,7 @@
                 <ul class="splide__pagination position-static mt-3 mb-2"></ul>
             </div>
 
+            {{-- instagrom --}}
             <div id="invite-instagram" class="mt-5">
                 <div class="row m-0"
                     style="background: linear-gradient(270deg, #EE295F 0%, #9033C2 100%);
@@ -849,6 +539,7 @@
                     style="height: 160px; margin-top: -120px">
             </div>
 
+            {{-- newest adds --}}
             <div id="annos">
                 <div class="section-title-container">
                     <div class="section-title">
@@ -859,12 +550,6 @@
 
                     <div class="section-options">
                         <div class="d-flex flex-column align-items-center">
-                            {{-- <a href="#"
-                                class="position-relative text-reset text-decoration-none btn btn-light rounded-circle border p-0 align-content-center comp-btn"
-                                style="width:32px;height:32px">
-                                <i class="bi bi-arrow-repeat position-relative"></i>
-                                <span class="badge text-dark text-align-center">0</span>
-                            </a> --}}
                             <a href="#" class="btn btn-light rounded-circle comp-link"><span
                                     class="badge text-align-center">0</span></a>
                         </div>
@@ -880,7 +565,111 @@
                 </div>
 
                 <div class="row row-gap-3" id="hot-annos-list">
-                    {{-- خودکار اضافه می‌شود --}}
+                    @foreach ($advertisements as $advertisement)
+                        <div class="col-md-6">
+                            <a href="#" class="text-reset text-decoration-none">
+                                <div class="row anno-card shadow rounded-3" style="overflow: visible !important;">
+                                    <div class="col-6 position-relative"
+                                        style="padding: 12px;min-height: 170px !important;">
+                                        <div class="row g-0" dir="ltr">
+                                            <div class="col align-content-center text-start p-0">
+                                                <div class="d-flex align-items-center gap-1">
+                                                    <span class="text-small-1">{{$advertisement->academy?->city->title ?? 'یزد'}}</span>
+                                                    <span class="">|</span>
+                                                    <span class="text-small-1">{{$advertisement->academy?->phone ?? '03531231234'}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col text-end p-0">
+                                                <div class="d-flex justify-content-end">
+                                                    <h5 class="mt-2 me-2 text-align-center fw-bold"
+                                                        style="font-size: 16px">
+                                                        {{$advertisement->academy?->title ?? 'یزد اسکیل'}}
+                                                    </h5>
+                                                    <img src="{{ asset('site/public/icon/vertical-line.svg') }}"
+                                                        alt="school" width="5px" height="35px">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="fw-bold mt-2 mb-1" style="font-size: 15px">{{$advertisement->title}}</p>
+                                        <p style="font-size: 16px">
+                                            {{$advertisement->description}}
+                                        </p>
+                                        <div class="bottom-icons border-top align-items-center align-self-end"
+                                            style="position: absolute;padding: 5px 12px 0 12px;bottom: 7.5px;left: 0;right: 0;"
+                                            dir="ltr">
+                                            <div class="checkbox-wrapper-13 d-flex align-items-center" dir="rtl">
+                                                <input id="comp${item.id}" type="checkbox">
+                                                <label for="comp${item.id}">مقایسه</label>
+                                            </div>
+                                            <small style="font-size: 11.9px;">
+                                                <a type="button" class="text-decoration-none text-reset"
+                                                    data-id="${item.id}">
+                                                    <small class="like-count"
+                                                        style="font-size: 11.9px;">0</small>
+                                                    <i class="bi bi-heart ms-1 text-primary"
+                                                        style="position: relative;top: 2px;font-size:14px !important;"></i>
+                                                </a>
+                                            </small style="font-size: 11.9px;">
+                                            <small style="font-size: 11.9px;">
+                                                0
+                                                <i class="bi bi-eye ms-1 text-primary"
+                                                    style="position: relative;top: 2px;"></i>
+                                            </small>
+                                            <small dir="rtl" style="font-size: 11.9px;">
+                                                <i class="bi bi-clock ms-1 text-primary"
+                                                    style="position: relative;top: 2px;"></i>
+                                                {{Jdate($advertisement->created_at)->ago()}}
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 position-relative img ads-img-col"
+                                        style="z-index: 5;overflow: visible;">
+                                        <div class="img-container h-100">
+                                            <a href="#" class="text-reset text-decoration-none">
+                                                <img src="{{asset($advertisement->image ?? 'site/public/img/no-image.png')}}" alt="${item.title}"
+                                                    style="object-fit: cover; width: 100%; height: 100%;max-height: 200px;">
+                                            </a>
+                                            <!-- این دیو با هاور نمایش داده می‌شود -->
+                                            <div class="hover-reveal border-top">
+                                                <div class="bottom-icons py-0 px-1 align-self-end d-flex align-items-center"
+                                                    style="direction: rtl;">
+                                                    <a href="#" class="text-reset text-decoration-none">
+                                                        <small style="font-size: 11.9px" class="fw-bold">
+                                                            <i class="bi bi-exclamation-triangle ms-1 text-primary"
+                                                                style="position: relative;top: 2px;"></i>
+                                                            ثبت تخلف
+                                                        </small>
+                                                    </a>
+                                                    <p class="text-center m-0 d-flex"
+                                                        style="font-size: 11.9px;direction: rtl;font-weight:bold;margin-bottom:4px">
+                                                        <span class="text-dark fw-bold"
+                                                            style="font-size: 11.9px">1403/05/08</span>
+                                                        <span class="text-primary fw-bold mx-1"
+                                                            style="font-size: 11.9px;"> الی </span>
+                                                        <span class="text-dark fw-bold"
+                                                            style="font-size: 11.9px">1403/05/20</span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="discount-squer"
+                                            style="position: absolute; top: -5px; left: 18px; z-index: 66;">
+                                            <img src="{{ asset('site/public/svgs/Group 1.svg') }}" width="90" alt="discount">
+                                            <span class="d-flex"
+                                                style="font-size: 12px; font-weight: 800; position: absolute; right: 16px; top: 7px;direction: ltr;">
+                                                <span class="me-1" style="font-size: 13px;">تخفیف</span>
+                                                <strong style="font-size: 12px;">10%</strong>
+                                            </span>
+                                        </div>
+                                        <div class="permume-squer"
+                                            style="position: absolute; top: -7px; right: 12px; z-index: 66;">
+                                            <img src="{{ asset('site/public/svgs/hot-bookmark.svg') }}" width="36" alt="discount">
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    @endforeach
                 </div>
 
                 <div class="mt-4" style="text-align: end">
@@ -890,223 +679,6 @@
                     </a>
                 </div>
             </div>
-
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script>
-                $(document).ready(function() {
-                    // Function to fetch and display advertisements
-                    function fetchAnnos(hot = 0) {
-                        $.ajax({
-                            url: '/', // Your route (should be fine as is)
-                            method: 'GET',
-                            data: {
-                                hot: hot
-                            },
-                            success: function(response) {
-                                let html = '';
-                                response.forEach(item => {
-                                    html += `
-                            <div class="col-md-6">
-                                <a href="#" class="text-reset text-decoration-none">
-                                    <div class="row anno-card shadow rounded-3" style="overflow: visible !important;">
-                                        <div class="col-6 position-relative" style="padding: 12px;min-height: 170px !important;">
-                                            <div class="row g-0" dir="ltr">
-                                                <div class="col align-content-center text-start p-0">
-                                                    <div class="d-flex align-items-center gap-1">
-                                                        <span class="text-small-1">${item.city}</span>
-                                                        <span class="">|</span>
-                                                        <span class="text-small-1">${item.tel}</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col text-end p-0">
-                                                    <div class="d-flex justify-content-end">
-                                                        <h5 class="mt-2 me-2 text-align-center fw-bold" style="font-size: 16px">
-                                                         دارالفنون فاضل
-                                                        </h5>
-                                                        <img src="{{ asset('site/public/icon/vertical-line.svg') }}" alt="school" width="5px"
-                                                            height="35px">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <p class="fw-bold mt-2 mb-1" style="font-size: 15px">عنوان اگهی</p>
-                                            <p style="font-size: 16px">
-                                                ${item.text}
-                                            </p>
-                                            <div class="bottom-icons border-top align-items-center align-self-end" style="position: absolute;padding: 5px 12px 0 12px;bottom: 7.5px;left: 0;right: 0;" dir="ltr">
-                                                <div class="checkbox-wrapper-13 d-flex align-items-center" dir="rtl">
-                                                  <input id="comp${item.id}" type="checkbox">
-                                                  <label for="comp${item.id}">مقایسه</label>
-                                                </div>
-                                                <small style="font-size: 11.9px;">
-                                                    <a type="button" class="text-decoration-none text-reset"
-                                                        data-id="${item.id}">
-                                                        <small class="like-count" style="font-size: 11.9px;">${item.likes}</small>
-                                                        <i class="bi bi-heart ms-1 text-primary"
-                                                        style="position: relative;top: 2px;font-size:14px !important;"></i>
-                                                    </a>
-                                                </small style="font-size: 11.9px;">
-                                                <small style="font-size: 11.9px;">
-                                                    ${item.views}
-                                                    <i class="bi bi-eye ms-1 text-primary" style="position: relative;top: 2px;"></i>
-                                                </small>
-                                                <small dir="rtl" style="font-size: 11.9px;">
-                                                    <i class="bi bi-clock ms-1 text-primary" style="position: relative;top: 2px;"></i>
-                                                     ${item.time}
-                                                </small>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 position-relative img ads-img-col" style="z-index: 5;overflow: visible;">
-                                            <div class="img-container h-100">
-                                                <a href="#" class="text-reset text-decoration-none">
-                                                    <img src="${item.image}" alt="${item.title}"
-                                                         style="object-fit: cover; width: 100%; height: 100%;">
-                                                </a>
-                                                <!-- این دیو با هاور نمایش داده می‌شود -->
-                                                <div class="hover-reveal border-top">
-                                                    <div class="bottom-icons py-0 px-1 align-self-end d-flex align-items-center"
-                                                        style="direction: rtl;">
-                                                        <a href="#" class="text-reset text-decoration-none">
-                                                            <small style="font-size: 11.9px" class="fw-bold">
-                                                                <i class="bi bi-exclamation-triangle ms-1 text-primary"
-                                                                style="position: relative;top: 2px;"></i>
-                                                                ثبت تخلف
-                                                            </small>
-                                                        </a>
-                                                        <p class="text-center m-0 d-flex"
-                                                                style="font-size: 11.9px;direction: rtl;font-weight:bold;margin-bottom:4px">
-                                                                <span class="text-dark fw-bold" style="font-size: 11.9px">1403/05/08</span>
-                                                                <span class="text-primary fw-bold mx-1" style="font-size: 11.9px;"> الی </span>
-                                                                <span class="text-dark fw-bold" style="font-size: 11.9px">1403/05/20</span>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="discount-squer" style="position: absolute; top: -5px; left: 18px; z-index: 66;">
-                                                <img src="{{ asset('Group 1.svg') }}" width="90" alt="discount">
-                                                <span class="d-flex" style="font-size: 12px; font-weight: 800; position: absolute; right: 16px; top: 7px;direction: ltr;">
-                                                    <span class="me-1" style="font-size: 13px;">تخفیف</span>
-                                                    <strong style="font-size: 12px;">10%</strong>
-                                                </span>
-                                            </div>
-                                            <div class="permume-squer" style="position: absolute; top: -7px; right: 12px; z-index: 66;">
-                                                <img src="{{ asset('hot-bookmark.svg') }}" width="36" alt="discount">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        `;
-                                });
-                                $('#hot-annos-list').html(html);
-                            },
-                            error: function() {
-                                alert('An error occurred!');
-                            }
-                        });
-                    }
-
-                    // Initial load
-                    fetchAnnos(0);
-
-                    // On checkbox change
-                    $('#hot-annos').on('change', function() {
-                        let isChecked = $(this).is(':checked');
-                        fetchAnnos(isChecked ? 1 : 0);
-                    });
-                });
-            </script>
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script>
-                $(document).ready(function() {
-                    $('.like-btn').each(function() {
-                        const btn = $(this);
-                        const adId = btn.data('id');
-                        const btn2 = $("#like-btn2" + adId);
-                        const adId2 = btn2.data('id');
-
-                        // 1. دریافت وضعیت لایک و شمارش
-                        $.get('/like-count/' + adId, function(res) {
-                            btn.find('.like-count').text(res.count);
-                            btn2.find('.like-count').text(res.count);
-                        });
-
-                        $.get('/like/' + adId + '/check', function(res) {
-                            if (res.liked) {
-                                btn.addClass('liked');
-                                btn.find('i').removeClass('bi-heart').addClass('bi-heart-fill text-danger');
-                                btn2.addClass('liked');
-                                btn2.find('i').removeClass('bi-heart').addClass(
-                                    'bi-heart-fill text-danger');
-                            } else {
-                                btn.removeClass('liked');
-                                btn.find('i').removeClass('bi-heart-fill text-danger').addClass('bi-heart');
-                                btn2.removeClass('liked');
-                                btn2.find('i').removeClass('bi-heart-fill text-danger').addClass(
-                                    'bi-heart');
-                            }
-                        });
-
-                        // $.ajaxSetup({
-                        //     headers: {
-                        //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        //     }
-                        // });
-                        // 2. رویداد کلیک برای لایک یا حذف
-                        btn.on('click', function() {
-                            let adId = btn.data('id');
-                            let adId2 = btn2.data('id');
-                            let icon = btn.find('i');
-                            let icon2 = btn2.find('i');
-                            let countElem = btn.find('.like-count');
-                            let countElem2 = btn2.find('.like-count');
-                            let isLiked = icon.hasClass('bi-heart-fill');
-                            let isLiked2 = icon2.hasClass('bi-heart-fill');
-
-                            // وضعیت اولیه رو ذخیره می‌کنیم تا در صورت خطا برگردیم
-                            let originalCount = parseInt(countElem.text());
-                            let newCount = isLiked ? originalCount - 1 : originalCount + 1;
-
-                            // تغییر ظاهری سریع
-                            if (isLiked) {
-                                icon.removeClass('bi-heart-fill text-danger').addClass('bi-heart');
-                                icon2.removeClass('bi-heart-fill text-danger').addClass('bi-heart');
-                            } else {
-                                icon.removeClass('bi-heart').addClass('bi-heart-fill text-danger');
-                                icon2.removeClass('bi-heart').addClass('bi-heart-fill text-danger');
-                            }
-                            countElem.text(newCount);
-                            countElem2.text(newCount);
-
-                            // ارسال به سرور
-                            $.ajax({
-                                url: '/like/' + adId,
-                                type: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                },
-                                success: function(res) {
-                                    // اگر سرور موفق بود، هیچ‌کاری نکن
-                                },
-                                error: function() {
-                                    // در صورت خطا، همه چیز رو به حالت اول برگردون
-                                    if (isLiked) {
-                                        icon.removeClass('bi-heart').addClass(
-                                            'bi-heart-fill text-danger');
-                                        countElem.text(originalCount);
-                                        countElem2.text(originalCount2);
-                                    } else {
-                                        icon.removeClass('bi-heart-fill text-danger').addClass(
-                                            'bi-heart');
-                                        countElem.text(originalCount);
-                                        countElem2.text(originalCount2);
-                                    }
-                                }
-                            });
-                        });
-
-                    });
-                });
-            </script>
         </div>
 
         {{-- vodeo --}}
@@ -1121,7 +693,7 @@
                 <div class="video-overlay video-overlay2"></div>
 
                 <div class="play-pause-btn" id="play-pause-btn">
-                    <i class="fas fa-play"></i>
+                    <i class="bi bi-play-fill"></i>
                 </div>
             </div>
         </section>
@@ -1474,7 +1046,6 @@
                             </div>
                         </div>
                     @endforeach
-
                 </div>
             </div>
             <!-- بخش کارت‌ها -->
@@ -1564,8 +1135,7 @@
 
             <!-- بخش نقشه -->
             <div class="map-container22 mb-4">
-                <div id="map" class="shadow" style="height: 300px;
-            border-radius: 12px;"></div>
+                <div id="map" class="shadow" style="height: 300px;border-radius: 12px;"></div>
             </div>
 
             <!-- بخش فوتر -->
@@ -1626,17 +1196,17 @@
                                 <ul class="splide__list rounded-3">
                                     <li
                                         class="splide__slide rounded-3 align-content-center align-items-center text-center">
-                                        <img src="{{ asset('enemad.png') }}" class="rounded-3 my-auto mx-auto"
+                                        <img src="{{ asset('site/public/img/enemad.png') }}" class="rounded-3 my-auto mx-auto"
                                             style="height: 125px" alt="enamad">
                                     </li>
                                     <li
                                         class="splide__slide rounded-3 align-content-center align-items-center text-center">
-                                        <img src="{{ asset('image2.png') }}" class="rounded-3 my-auto mx-auto"
+                                        <img src="{{ asset('site/public/img/no-image.png') }}" class="rounded-3 my-auto mx-auto"
                                             style="height: 125px" alt="image2">
                                     </li>
                                     <li
                                         class="splide__slide rounded-3 align-content-center align-items-center text-center">
-                                        <img src="{{ asset('image3.png') }}" class="rounded-3 my-auto mx-auto"
+                                        <img src="{{ asset('site/public/img/no-image.png') }}" class="rounded-3 my-auto mx-auto"
                                             style="height: 125px" alt="image3">
                                     </li>
                                 </ul>
@@ -1732,23 +1302,7 @@
     </a>
     <!--endregion: go to top button -->
 
-    <!--region: news button -->
-    <svg width="0" height="0">
-        <defs>
-            <clipPath id="roundedClip">
-                <path d="M 6.32 19.12
-                    L 24.68 4.88
-                    A 8 8 0 0 1 31 8
-                    L 31 110
-                    A 8 8 0 0 1 24.68 113.12
-                    L 0 86
-                    A 8 8 0 0 1 6.32 98.88
-                    L 0 32
-                    A 8 8 0 0 1 6.32 19.12
-                    Z" />
-            </clipPath>
-        </defs>
-    </svg>
+
 
     <div class="right-nav" id="btn-news">
         <p><a href="#" class="text-decoration-none text-dark">اخبار</a></p>
@@ -1789,24 +1343,19 @@
                 <div class="text-end">
                     {{-- <a href="{{ route('news') }}" class="btn btn-archive">مشاهده آرشیو</a> --}}
                 </div>
-                @foreach ($news as $item)
+                @foreach ($khabars as $item)
                     <div class="khabar-container news-item" style="display:none;">
                         <div class="khabar-item row align-items-center">
-                            @php
-                                $media = json_decode($item->media, true) ?? [];
-                                $firstImage = $media[0] ?? null;
-                                $otherImages = array_slice($media, 1);
-                            @endphp
                             <div class="col-md-3">
                                 <div class="row g-0">
-                                    @if ($item->images->count() > 0)
+                                    @if ($item->files->where('type','image')->count() > 0)
                                         <div class="col-4">
                                             <div class="row g-0 khabar-gallery-row">
-                                                @foreach ($item->images as $images)
+                                                @foreach ($item->files()->where('type','image')->get() as $images)
                                                     <div class="col-12 p-1 text-center">
                                                         <a href="javascript:void(0)" class="image-link"
-                                                            data-image-src="{{ asset($images->image_path) }}">
-                                                            <img src="{{ asset($images->image_path) }}"
+                                                            data-image-src="{{ asset($images->url) }}">
+                                                            <img src="{{ asset($images->url) }}"
                                                                 alt="تصویر خبر {{ $item->title }}"
                                                                 class="w-100 rounded-2">
                                                         </a>
@@ -1818,9 +1367,9 @@
                                     <div class="col">
                                         <div class="khabar-image-main h-100">
                                             <a href="javascript:void(0)" class="image-link"
-                                                data-image-src="{{ asset($item->cover ? $item->cover : $item->images()->first()->image_path) }}"><img
+                                                data-image-src="{{ asset($item->cover ? $item->cover : $item->files()->first()->url) }}"><img
                                                     class="khabar-image-main-cover"
-                                                    src="{{ asset($item->cover ? $item->cover : $item->images()->first()->image_path) }}"
+                                                    src="{{ asset($item->cover ? $item->cover : $item->files()->first()->url) }}"
                                                     alt="تصویر خبر {{ $item->title }}"></a>
                                         </div>
                                     </div>
@@ -1830,28 +1379,18 @@
                             <div class="col-md-9">
                                 <div class="khabar-content h-100">
                                     <h2 class="khabar-title">{{ $item->title }}</h2>
-                                    @php
-                                        $plainText = strip_tags($item->text);
-                                        $words = explode(' ', $plainText);
-                                        $shortText = implode(' ', array_slice($words, 0, 20));
-                                        $publishDate = \Morilog\Jalali\Jalalian::fromDateTime(
-                                            $item->publish_at,
-                                        )->format('H:i Y/m/d');
-                                        $shortUrl = route('home'); // Assuming a route to view the post
-                                    @endphp
-
                                     <div class="khabar-text-box" id="khabar-{{ $item->id }}">
-                                        <div class="short-text">{{ $item->short ?? $shortText }}...</div>
+                                        <div class="short-text">{{ $item->description }}...</div>
                                         <div class="khabar-meta align-items-center">
                                             <a href="{{ route('news') }}" class="btn btn-primary px-3">بیشتر
                                                 بخوانید</a>
                                             <div>
                                                 <span class="views mx-2"><i class="bi bi-eye"></i>
-                                                    {{ $item->views_count }}
+                                                    0
                                                     بازدید</span>
                                                 <span class="mx-2"><i class="bi bi-heart"></i> 250</span>
                                                 <span class="date mx-2"><i class="bi bi-clock"></i>
-                                                    {{ $publishDate }}</span>
+                                                    {{ Jdate($item->created_at)->format('H:i Y/m/d') }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -1915,9 +1454,9 @@
                                             <div class="splide" id="gallerySplide">
                                                 <div class="splide__track">
                                                     <ul class="splide__list">
-                                                        @foreach ($item->images as $images)
+                                                        @foreach ($item->files()->where('type','image')->get() as $images)
                                                             <li class="splide__slide">
-                                                                <img src="{{ asset($images->image_path) }}"
+                                                                <img src="{{ asset($images->url) }}"
                                                                     alt="تصویر خبر {{ $item->title }}"
                                                                     class="img-fluid rounded">
                                                             </li>
@@ -1934,27 +1473,7 @@
                                 </div>
                             </div>
                         </div>
-                        @if (count($otherImages) > 0)
-                            <div class="khabar-media-small">
-                                @foreach ($otherImages as $mediaItem)
-                                    <div class="khabar-media-item">
-                                        @php
-                                            $extension = pathinfo($mediaItem, PATHINFO_EXTENSION);
-                                        @endphp
 
-                                        @if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                                            <a href="/{{ $mediaItem }}"><img src="{{ asset($mediaItem) }}"
-                                                    alt="تصویر خبر"></a>
-                                        @elseif(in_array(strtolower($extension), ['mp4', 'webm', 'ogg']))
-                                            <video controls>
-                                                <source src="{{ asset($mediaItem) }}" type="video/{{ $extension }}">
-                                                مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
-                                            </video>
-                                        @endif
-                                    </div>
-                                @endforeach
-                            </div>
-                        @endif
                     </div>
                 @endforeach
                 {{-- <div class="text-start">
@@ -2223,7 +1742,7 @@
     </script>
 
     <!-- Select2 -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://lib.arvancloud.ir/select2/4.1.0-rc.0/js/select2.min.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -2301,4 +1820,293 @@
     </script>
 @endsection
 @section('script')
+    {{-- inputs --}}
+    <script>
+        $(document).on("input", ".only-persian", function() {
+            let value = $(this).val();
+            // حذف هر چیزی که فارسی نیست
+            let persianOnly = value.replace(/[^\u0600-\u06FF\s]/g, '');
+            $(this).val(persianOnly);
+            let name = $(this).attr('name');
+            const box = document.getElementById("autocompleteBox" + name);
+            const clearBtn = document.getElementById("clearBtn_" + name);
+            let value2 = $(this).val();
+            if (value2.length > 0) {
+                box.classList.add("filled");
+                clearBtn.style.display = 'block';
+            } else {
+                box.classList.remove("filled");
+                clearBtn.style.display = 'none';
+            }
+        });
+        const states = [];
+        const reshtes = [];
+        const herves = [];
+
+        function nameinput() {
+            const input = document.getElementById("searchInputname");
+            const box = document.getElementById("autocompleteBoxname");
+            const clearBtn = document.getElementById("clearBtn_name");
+
+            if (input.value.length > 0) {
+                box.classList.add("filled");
+                clearBtn.style.display = 'block';
+            } else {
+                box.classList.remove("filled");
+                clearBtn.style.display = 'none';
+            }
+        }
+
+        function dropdownshow(id) {
+            filterOptions(id, 0);
+            const dropdown = document.getElementById("dropdownList" + id);
+            dropdown.style.display = 'block';
+        }
+
+        function hideDropdown() {
+            const dropdown = document.getElementById("dropdownList" + id);
+
+            setTimeout(() => dropdown.style.display = 'none', 150);
+        }
+
+        function filterOptions(divId, status) {
+            const dropdown = document.getElementById("dropdownList" + divId);
+            const input = document.getElementById("searchInput" + divId);
+            const box = document.getElementById("autocompleteBox" + divId);
+            const value = input.value.toLowerCase();
+            if (divId == "city") {
+                city = document.getElementById("selectedIdstate").value;
+                $.ajax({
+                    url: '/states/' + city, //  URL جدید
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+
+                        if (status == 1) {
+                            const filtered = data.filter(item => item.title.toLowerCase().startsWith(value));
+                            dropdown.innerHTML = filtered.length ?
+                                filtered.map((item, index) =>
+                                    `<div class="${index === 0 ? 'active' : ''}" onclick="selectItem(${item.id}, '${item.title}','${divId}')">${item.title}</div>`
+                                ).join('') :
+                                '<div>نتیجه‌ای یافت نشد</div>';
+                        } else {
+                            const filtered = data;
+                            dropdown.innerHTML = filtered.length ?
+                                filtered.map((item, index) =>
+                                    `<div class="${index === 0 ? 'active' : ''}" onclick="selectItem(${item.id}, '${item.title}','${divId}')">${item.title}</div>`
+                                ).join('') :
+                                '<div>نتیجه‌ای یافت نشد</div>';
+                        }
+
+                        box.classList.toggle("filled", input.value.trim() !== "");
+
+                    }
+                });
+
+                box.classList.toggle("filled", input.value.trim() !== "");
+            } else if (divId == "state") {
+
+                if (status == 1) {
+                    const filtered = states.filter(item => item.title.toLowerCase().includes(value));
+                    dropdown.innerHTML = filtered.length ?
+                        filtered.map(item =>
+                            `<div onclick="selectItem(${item.id}, '${item.title}','${divId}')">${item.title}</div>`)
+                        .join('') :
+                        '<div>نتیجه‌ای یافت نشد</div>';
+                } else {
+                    const filtered = states;
+                    dropdown.innerHTML = filtered.length ?
+                        filtered.map(item =>
+                            `<div onclick="selectItem(${item.id}, '${item.title}','${divId}')">${item.title}</div>`)
+                        .join('') :
+                        '<div>نتیجه‌ای یافت نشد</div>';
+                }
+                box.classList.toggle("filled", input.value.trim() !== "");
+            } else if (divId == "group") {
+                if (status == 1) {
+                    const filtered = reshtes.filter(item => item.name.toLowerCase().includes(value));
+                    dropdown.innerHTML = filtered.length ?
+                        filtered.map(item =>
+                            `<div onclick="selectItem(${item.id}, '${item.name}','${divId}')">${item.name}</div>`)
+                        .join('') :
+                        '<div>نتیجه‌ای یافت نشد</div>';
+                } else {
+                    const filtered = reshtes;
+                    dropdown.innerHTML = filtered.length ?
+                        filtered.map(item =>
+                            `<div onclick="selectItem(${item.id}, '${item.name}','${divId}')">${item.name}</div>`)
+                        .join('') :
+                        '<div>نتیجه‌ای یافت نشد</div>';
+                }
+
+
+                box.classList.toggle("filled", input.value.trim() !== "");
+            } else if (divId == "herfe") {
+                if (status == 1) {
+                    const filtered = herves.filter(item => item.name.toLowerCase().includes(value));
+                    dropdown.innerHTML = filtered.length ?
+                        filtered.map(item =>
+                            `<div onclick="selectItem(${item.id}, '${item.name}','${divId}')">${item.name}</div>`)
+                        .join('') :
+                        '<div>نتیجه‌ای یافت نشد</div>';
+                } else {
+                    const filtered = herves;
+                    dropdown.innerHTML = filtered.length ?
+                        filtered.map(item =>
+                            `<div onclick="selectItem(${item.id}, '${item.name}','${divId}')">${item.name}</div>`)
+                        .join('') :
+                        '<div>نتیجه‌ای یافت نشد</div>';
+                }
+                box.classList.toggle("filled", input.value.trim() !== "");
+            }
+            const firstOption = dropdown.querySelector("div");
+            if (firstOption) firstOption.classList.add("active");
+        }
+
+        function selectItem(id, name, divId) {
+            const input = document.getElementById("searchInput" + divId);
+            const box = document.getElementById("autocompleteBox" + divId);
+            const dropdown = document.getElementById("dropdownList" + divId);
+
+
+            if (divId == "state") {
+                $('selectedId').change(function() { // به تغییرات در لیست *استان* گوش میدیم
+                    var cityId = $(this).val(); //  مقدار (ID) *استان* انتخاب شده
+                    if (cityId) {
+                        $.ajax({
+                            url: '/states/' + cityId, //  URL جدید
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(data) {
+                                const filtered = data.filter(item => item.title.toLowerCase().includes(
+                                    value));
+                                dropdown.innerHTML = filtered.length ?
+                                    filtered.map(item =>
+                                        `<div onclick="selectItem(${item.id}, '${item.title}','${divId}')">${item.title}</div>`
+                                    )
+                                    .join('') :
+                                    '<div>نتیجه‌ای یافت نشد</div>';
+                                box.classList.toggle("filled", input.value.trim() !== "");
+                            }
+                        });
+                    } else {
+                        $('#state').empty();
+                        $('#state').append(
+                            '<option value="">شهرستان</option>'); //اگر استانی انتخاب *نشد*، شهرستان ها خالی
+                    }
+                });
+                clearInput('city');
+            }
+
+            input.value = name;
+            document.getElementById("selectedId" + divId).value = id;
+            box.classList.add("filled");
+            dropdown.style.display = 'none';
+            const clearBtn = document.getElementById("clearBtn_" + divId);
+            clearBtn.style.display = 'block';
+        }
+
+        function clearInput(id) {
+            if (id == 'name') {
+                const box = document.getElementById("autocompleteBoxname");
+                box.classList.remove("filled");
+                const input = document.getElementById("searchInputname");
+                input.value = "";
+                const clearBtn = document.getElementById("clearBtn_name");
+                clearBtn.style.display = 'none';
+            } else {
+                const box = document.getElementById("autocompleteBox" + id);
+                const input = document.getElementById("searchInput" + id);
+                input.value = "";
+                document.getElementById("selectedId" + id).value = "";
+                box.classList.remove("filled");
+                if (id == 'state') {
+                    const box2 = document.getElementById("autocompleteBoxcity");
+                    const input2 = document.getElementById("searchInputcity");
+                    input2.value = "";
+                    document.getElementById("selectedIdcity").value = "";
+                    box2.classList.remove("filled");
+                    const clearBtn2 = document.getElementById("clearBtn_city");
+                    clearBtn2.style.display = 'none';
+                }
+                const clearBtn = document.getElementById("clearBtn_" + id);
+                clearBtn.style.display = 'none';
+                filterOptions(id, 0);
+            }
+        }
+
+        // بستن لیست با کلیک خارج از آن
+        document.addEventListener("click", function(e) {
+            const box1 = document.getElementById("autocompleteBoxstate");
+            const box2 = document.getElementById("autocompleteBoxcity");
+            const box3 = document.getElementById("autocompleteBoxgroup");
+            const box4 = document.getElementById("autocompleteBoxherfe");
+            const dropdown1 = document.getElementById("dropdownListstate");
+            const dropdown2 = document.getElementById("dropdownListcity");
+            const dropdown3 = document.getElementById("dropdownListgroup");
+            const dropdown4 = document.getElementById("dropdownListherfe");
+
+
+            if (box1 && !box1.contains(e.target)) {
+                dropdown1.style.display = "none";
+            }
+            if (box2 && !box2.contains(e.target)) {
+                dropdown2.style.display = "none";
+            }
+            if (box3 && !box3.contains(e.target)) {
+                dropdown3.style.display = "none";
+            }
+            if (box4 && !box4.contains(e.target)) {
+                dropdown4.style.display = "none";
+            }
+        });
+
+        document.querySelectorAll("input[id^='searchInput']").forEach(input => {
+            input.addEventListener("keydown", function(e) {
+                const id = this.id.replace("searchInput", "");
+                const dropdown = document.getElementById("dropdownList" + id);
+                const items = dropdown.querySelectorAll("div");
+                const active = dropdown.querySelector(".active");
+                let index = Array.from(items).indexOf(active);
+
+                if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    if (index < items.length - 1) {
+                        if (active) active.classList.remove("active");
+                        items[index + 1].classList.add("active");
+                        items[index + 1].scrollIntoView({
+                            block: "nearest"
+                        });
+                    }
+                }
+
+                if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    if (index > 0) {
+                        if (active) active.classList.remove("active");
+                        items[index - 1].classList.add("active");
+                        items[index - 1].scrollIntoView({
+                            block: "nearest"
+                        });
+                    }
+                }
+
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (active) {
+                        const idValue = getIdFromElement(active); // تابع استخراج id
+                        const name = active.textContent.trim();
+                        selectItem(idValue, name, id);
+                    }
+                }
+            });
+        });
+
+        function getIdFromElement(el) {
+            // استخراج id از onclick
+            const onclick = el.getAttribute("onclick");
+            const match = onclick.match(/selectItem\((\d+),/);
+            return match ? parseInt(match[1]) : "";
+        }
+    </script>
 @endsection

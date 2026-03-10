@@ -1329,12 +1329,7 @@
 }
 
 .login-btn:hover~.background-slide {
-    /* transform: translateX(calc(74% + 1rem)); */
     transform: translate(80px, -50%);
-    /* width: 50px; */
-    /* height: 45px; */
-    /* right: 147px; */
-    /* top: 2px; */
 }
 
 .login-btn:hover~.register-btn {

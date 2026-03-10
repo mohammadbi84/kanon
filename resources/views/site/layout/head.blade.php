@@ -46,10 +46,10 @@
     <!-- switch element -->
 
 
-    <link href="https://v1.fontapi.ir/css/VazirFD" rel="stylesheet">
+    <link href="https://lib.arvancloud.ir/vazir-font/33.003/Farsi-Digits-Non-Latin/Vazirmatn-FD-NL-font-face.css" rel="stylesheet">
     <style>
         body {
-            font-family: 'Vazir FD', sans-serif !important;
+            font-family: 'Vazirmatn FD NL', sans-serif !important;
             /* Or 'Vazirmatn', 'Vazir', depending on the CDN/version */
         }
     </style>

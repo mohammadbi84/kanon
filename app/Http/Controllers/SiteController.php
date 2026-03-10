@@ -13,6 +13,7 @@ use App\Models\Khabar;
 use App\Models\Moases;
 use App\Models\Organ;
 use App\Models\Popup;
+use App\Models\Position;
 use App\Models\RegisterMessage;
 use App\Models\Setting;
 use App\Models\Slider;
@@ -45,40 +46,43 @@ class SiteController extends Controller
 
     public function index(Request $request)
     {
-        $page = StaticPageVisit::firstOrCreate(['slug' => 'home']);
+        // $page = StaticPageVisit::firstOrCreate(['slug' => 'home']);
 
-        $existingVisit = $page->visits()
-            ->where('ip', request()->ip())
-            ->where('created_at', '>=', now()->subDay())
-            ->first();
+        // $existingVisit = $page->visits()
+        //     ->where('ip', request()->ip())
+        //     ->where('created_at', '>=', now()->subDay())
+        //     ->first();
 
-        if (!$existingVisit) {
-            $page->visits()->create([
-                'ip' => request()->ip(),
-                'user_agent' => request()->userAgent(),
-                'user_id' => auth()->id(),
-            ]);
-        }
-        $sliders = Slider::where('type', 0)->orderBy('order', 'asc')->get();
-        if ($sliders->count() > 1) {
-            // مثلا میخوای اسلایدری که slug اش برابر "special-slider" هست حذف بشه
-            $sliders = $sliders->reject(function ($slider) {
-                return $slider->id == 18;
-            })->values(); // ریست اندیس‌های آرایه
-        }
-        foreach ($sliders as $slider) {
-            $slider['time'] = $this->time($slider->created_at);
-        }
+        // if (!$existingVisit) {
+        //     $page->visits()->create([
+        //         'ip' => request()->ip(),
+        //         'user_agent' => request()->userAgent(),
+        //         'user_id' => auth()->id(),
+        //     ]);
+        // }
 
-        $Advertisements = [];
+
+        $khabars = Khabar::active()->get();
+
+        $popups = Position::find(1)->advertisements;
+        $sliders = Position::find(3)->advertisements;
+        $specialAdds = Position::find(4)->advertisements;
+        $advertisements = Position::find(5)->advertisements;
+
+        $courses = [];
         $newCourses = [];
         $contents = [];
-        $news = [];
 
-        $popups = Popup::active()->get();
-
-
-        return view('site.index',compact('sliders','Advertisements','newCourses','contents','news','popups'));
+        return view('site.index', compact(
+            'popups',
+            'sliders',
+            'specialAdds',
+            'advertisements',
+            'courses',
+            'newCourses',
+            'khabars',
+            'contents'
+        ));
     }
 
     public function states($cityId)

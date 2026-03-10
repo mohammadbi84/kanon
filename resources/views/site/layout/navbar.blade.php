@@ -1,7 +1,7 @@
 <header>
     <!-- بوکمارک -->
     @php
-        $bookmarks = App\Models\Bookmark::active()->orderBy('sort', 'asc')->get();
+        $bookmarks = App\Models\Position::find(2)->advertisements;
     @endphp
     @if ($bookmarks->count() > 0)
         <div class="bookmark-container">
@@ -9,20 +9,13 @@
                 <div class="swiper" id="bookmarkSlider">
                     <div class="swiper-wrapper">
                         @foreach ($bookmarks as $bookmark)
-                            <div class="swiper-slide bookmark-content px-0" style="height: {{ $bookmark->height }}px;"
-                                data-height="{{ $bookmark->height }}" data-delay="{{ $bookmark->duration }}">
+                            <div class="swiper-slide bookmark-content px-0" style="height: 60px;"
+                                data-height="60px" data-delay="{{ $bookmark->duration }}">
                                 <div class="bookmark-item">
                                     <!-- محتوای body که می‌تواند شامل عکس یا بک‌گراند باشد -->
                                     <div class="bookmark-media">
-                                        {!!  $bookmark->body !!}
+                                        {!!  $bookmark->description !!}
                                     </div>
-
-                                    <!-- عنوان روی محتوا -->
-                                    {{-- @if ($bookmark->show_title)
-                                        <div class="bookmark-title-overlay">
-                                            {{ app()->getLocale() == 'fa' ? $bookmark->title_fa : $bookmark->title_en }}
-                                        </div>
-                                    @endif --}}
                                 </div>
                             </div>
                         @endforeach
@@ -33,13 +26,9 @@
         </div>
 
         @if ($bookmarks->count() == 1)
-            @php
-                $height = $bookmarks->first()->height;
-            @endphp
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
-                    fixedHeight = {{ $height }};
-                    setCssVar("--bookmark-height", `${fixedHeight}px`, );
+                    setCssVar("--bookmark-height", `60px`, );
                 });
             </script>
         @endif
@@ -481,14 +470,9 @@
             </div>
             <div class="mobile-main-category py-3">
                 <a href="#" class="text-reset text-decoration-none fw-bold">
-                    <img src="{{ asset('shop/assets/svgs/cart.svg') }}" alt="cart" width="24">
+                    <span class="bi bi-basket"></span>
                     {{ __('menu.cart') }}
                 </a>
-            </div>
-            <div class="mobile-main-category py-3">
-                <a class="nav-link fw-bold" href="#specials">
-                    <img src="{{ asset('shop/assets/svgs/badge-percent.svg') }}" alt="hots" width="18">
-                    {{ __('menu.amazing') }}</a>
             </div>
             <div class="mobile-main-category py-3">
                 <a class="nav-link fw-bold"

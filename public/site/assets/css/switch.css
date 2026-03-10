@@ -35,7 +35,7 @@
 }
 
 .switch .slider::after {
-    background-image: url('/fire-icon.svg');
+    background-image: url('/site/public/svgs/fire-icon.svg');
     /* The image used */
     background-color: #fff;
     /* You must set a specified height */
@@ -65,7 +65,7 @@
 }
 
 .switch input[type="checkbox"]:checked+.slider::after {
-    background-image: url('/fire-icon-color.svg');
+    background-image: url('/site/public/svgs/fire-icon-color.svg');
     /* The image used */
     background-color: #fff;
     /* You must set a specified height */
@@ -143,7 +143,7 @@
 }
 
 .switch2 .slider::after {
-    background-image: url('/like-gray.svg');
+    background-image: url('/site/public/svgs/like-gray.svg');
     /* The image used */
     background-color: #fff;
     /* You must set a specified height */
@@ -174,7 +174,7 @@
 
 .switch2 input[type="checkbox"]:checked+.slider::after {
     /* background-color: red; */
-    background-image: url('/heart-fill.svg');
+    background-image: url('/site/public/svgs/heart-fill.svg');
     /* The image used */
     background-color: #fff;
     /* You must set a specified height */
@@ -212,7 +212,7 @@
     justify-content: center;
 
     /* background-color: red; */
-    background-image: url('/arrow.svg');
+    background-image: url('/site/public/svgs/arrow.svg');
     /* The image used */
     background-color: #ccc;
     /* You must set a specified height */

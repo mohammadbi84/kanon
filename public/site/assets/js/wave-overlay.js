@@ -64,3 +64,14 @@ function closeOverlay(overlayContainerSelector, bodyOverflowState) { // reverse 
         restoreBodyScroll(bodyOverflowState)
     }, {once: true});
 }
+
+
+function removeBodyScroll() {
+    let currentOverflow = getComputedStyle(document.body).overflow
+    document.body.style.overflow = "hidden"
+    return currentOverflow
+}
+
+function restoreBodyScroll(previousOverflowState) {
+    document.body.style.overflow = previousOverflowState ?? "auto"
+}

@@ -214,25 +214,8 @@ class AuthController extends Controller
     }
     public function register()
     {
-        $ghanon = Setting::first()->ghanon;
-        $socials = Social::all();
-        $states = City::where('active', 1)->whereNull('parent')->get();
-        foreach ($states as $state) {
-            $cities = City::where('active', 1)->where('parent', $state->id)->get();
-            $state['cities'] = $cities;
-        }
-        $herfes = Group::orderBy('name', 'asc')->get();
-        // $citys = City::where('active', 1)->where('parent', null)->orderBy('title','asc')->get();
-        $organs = Organ::where('status', 1)->take(1)->get();
-        foreach ($organs as $organ) {
-            $organ['ostan'] = City::find($organ->state);
-            $organ['city'] = City::find($organ->city);
-            $organ['moases'] = Moases::where('organ_id', $organ->id)->pluck('name')->first();
-            $organ['time'] = $this->time_index($organ->created_at);
-        }
-        $alert = RegisterAlert::first();
-        $khoshes = Khoshe::with('herfes')->orderBy('name', 'asc')->get();
-        return view('auth.register', compact('khoshes', 'socials', 'alert', 'states', 'herfes', 'ghanon', 'organs'));
+
+        return view('auth.register');
     }
     public function register_post(StoreOrganRequest $request)
     {

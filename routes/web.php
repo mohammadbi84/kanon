@@ -52,7 +52,7 @@ Route::get('/states/{cityId}', [SiteController::class, 'states']);
 
 
 // site pages
-Route::get('/', [SiteController::class, 'index'])->middleware('senddata')->name('home');
+Route::get('/', [SiteController::class, 'index'])->name('home');
 Route::get('/school', [SiteController::class, 'school'])->name('school');
 Route::get('/maps', [SiteController::class, 'map'])->name('map');
 Route::prefix('/job-opportunity')->group(function () {
@@ -87,10 +87,6 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::post('/store', [AdvertisementController::class, 'store'])->name('store');
         Route::patch('/{id}/toggle', [AdvertisementController::class, 'toggle'])->name('toggle');
     });
-
-
-
-
     // ================== academy ==================
     Route::prefix('/academy')->group(function () {
         Route::get('/', [AcademyController::class, 'index'])->name('academy.index');
@@ -104,7 +100,6 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::patch('/{academy}/toggle', [AcademyController::class, 'toggle'])->name('academy.toggle');
         Route::get('/{academy}/show', [AcademyController::class, 'show'])->name('academy.show');
     });
-
     // ================== Khabar ==================
     Route::prefix('/khabar')->group(function () {
         Route::get('/', [KhabarController::class, 'index'])->name('khabar.index');
@@ -120,20 +115,6 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::post('/status/{id}', [KhabarController::class, 'toggleImageStatus'])->name('khabar.status');
         Route::delete('/image/{id}', [KhabarController::class, 'deleteImage'])->name('khabar.image.delete');
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // ================== jobtypes ==================
     Route::prefix('/jobtype')->group(function () {
         Route::get('/', [JobtypeController::class, 'index'])->name('jobtype.index');

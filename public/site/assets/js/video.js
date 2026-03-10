@@ -11,14 +11,14 @@ document.addEventListener("DOMContentLoaded", function () {
         if (video.paused) {
             playPauseBtn.style.display = "none";
             video.play();
-            playIcon.classList.remove("fa-play");
-            playIcon.classList.add("fa-pause");
+            playIcon.classList.remove("bi-play-fill");
+            playIcon.classList.add("bi-pause-fill");
             videoContainer.classList.add("playing");
         } else {
             playPauseBtn.style.display = "flex";
             video.pause();
-            playIcon.classList.remove("fa-pause");
-            playIcon.classList.add("fa-play");
+            playIcon.classList.remove("bi-pause-fill");
+            playIcon.classList.add("bi-play-fill");
             videoContainer.classList.remove("playing");
         }
     }
@@ -34,8 +34,8 @@ document.addEventListener("DOMContentLoaded", function () {
         video.load();
 
         // ریست آیکن
-        playIcon.classList.remove("fa-pause");
-        playIcon.classList.add("fa-play");
+        playIcon.classList.remove("bi-pause-fill");
+        playIcon.classList.add("bi-play-fill");
 
         // حذف کلاس playing
         videoContainer.classList.remove("playing");

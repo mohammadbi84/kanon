@@ -22,15 +22,15 @@ class Khabar extends Model
     {
         return $this->morphMany(File::class, 'fileable');
     }
-    
+
     public function scopeActive($query)
     {
         return $query->where('status', 1)
             ->where(function ($q) {
-                $q->whereNull('start_date')->orWhere('start_date', '<=', jdate()->now());
+                $q->whereNull('start_at')->orWhere('start_at', '<=', jdate()->now());
             })
             ->where(function ($q) {
-                $q->whereNull('end_date')->orWhere('end_date', '>=', jdate()->now());
+                $q->whereNull('end_at')->orWhere('end_at', '>=', jdate()->now());
             });
     }
 }

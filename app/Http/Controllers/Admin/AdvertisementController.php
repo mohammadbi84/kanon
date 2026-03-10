@@ -36,7 +36,7 @@ class AdvertisementController extends Controller
             'title'       => 'required|string|max:255',
             'description'        => 'string|required_if:position_id,[1,2,4,5]',
             'image'      => 'string|required_if:position_id,[1,3,4,5]',
-            'video'      => 'string|required_if:position_id,3',
+            'video'      => 'string|nullable',
             'duration'      => 'integer|required_if:position_id,[1,2,3]',
         ], [
             'title.required'      => 'عنوان الزامی است.',

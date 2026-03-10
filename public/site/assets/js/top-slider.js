@@ -71,8 +71,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 clearTimeout(timeoutId);
                 video.play();
                 playBtn.style.display = "none";
-                icon.classList.remove("fa-play");
-                icon.classList.add("fa-pause");
+                icon.classList.remove("bi-play-fill");
+                icon.classList.add("bi-pause-fill");
                 container.classList.add("playing");
 
                 thumbsContainerMain.classList.add("d-none");
@@ -80,8 +80,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 activeVideo = video;
             } else {
                 video.pause();
-                icon.classList.remove("fa-pause");
-                icon.classList.add("fa-play");
+                icon.classList.remove("bi-pause-fill");
+                icon.classList.add("bi-play-fill");
                 playBtn.style.display = "flex";
                 container.classList.remove("playing");
                 thumbsContainerMain.classList.remove("d-none");
@@ -114,8 +114,8 @@ document.addEventListener("DOMContentLoaded", function () {
             video.load();
 
             // ریست آیکن
-            icon.classList.remove("fa-pause");
-            icon.classList.add("fa-play");
+            icon.classList.remove("bi-pause-fill");
+            icon.classList.add("bi-play-fill");
             container.classList.remove("playing");
 
             activeVideo = null;
