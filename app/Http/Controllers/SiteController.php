@@ -25,6 +25,7 @@ use App\Models\StaticPageVisit;
 use App\Models\topadv;
 use App\Models\Training_course;
 use App\Models\TuitionHerfe;
+use App\Models\Visit;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
@@ -32,37 +33,22 @@ use Illuminate\Support\Arr;
 
 class SiteController extends Controller
 {
-    //
-    public function policy()
-    {
-        $ghanon = setting::first()->ghanon;
-        return view('dashboard.policy', compact('ghanon'));
-    }
-
-    public function policyChange(Request $req)
-    {
-        $pol = setting::first();
-        $pol->ghanon = $req->ghanon;
-        $pol->save();
-        return redirect()->back();
-    }
-
     public function index(Request $request)
     {
-        // $page = StaticPageVisit::firstOrCreate(['slug' => 'home']);
+        $page = StaticPageVisit::firstOrCreate(['slug' => 'home']);
 
-        // $existingVisit = $page->visits()
-        //     ->where('ip', request()->ip())
-        //     ->where('created_at', '>=', now()->subDay())
-        //     ->first();
+        $existingVisit = $page->visits()
+            ->where('ip_address', request()->ip())
+            ->orWhere('agent', request()->userAgent())
+            ->where('created_at', '>=', now()->subDay())
+            ->first();
 
-        // if (!$existingVisit) {
-        //     $page->visits()->create([
-        //         'ip' => request()->ip(),
-        //         'user_agent' => request()->userAgent(),
-        //         'user_id' => auth()->id(),
-        //     ]);
-        // }
+        if (!$existingVisit) {
+            $page->visits()->create([
+                'ip_address' => request()->ip(),
+                'agent' => request()->userAgent(),
+            ]);
+        }
 
 
         $khabars = Khabar::active()->get();
@@ -70,7 +56,6 @@ class SiteController extends Controller
         $popups = Position::find(1)->advertisements;
         $sliders = Position::find(3)->advertisements;
         $specialAdds = Position::find(4)->advertisements;
-        $advertisements = Position::find(5)->advertisements;
 
         $courses = [];
         $newCourses = [];
@@ -85,7 +70,6 @@ class SiteController extends Controller
             'popups',
             'sliders',
             'specialAdds',
-            'advertisements',
             'courses',
             'newCourses',
             'khabars',

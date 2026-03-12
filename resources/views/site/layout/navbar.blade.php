@@ -109,7 +109,7 @@
         </div>
     @endif
     <!-- navbar -->
-    <div class="main-menu rounded-3">
+    <div class="main-menu">
         <nav class="navbar navbar-expand-lg">
             <div class="container position-relative" id="navbar_container">
                 <a class="navbar-brand fw-bold d-flex align-items-center" href="/">

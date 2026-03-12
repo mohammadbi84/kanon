@@ -62,5 +62,5 @@
 
 
     @yield('head')
-
+    @livewireStyles
 </head>

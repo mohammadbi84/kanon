@@ -65,28 +65,28 @@ function initMainMenu() {
                 if (Bookmark && Bookmark.classList.contains("expanded")) {
                     mainMenu.classList.add("smallBookmark");
                 }
-                mainMenu.classList.remove("rounded-3");
+                // mainMenu.classList.remove("rounded-3");
             } else {
                 mainMenu.classList.remove("small");
                 categoryMenu.classList.remove("small");
                 if (favorites_dropdown) {
-                    favorites_dropdown.style.top = "75px";
+                    favorites_dropdown.style.top = "80px";
                     favorites_dropdown.style.left = "-10px";
                 }
                 cart_dropdown.style.left = "-10px";
                 compare_dropdown.style.left = "-10px";
                 profile_dropdown.style.left = "-10px";
-                cart_dropdown.style.top = "75px";
-                compare_dropdown.style.top = "75px";
-                profile_dropdown.style.top = "75px";
-                categoriesMenu.style.top = "75px";
+                cart_dropdown.style.top = "80px";
+                compare_dropdown.style.top = "80px";
+                profile_dropdown.style.top = "80px";
+                categoriesMenu.style.top = "80px";
                 categoriesMenu.style.left = "-10px";
                 categoriesMenu.style.right = "-10px";
 
                 if (Bookmark && Bookmark.classList.contains("expanded")) {
                     mainMenu.classList.remove("smallBookmark");
                 }
-                mainMenu.classList.add("rounded-3");
+                // mainMenu.classList.add("rounded-3");
             }
         }
 

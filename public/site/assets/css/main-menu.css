@@ -2,8 +2,8 @@
     --main-menu-back: white;
     --main-menu-back-small: rgba(255, 255, 255, 0.8);
     --main-menu-margin-top: 20px;
-    --main-menu-margin: 11%;
-    --main-menu-padding-default: 10px;
+    --main-menu-margin: 105px;
+    --main-menu-padding-default: 15px;
     --main-menu-padding-small: 0px;
     /*  اگر متغیر --raduis را تعریف نکرده اید، این خط را اضافه کنید: */
     --raduis: 5px;
@@ -55,15 +55,16 @@
 
 .main-menu .navbar .navbar-brand img {
     height: 45px;
-    transform: scale(1);
-    -ms-transform: scale(1);
+    margin-right: 10px;
+    transform: scale(1.8);
+    -ms-transform: scale(2);
 }
 
 .main-menu.small .navbar .navbar-brand img {
     margin-right: 0;
     margin-left: 0;
-    transform: scale(0.8);
-    -ms-transform: scale(0.8);
+    transform: scale(1);
+    -ms-transform: scale(1.4);
 }
 
 .main-menu .navbar .btn-text {
@@ -416,7 +417,7 @@
 /* منوی دسته‌بندی برای دسکتاپ */
 .category-menu {
     position: absolute;
-    top: 75px;
+    top: 80px;
     left: -10px;
     right: -10px;
     background: white;
@@ -804,7 +805,7 @@
 .profile-dropdown,
 .compare-dropdown {
     position: absolute;
-    top: 75px;
+    top: 80px;
     left: -10px;
     width: 340px;
     background: white;

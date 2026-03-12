@@ -126,26 +126,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }, 2000);
         });
     });
-
-    // وقتی اسلاید تغییر کرد
-    slider.events.on("indexChanged", (info) => {
-        const index = info.displayIndex - 1;
-        updateActiveThumb(index);
-        clearTimeout(timeoutId);
-        playNextSlide();
-        videoContainers.forEach((container) => {
-            const video = container.querySelector(".slider-video");
-            // توقف کامل
-            video.pause();
-
-            // ریست زمان
-            video.currentTime = 0;
-
-            // مجبور کردن مرورگر به ریفرش state
-            video.load();
-        });
-    });
-
     // شروع اسلاید اول
     playNextSlide();
     updateActiveThumb(0);

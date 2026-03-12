@@ -39,6 +39,7 @@
     @include('site.layout.footer')
     @yield('script')
 
+    @livewireScripts
 </body>
 
 </html>
