@@ -17,16 +17,21 @@ class AdvertisementController extends Controller
         return view('admin.advertisement.index', compact('positions'));
     }
 
-    public function advertisements(Position $position)
+    public function advertisements(Position $position, $status = null)
     {
         if (request()->ajax()) {
-            $advertisements = Advertisement::with('academy')->where('position_id', $position->id)
-                ->whereIn('status', ['pending_review', 'approved', 'active'])->get();
+            if ($status != null) {
+                $advertisements = Advertisement::with('academy')->where('position_id', $position->id)
+                    ->where('status', $status)->get();
+            } else {
+                $advertisements = Advertisement::with('academy')->where('position_id', $position->id)
+                    ->whereIn('status', ['pending_review', 'approved', 'active'])->get();
+            }
             return response()->json(['data' => $advertisements]);
         }
         // return $advertisements;
         $academies = Academy::where('status', 'approved')->pluck('name');
-        return view('admin.advertisement.advertisement', compact('position', 'academies'));
+        return view('admin.advertisement.advertisement', compact('position', 'academies','status'));
     }
     public function store(Request $request)
     {

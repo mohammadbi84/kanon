@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AcademyController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdvertisementController;
 use App\Http\Controllers\Admin\ArticleController;
+use App\Http\Controllers\Admin\BenefitController;
 use App\Http\Controllers\Admin\BookmarkController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CityController;
@@ -79,7 +80,7 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::delete('/pricing/{positionPrice}', [PositionPriceController::class, 'destroy'])->name('pricing.destroy');
 
         // advertisements
-        Route::get('/{position}/advertisement', [AdvertisementController::class, 'advertisements'])->name('positions.advertisements');
+        Route::get('/{position}/advertisement/{status?}', [AdvertisementController::class, 'advertisements'])->name('positions.advertisements');
     });
     // ================== advertisement ==================
     Route::prefix('/advertisement')->name('advertisement.')->group(function () {
@@ -228,6 +229,16 @@ Route::prefix('/admin2')->name('admin.')->group(function () {
         Route::post('/bulk-delete', [SliderController::class, 'bulkDelete'])->name('slider.bulkDelete');
         Route::get('/{id}', [SliderController::class, 'edit'])->name('slider.edit');
         Route::put('/{id}', [SliderController::class, 'update'])->name('slider.update');
+    });
+
+    // ================== Benefit ==================
+    Route::prefix('/benefit')->group(function () {
+        Route::get('/', [BenefitController::class, 'index'])->name('benefit.index');
+        Route::post('/store', [BenefitController::class, 'store'])->name('benefit.store');
+        Route::delete('/delete/{id}', [BenefitController::class, 'delete'])->name('benefit.delete');
+        Route::post('/bulk-delete', [BenefitController::class, 'bulkDelete'])->name('benefit.bulkDelete');
+        Route::get('/{id}', [BenefitController::class, 'edit'])->name('benefit.edit');
+        Route::post('/{id}', [BenefitController::class, 'update'])->name('benefit.update');
     });
 });
 

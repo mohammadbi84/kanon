@@ -1037,12 +1037,12 @@
 
                 <div class="row mx-0 row-gap-4 fix-shadow-margin"
                     style="margin-left: -10px !important; margin-right: -10px !important;">
-                    @foreach ($contents as $key => $content)
+                    @foreach ($benefits as $key => $benefit)
                         <div class="col-md-4">
                             <div class="advantage-card h-100">
                                 <p class="fw-bold text-primary fs-4 text-count">{{ $key + 1 }}</p>
-                                <p class="title text-title-3 text-bold-2">{{ $content['title'] }}</p>
-                                <p class="text mb-0 text-normal text-dark">{{ $content['text'] }}</p>
+                                <p class="title text-title-3 text-bold-2">{{ $benefit->title }}</p>
+                                <p class="text mb-0 text-normal text-dark">{!! $benefit->text !!}</p>
                             </div>
                         </div>
                     @endforeach
@@ -1741,67 +1741,7 @@
         });
     </script>
 
-    <!-- Select2 -->
-    <script src="https://lib.arvancloud.ir/select2/4.1.0-rc.0/js/select2.min.js"></script>
-
-    <script>
-        $(document).ready(function() {
-            $("#city").select2({
-                // placeholder: "یک دسته بندی انتخاب کنید",
-                allowClear: false,
-                width: "100%",
-                dropdownAutoWidth: true,
-            });
-            $("#state").select2({
-                // placeholder: "یک دسته بندی انتخاب کنید",
-                allowClear: false,
-                width: "100%",
-                dropdownAutoWidth: true,
-            });
-            $("#group").select2({
-                // placeholder: "یک دسته بندی انتخاب کنید",
-                allowClear: false,
-                width: "100%",
-                dropdownAutoWidth: true,
-            });
-
-            $("#herfe").select2({
-                // placeholder: "یک شهر انتخاب کنید",
-                allowClear: false,
-                width: "100%",
-                dropdownAutoWidth: true,
-            });
-
-            function handleFloatingLabel(selectId) {
-                let val = $(selectId).val();
-                if (val && val !== "") {
-                    $(selectId + "Lable").addClass("floating");
-                } else {
-                    $(selectId + "Lable").removeClass("floating");
-                }
-            }
-
-            $("#city").on("change", function() {
-                handleFloatingLabel("#city");
-            });
-            $("#state").on("change", function() {
-                handleFloatingLabel("#state");
-            });
-            $("#group").on("change", function() {
-                handleFloatingLabel("#group");
-            });
-
-            $("#herfe").on("change", function() {
-                handleFloatingLabel("#herfe");
-            });
-
-            // اول صفحه بررسی کنه
-            handleFloatingLabel("#city");
-            handleFloatingLabel("#state");
-            handleFloatingLabel("#group");
-            handleFloatingLabel("#herfe");
-        });
-    </script>
+    {{-- map --}}
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const lat = 31.879293;
@@ -1839,9 +1779,9 @@
                 clearBtn.style.display = 'none';
             }
         });
-        const states = [];
-        const reshtes = [];
-        const herves = [];
+        const states = @json($states);
+        const reshtes = @json($fields);
+        const herves = @json($professions);
 
         function nameinput() {
             const input = document.getElementById("searchInputname");

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Advertisement;
+use App\Models\Benefit;
 use App\Models\City;
 use App\Models\Content;
 use App\Models\Course;
+use App\Models\Field;
 use App\Models\Group;
 use App\Models\Herfe;
 use App\Models\HerfeOrgan;
@@ -14,6 +16,7 @@ use App\Models\Moases;
 use App\Models\Organ;
 use App\Models\Popup;
 use App\Models\Position;
+use App\Models\Profession;
 use App\Models\RegisterMessage;
 use App\Models\Setting;
 use App\Models\Slider;
@@ -71,7 +74,12 @@ class SiteController extends Controller
 
         $courses = [];
         $newCourses = [];
-        $contents = [];
+        $benefits = Benefit::all();
+
+
+        $states = City::whereNull('parent')->where('active',1)->get();
+        $fields = Field::get();
+        $professions = Profession::get();
 
         return view('site.index', compact(
             'popups',
@@ -81,7 +89,10 @@ class SiteController extends Controller
             'courses',
             'newCourses',
             'khabars',
-            'contents'
+            'benefits',
+            'states',
+            'fields',
+            'professions',
         ));
     }
 

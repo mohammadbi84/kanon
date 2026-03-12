@@ -2,26 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AcademyCreateRequest;
 use App\Http\Requests\StoreOrganRequest;
+use App\Models\Academy;
 use App\Models\City;
-use App\Models\File;
-use App\Models\Group;
-use App\Models\HerfeOrgan;
-use App\Models\Khoshe;
-use App\Models\LoginPageAd;
-use App\Models\Moases;
-use App\Models\Organ;
-use App\Models\organsocial;
-use App\Models\OrganUser;
-use App\Models\RegisterAlert;
-use App\Models\Setting;
-use App\Models\Social;
+use App\Models\Cluster;
+use App\Models\Field;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -50,9 +42,10 @@ class AuthController extends Controller
         $user = User::where('mobile', $request->mobile)->first();
         if ($user) {
             session()->forget('login_attempts'); // موفقیت: ریست شمارنده
-            return redirect(route('register.status', ['user' => $user]));
+            session()->put('user_id', $user->id);
+            return redirect(route('register.status'));
         } else {
-            return redirect()->back()->withInput()->with('fail', 'شماره موبایل اشتباه است لطفا دوباره تلاش کنید.');
+            return redirect()->back()->withInput()->with('fail', 'شماره موبایل ثبت نشده است لطفا ابتدا ثبت نام کنید.');
         }
     }
     public function check_password(Request $request)
@@ -80,7 +73,7 @@ class AuthController extends Controller
                     session()->forget('login_attempts'); // موفقیت: ریست شمارنده
                     Auth::login($user);
                     if ($user->hasRole('admin')) {
-                        return redirect('/dashboard/home');
+                        return redirect()->route('admin.index')->with('success', 'خوش آمدید.');
                     } else {
                         return redirect(route('panel'))->with('success', 'با موفقیت وارد شدید.');
                     }
@@ -91,14 +84,14 @@ class AuthController extends Controller
                 }
             } else if ($user->id == 1) {
                 Auth::login($user);
-                return redirect('/dashboard/home');
+                return redirect()->route('admin.index')->with('success', 'خوش آمدید.');
             }
         }
     }
     public function check_organ_id(Request $request)
     {
         $user = $request->user;
-        $organ = Organ::where('number', $request->number)->first();
+        $organ = Academy::where('id_number', $request->number)->first();
         if ($organ) {
             $status = true;
             return redirect(route('register.status', ['user' => $user, 'organ' => $organ, 'status' => $status]));
@@ -118,8 +111,7 @@ class AuthController extends Controller
     {
         // ورود با رمز یکبار مصرف
         $user = $request->user;
-        $sliders = LoginPageAd::all();
-        return view('auth.loginCode', compact('sliders', 'user'));
+        return view('auth.loginCode', compact('user'));
     }
     public function verifyCode(Request $request)
     {
@@ -142,7 +134,7 @@ class AuthController extends Controller
             // پاک‌کردن کد برای امنیت بیشتر
             $user->update(['sms' => null]);
             if ($user->hasRole('admin')) {
-                return redirect()->route('dashboard');
+                return redirect()->route('admin.index')->with('success', 'خوش آمدید.');
             }
             return redirect()->route('panel');
         } else {
@@ -152,20 +144,19 @@ class AuthController extends Controller
     public function forgot_password(Request $request)
     {
         // return $request;
-        $sliders = LoginPageAd::all();
         $status = $request->status ?? 1;
         $user = $request->user;
-        return view('auth.forgot-password', compact('sliders', 'status','user'));
+        return view('auth.forgot-password', compact('status', 'user'));
     }
     public function forgot_password_post(Request $request)
     {
         $user = User::where('mobile', $request->mobile)->first();
-        $organ = Organ::where('number', $request->number)->first();
-        if ($user and OrganUser::where('user_id', $user->id)->where('organ_id', $organ->id)->first()) {
+        $organ = Academy::where('id_number', $request->number)->first();
+        if ($user and $organ->manager_id == $user->id) {
             $user->sms = rand(100000, 999999);
             $user->save();
             $this->sendSMS($user->sms, $user->mobile);
-            return redirect(route('forgot_password', ['status' => 2,'user'=>$user]));
+            return redirect(route('forgot_password', ['status' => 2, 'user' => $user]));
         } else {
             return redirect()->back()->with('fail', 'اطلاعات وارد شده اشتباه است لطفا دوباره تلاش کنید.');
         }
@@ -197,12 +188,12 @@ class AuthController extends Controller
             if ($user and $user->id != 1) {
                 if (Hash::check($request->password, $user->password)) {
                     Auth::login($user);
-                    return redirect('/dashboard/home');
+                    return redirect()->route('admin.index')->with('success', 'خوش آمدید.');
                 }
             } else if ($user->id == 1) {
 
                 Auth::login($user);
-                return redirect('/dashboard/home');
+                return redirect()->route('admin.index')->with('success', 'خوش آمدید.');
             }
         }
         return redirect()->back()->with('msg', 'موبایل یا رمز عبور اشتباه است');
@@ -214,199 +205,88 @@ class AuthController extends Controller
     }
     public function register()
     {
+        $fields = Field::all();
+        $clusters = Cluster::all();
 
-        return view('auth.register');
+        $states = City::whereNull('parent')->get();
+        return view('auth.register', compact('fields', 'clusters', 'states'));
     }
-    public function register_post(StoreOrganRequest $request)
+    public function register_post(AcademyCreateRequest $request)
     {
-        // return $request;
-        // return $request;
-        // $user = User::where('mobile', $request->mobile)->first();
-        // if ($user) {
-        //     $user->sms = '123456';
-        //     $user->save();
-        //     return redirect(route('code', ['id' => $user->id]))->with('success', 'شما یک آموزشگاه دارید لطفا وارد شوید');
-        // }
-        // return redirect('/');
-        //        return $data;
 
-        $modir_national = str_replace('-', '', $request->modir_national);
-        $postal = str_replace('-', '', $request->postal);
+        $data = $request->all();
 
-        $organ = new Organ();
-        $organ->name = $request->name;
+        $national_code = str_replace('-', '', $request->national_code);
+        $postal_code = str_replace('-', '', $request->postal_code);
 
-        $organ->lat = ' ';
-        $organ->lang = ' ';
-        $organ->number = $request->number;
-        $organ->sodor_num = $request->sodor;
-        $organ->sodor_start = $request->sodor_start;
-        $organ->sodor_end = $request->sodor_end;
-        //
-        if ($request->tabsare) {
-            $organ->tabsare34 = 1;
-        }
-        if ($request->mardzan == 1) {
-            $organ->baradaran = 1;
-            $organ->khaharan = 0;
-        } elseif ($request->mardzan == 2) {
-            $organ->baradaran = 0;
-            $organ->khaharan = 1;
-        } else {
-            $organ->baradaran = 1;
-            $organ->khaharan = 1;
-            $organ->tabsare34 = 1;
-        }
+        $data['national_code'] = $national_code;
+        $data['postal_code'] = $postal_code;
+        $data['tabsare_34'] = $request->tabsare_34 ? true : false;
 
-        $organ->state = $request->state;
-        $organ->city = $request->city;
-
-        $organ->address = $request->address;
-        $organ->postal = $postal;
-
-        $organ->tel = $request->tel_prefix . '-' . $request->tel;
-        $organ->fax = $request->fax_prefix . '-' . $request->fax;
-        $organ->mobile = $request->mobile ?? $request->modir_mobile ?? $request->hoghoghi_mobile;
-
-        $organ->email = $request->email;
-        $organ->site = $request->site;
-
-        $organ->parvane_type = $request->parvane;
-        $organ->parvane_date = $request->parvane_date;
-
-        // $organ->organ_id = $o_id;
-        $organ->type = 2;
-        $organ->status = -1;
-
-        if (isset($request->file_moases)) {
-            $file = $request->file('file_moases');
-            $pathName = time() . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
-            $file->move('file/moases', $pathName);
-            $organ->file_moases = 'file/moases/' . $pathName;
-        }
-        if (isset($request->file_logo)) {
-            $file = $request->file('file_logo');
-            $pathName = time() . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
-            $file->move('file/logo', $pathName);
-            $organ->file_logo = 'file/logo/' . $pathName;
-        }
 
         if (isset($request->file_tasis_front)) {
-            $file = $request->file('file_tasis_front');
-            $pathName = time() . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
-            $file->move('file/tasis', $pathName);
-            $organ->file_tasis = 'file/tasis/' . $pathName;
+            $license_front = $request->file_tasis_front->store('/licenses', 'public');
         }
         if (isset($request->file_tasis_back)) {
-            $file = $request->file('file_tasis_back');
-            $pathName = time() . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
-            $file->move('file/tasis', $pathName);
-            $organ->file_tasis_back = 'file/tasis/' . $pathName;
+            $license_back = $request->file_tasis_back->store('/licenses', 'public');
+        }
+        $data['license_file_front'] = $license_front;
+        $data['license_file_back'] = $license_back;
+
+        $data['phone'] = $request->phone_prefix . $request->phone;
+        $data['fax'] = $request->fax_prefix . $request->fax;
+
+
+        $data['founder_phone'] = $data['founder_phone'] ? $request->founder_phone_prefix . $request->founder_phone : $request->founder_phone_prefix2  . $request->founder_phone2;
+        $data['founder_mobile'] = $data['founder_mobile'] ? $request->founder_mobile : $request->founder_mobile2;
+        $data['founder_email'] = $data['founder_email'] ? $request->founder_email : $request->founder_email2;
+        $data['founder_address'] = $data['founder_address'] ? $request->founder_address : $request->founder_address2;
+
+        $data['creator_id'] = auth()->id();
+
+
+
+        $user = User::where('mobile', $request->founder_mobile ?? $request->founder_mobile2)->first();
+        if (!$user) {
+            $user = User::create([
+                'name' => $request->natural_name ?? $request->legal_manager,
+                'family' => $request->natural_family,
+                'mobile' => $request->founder_mobile ?? $request->founder_mobile2,
+            ]);
         }
 
-        if (isset($request->herfe_file)) {
-            $file = $request->file('herfe_file');
-            $pathName = time() . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
-            $file->move('file/herfe_file', $pathName);
-            $organ->herfes_file = 'file/herfe_file/' . $pathName;
+        $user->syncRoles(['manager']);
+
+        $data['manager_id'] = $user->id;
+        $data['slug'] = Str::slug($request->name);
+        $data['status'] = 'approved';
+
+        $academy = Academy::create($data);
+
+
+        if ($request->hasFile('file')) {
+            foreach ($request->file('file') as $index => $singleFile) {
+                $path = $singleFile->store('/fields', 'public');
+                $file = $academy->files()->create([
+                    'url' => $path,
+                    'type' => 'image',
+                    'status' => 1,
+                ]);
+            }
         }
 
-
-        DB::beginTransaction();
-
-        try {
-
-            $organ->save();
-
-            if ($request->hasFile('file')) {
-                foreach ($request->file('file') as $index => $singleFile) {
-                    if ($singleFile) {
-                        $pathName = time() . rand(1000, 9999) . '.' . $singleFile->getClientOriginalExtension();
-                        $singleFile->move('file/herfe_file', $pathName);
-                        $organfiles = File::create(['organ_id' => $organ->id, 'file' => 'file/herfe_file/' . $pathName]);
-                    }
-                }
+        if (isset($request->herfe)) {
+            foreach ($request->herfe as $item) {
+                $academy->fields()->attach($item);
             }
-
-            if (isset($request->herfe)) {
-                foreach ($request->herfe as $item) {
-                    $herfnew = new HerfeOrgan();
-                    $herfnew->organ_id = $organ->id;
-                    $herfnew->herfe_id = $item;
-                    $herfnew->save();
-                }
-            }
-
-            $socials = Social::all();
-            foreach ($socials as $social) {
-                $iid = $social->id;
-                $soc = new organsocial();
-                $soc->social_id = $social->id;
-                $soc->organ_id = $organ->id;
-                $soc->address = $request->$iid;
-                $soc->save();
-            }
-
-            $moases = Moases::where('mobile', $request->modir_mobile ?? $request->hoghoghi_mobile)->first();
-            if (!$moases) {
-                $moases = new Moases();
-                $moases->name = $request->modir_name;
-                $moases->family = $request->modir_family;
-                $moases->mobile = $request->modir_mobile ?? $request->hoghoghi_mobile;
-                $moases->address = $request->address_moasses ?? $request->hoghoghi_address;
-                $moases->national_code = $modir_national;
-                $moases->shenasname = $request->modir_shenasname;
-                $moases->gender = $request->modir_gender;
-                $moases->father = $request->modir_father;
-                $moases->birthday = $request->modir_birthday;
-                $moases->sadere = $request->modir_sodor;
-                $moases->sherkat_name = $request->hoghoghi_name;
-                $moases->sherkat_sab = $request->hoghoghi_sabt;
-                $moases->sherkat_modir = $request->hoghoghi_modir;
-                $moases->sherkat_tarikh = $request->hoghoghi_tarikh;
-                $moases->organ_id = $organ->id;
-                $moases->tamas = $request->haghighi_prefix . "-" . $request->haghighi_number ?? $request->hoghoghi_tamas . "-" . $request->hoghoghi_prefix;
-                $moases->email = $request->modir_email;
-                $moases->save();
-            }
-
-            //            user
-            $member = User::where('mobile', $request->modir_mobile ?? $request->hoghoghi_mobile)->first();
-            if (!$member) {
-                $member = new User();
-                $member->name = $request->modir_name ?? $request->hoghoghi_modir;
-                $member->family = $request->modir_family;
-                $member->mobile = $request->modir_mobile ?? $request->hoghoghi_mobile;
-                $member->save();
-            }
-
-            $member->addRole('organ');
-
-            $membership = new OrganUser();
-            $membership->user_id = $member->id;
-            $membership->organ_id = $organ->id;
-            $membership->role = '1';
-            $membership->save();
-
-            DB::commit();
-            $user = User::findOrFail($member->id);
-            $user->sms = rand(100000, 999999);
-            $user->save();
-            $this->sendSMS($user->sms, $user->mobile);
-            return redirect(route('code', ['id' => $member->id]))->with('success', 'ثبت نام آموزشگاه ' . $request->name . ' با موفقیت انجام شد');
-
-            // all good
-        } catch (\Exception $e) {
-            DB::rollback();
-            return $e;
-            // return redirect()->back()->with('error', 'خطای سیستمی')->withInput();
-            // something went wrong
         }
+
+        return redirect(route('code', ['id' => $user->id]))->with('success', 'ثبت نام آموزشگاه ' . $request->name . ' با موفقیت انجام شد');
     }
     public function status(Request $request)
     {
         // return $request;
-        $user = User::find($request->user);
+        $user = User::findOrFail(session()->get('user_id'));
         $status = $request->status ?? false;
 
         return view('auth.password', compact('user', 'status'));
@@ -445,8 +325,7 @@ class AuthController extends Controller
     public function code($id)
     {
         $user = User::findOrFail($id);
-        $sliders = LoginPageAd::all();
-        return view('auth.code', compact('user', 'sliders'));
+        return view('auth.code', compact('user'));
     }
     public function code_check(Request $request)
     {
@@ -459,10 +338,10 @@ class AuthController extends Controller
         $enteredCode = implode('', $request->code);
         $user = user::where('sms', $enteredCode)->where('id', $request->id)->first();
         if ($user) {
-            $organ_id = OrganUser::where('user_id', $user->id)->first()->organ_id;
+            $organ_id = $user->academies()->first()->id;
             if ($organ_id) {
-                $organ = Organ::find($organ_id);
-                $organ->status = '0';
+                $organ = Academy::find($organ_id);
+                $organ->status = 'pending';
                 $organ->save();
                 // $user->sms = null;
                 $user->active = 1;

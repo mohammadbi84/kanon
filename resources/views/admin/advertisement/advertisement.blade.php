@@ -147,7 +147,7 @@
         $(document).ready(function() {
             // DataTable
             dt_advertisement = $('.advertisement').DataTable({
-                ajax: "{{ route('admin.positions.advertisements', ['position' => $position]) }}",
+                ajax: "{{ route('admin.positions.advertisements', ['position' => $position, 'status' => $status]) }}",
                 columns: [{
                         data: "",
                         title: ""

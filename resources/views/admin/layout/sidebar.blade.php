@@ -57,26 +57,6 @@
                 <div>داشبورد</div>
             </a>
         </li>
-        <!-- Dashboards -->
-        <li class="menu-item ">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-cog"></i>
-                <div>پیکربندی</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div>پاپ آپ</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div>تبلیغات بالای سایت</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-
         <li class="menu-header small text-uppercase"><span class="menu-header-text">پیکربندی</span></li>
         <li class="menu-item @if (Route::currentRouteName() == 'admin.jobtype.index' ||
                 Route::currentRouteName() == 'admin.jobtype.edit' ||
@@ -177,21 +157,21 @@
                         <div>آگهی ها</div>
                     </a>
                 </li>
-                <li class="menu-item @if (Route::currentRouteName() == 'admin.popups.index') active @endif">
+                {{-- <li class="menu-item @if (Route::currentRouteName() == 'admin.popups.index') active @endif">
                     <a href="{{ route('admin.popups.index') }}" class="menu-link">
                         <div>پاپ آپ</div>
                     </a>
-                </li>
+                </li> --}}
                 <li class="menu-item @if (Route::currentRouteName() == 'admin.articles.index') active @endif">
                     <a href="{{ route('admin.articles.index') }}" class="menu-link">
                         <div>صفحات داخلی</div>
                     </a>
                 </li>
-                <li class="menu-item @if (Route::currentRouteName() == 'admin.bookmark.index') active @endif">
+                {{-- <li class="menu-item @if (Route::currentRouteName() == 'admin.bookmark.index') active @endif">
                     <a href="{{route('admin.bookmark.index')}}" class="menu-link">
                         <div>بوکمارک</div>
                     </a>
-                </li>
+                </li> --}}
             </ul>
         </li>
         <li class="menu-item @if (Route::currentRouteName() == 'admin.academy.index' ||
@@ -217,6 +197,12 @@
             <a href="{{ route('admin.khabar.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-news"></i>
                 <div>اخبار</div>
+            </a>
+        </li>
+        <li class="menu-item @if (Route::currentRouteName() == 'admin.benefit.index') active @endif">
+            <a href="{{ route('admin.benefit.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-news"></i>
+                <div>مزایای گواهینامه ها</div>
             </a>
         </li>
     </ul>
