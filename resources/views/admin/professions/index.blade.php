@@ -2,32 +2,39 @@
 @section('head')
 @endsection
 @section('content')
+    {{-- بررسی اینکه آیا field_id از URL آمده یا نه --}}
+    @php
+        $fieldId = request()->get('field_id');
+    @endphp
+
+    <h5 class="breadcrumb-wrapper mb-4">
+        <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
+        @if ($fieldId)
+            <a href="{{ route('admin.clusters.index') }}" class="text-muted">{{ $field?->name }}</a> <span
+                class="text-muted">/</span>
+        @endif
+        <span>حرفه ها</span>
+    </h5>
     <!-- DataTable with Buttons -->
     <div class="header-label p-3 sticky-top bg-white d-flex justify-content-between align-items-center border-bottom"
         style="top: 60px;">
     </div>
     <div class="card">
         <div class="card-datatable table-responsive pt-0 p-3">
-            <form action="{{ route('admin.professions.store') }}" method="post" class="add-new-record pt-0 row g-2 mt-3 px-3"
-                id="form-add-new-record" enctype="multipart/form-data">
+            <form action="{{ route('admin.professions.store') }}" method="post"
+                class="add-new-record pt-0 row g-2 mt-3 px-3" id="form-add-new-record" enctype="multipart/form-data">
                 @csrf
 
                 {{-- فیلد نام حرفه --}}
                 <div class="col-sm-12">
                     <label class="form-label" for="name">نام حرفه</label>
                     <div class="input-group input-group-merge">
-                        <span id="name2" class="input-group-text">
-                            <i class="bx bx-check-square"></i>
-                        </span>
                         <input type="text" id="name" name="name" class="form-control dt-full-name"
                             placeholder="نام حرفه" required>
                     </div>
                 </div>
 
-                {{-- بررسی اینکه آیا field_id از URL آمده یا نه --}}
-                @php
-                    $fieldId = request()->get('field_id');
-                @endphp
+
 
                 {{-- انتخاب رشته --}}
                 @if (!$fieldId)
@@ -102,7 +109,7 @@
                     <div class="input-group form-group p-0">
                         <input type="number" id="practice_hour" name="practice_hour" class="form-control"
                             placeholder="ساعت" min="0">
-                            <span class="input-group-text"> : </span>
+                        <span class="input-group-text"> : </span>
                         <input type="number" id="practice_minute" name="practice_minute" class="form-control"
                             placeholder="دقیقه" min="0" max="59">
                     </div>
@@ -114,7 +121,7 @@
                     <div class="input-group form-group p-0">
                         <input type="number" id="project_hour" name="project_hour" class="form-control"
                             placeholder="ساعت" min="0">
-                            <span class="input-group-text"> : </span>
+                        <span class="input-group-text"> : </span>
                         <input type="number" id="project_minute" name="project_minute" class="form-control"
                             placeholder="دقیقه" min="0" max="59">
                     </div>
@@ -126,7 +133,7 @@
                     <div class="input-group form-group p-0">
                         <input type="number" id="internship_hour" name="internship_hour" class="form-control"
                             placeholder="ساعت" min="0">
-                            <span class="input-group-text"> : </span>
+                        <span class="input-group-text"> : </span>
                         <input type="number" id="internship_minute" name="internship_minute" class="form-control"
                             placeholder="دقیقه" min="0" max="59">
                     </div>
@@ -138,7 +145,7 @@
                     <div class="input-group form-group p-0">
                         <input type="number" id="total_hour" name="total_hour" class="form-control" placeholder="ساعت"
                             min="0">
-                            <span class="input-group-text"> : </span>
+                        <span class="input-group-text"> : </span>
                         <input type="number" id="total_minute" name="total_minute" class="form-control"
                             placeholder="دقیقه" min="0" max="59">
                     </div>

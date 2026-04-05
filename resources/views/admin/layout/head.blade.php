@@ -51,6 +51,8 @@
 
     {{-- sweetalert2 --}}
     <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/sweetalert2/sweetalert2.css') }}">
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/toastr/toastr.css')}}">
+
 
 
     {{-- datepicker --}}

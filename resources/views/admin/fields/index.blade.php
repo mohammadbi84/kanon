@@ -2,6 +2,20 @@
 @section('head')
 @endsection
 @section('content')
+    {{-- فیلد انتخاب خوشه (دینامیک بر اساس پارامتر URL) --}}
+    @php
+        $categoryId = request()->get('cluster_id');
+    @endphp
+
+    <h5 class="breadcrumb-wrapper mb-4">
+        <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
+        @if ($categoryId)
+            <a href="{{ route('admin.clusters.index') }}" class="text-muted">{{ $cluster?->name }}</a> <span
+                class="text-muted">/</span>
+        @endif
+        <span>رشته ها</span>
+    </h5>
+
     <!-- DataTable with Buttons -->
     <div class="card">
         <div class="card-datatable table-responsive pt-0 p-3">
@@ -22,10 +36,7 @@
                     </div>
                 </div>
 
-                {{-- فیلد انتخاب خوشه (دینامیک بر اساس پارامتر URL) --}}
-                @php
-                    $categoryId = request()->get('cluster_id');
-                @endphp
+
 
                 @if (!$categoryId)
                     {{-- اگر cluster_id در URL نبود --}}

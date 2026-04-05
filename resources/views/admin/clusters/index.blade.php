@@ -2,6 +2,19 @@
 @section('head')
 @endsection
 @section('content')
+    {{-- فیلد انتخاب رسته (دینامیک بر اساس پارامتر URL) --}}
+    @php
+        $categoryId = request()->get('category_id');
+    @endphp
+
+    <h5 class="breadcrumb-wrapper mb-4">
+        <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
+        @if ($categoryId)
+            <a href="{{ route('admin.categories.index') }}" class="text-muted">{{ $category?->name }}</a> <span class="text-muted">/</span>
+        @endif
+        <span>خوشه ها</span>
+    </h5>
+
     <!-- DataTable with Buttons -->
     <div class="card">
         <div class="card-datatable table-responsive pt-0 p-3">
@@ -14,18 +27,10 @@
                 <div class="col-sm-12">
                     <label class="form-label" for="name">نام خوشه</label>
                     <div class="input-group input-group-merge">
-                        <span id="name2" class="input-group-text">
-                            <i class="bx bx-check-square"></i>
-                        </span>
                         <input type="text" id="name" class="form-control dt-full-name" name="name"
                             placeholder="نام خوشه" required>
                     </div>
                 </div>
-
-                {{-- فیلد انتخاب رسته (دینامیک بر اساس پارامتر URL) --}}
-                @php
-                    $categoryId = request()->get('category_id');
-                @endphp
 
                 @if (!$categoryId)
                     {{-- اگر category_id در URL نبود --}}

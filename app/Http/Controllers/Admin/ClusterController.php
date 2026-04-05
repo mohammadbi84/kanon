@@ -19,23 +19,22 @@ class ClusterController extends Controller
         if (request()->ajax()) {
             $categories = null;
             if ($categoryId) {
-                $clusters = Cluster::with('category')
+                $clusters = Cluster::with('category', 'fields')
                     ->when($categoryId, fn($q) => $q->where('category_id', $categoryId))
                     ->latest()
                     ->get();
             } else {
                 $categories = Category::all();
-                $clusters = Cluster::with('category')->latest()->get();
+                $clusters = Cluster::with('category', 'fields')->latest()->get();
             }
             return response()->json(['data' => $clusters, 'categories' => $categories]);
         }
-        if ($categoryId) {
-            $clusters = Cluster::where('category_id', $categoryId)->latest()->get();
-        } else {
-            $clusters = Cluster::latest()->get();
-        }
         $categories = Category::all();
-        return view('admin.clusters.index', compact('clusters', 'categories'));
+        $category = [];
+        if ($categoryId) {
+            $category = Category::find($categoryId);
+        }
+        return view('admin.clusters.index', compact('categories', 'category'));
     }
 
     public function store(Request $request)
@@ -77,8 +76,13 @@ class ClusterController extends Controller
 
     public function delete($id)
     {
-        Cluster::findOrFail($id)->delete();
-        return response()->json(['success' => 'خوشه با موفقیت حذف شد.']);
+        $cluster = Cluster::findOrFail($id);
+        if ($cluster->fields()->count() == 0) {
+            $cluster->delete();
+            return response()->json(['success' => true, 'message' => 'خوشه با موفقیت حذف شد.']);
+        } else {
+            return response()->json(['success' => false, 'message' => 'خوشه دارای رشته می‌باشد.']);
+        }
     }
 
     public function bulkDelete(Request $request)
@@ -88,7 +92,12 @@ class ClusterController extends Controller
             return response()->json(['success' => false, 'message' => 'هیچ آی‌دی‌ای ارسال نشده است.'], 400);
         }
 
-        Cluster::whereIn('id', $ids)->delete();
+        $clusters = Cluster::whereIn('id', $ids)->get();
+        foreach ($clusters as $key => $cluster) {
+            if ($cluster->fields()->count() == 0) {
+                $cluster->delete();
+            }
+        }
         return response()->json(['success' => true, 'message' => 'رکوردها با موفقیت حذف شدند.']);
     }
 }

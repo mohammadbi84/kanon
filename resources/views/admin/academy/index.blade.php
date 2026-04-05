@@ -117,7 +117,7 @@
                                 return `<button class="btn btn-sm btn-danger item-toggle" data-id="${full.id}">رد شده</button>`;
                             } else if (full.status == 'suspended') {
                                 return `<button class="btn btn-sm btn-warning item-toggle" data-id="${full.id}">معلق</button>`;
-                            }else{
+                            } else {
                                 return full.status;
                             }
                         }
@@ -216,23 +216,14 @@
                                 ),
                             },
                             success: function(res) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "موفق!",
-                                    text: "رکورد با موفقیت حذف شدند.",
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    showConfirmButton: false,
-                                });
+                                toastr.success("رکورد با موفقیت حذف شد.");
+
                                 dt_academy.ajax.reload(null, false);
                                 $("#bulk-actions").addClass("d-none");
                             },
                             error: function(err) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "خطا!",
-                                    text: "مشکلی در حذف رخ داد.",
-                                });
+                                toastr.error("خطایی در حذف رخ داد.");
+
                                 console.error(err);
                             },
                         });
@@ -257,11 +248,8 @@
                         dt_academy.ajax.reload(null, false);
                     },
                     error: function(err) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "خطا!",
-                            text: "مشکلی در حذف رخ داد.",
-                        });
+                        toastr.error("خطایی در حذف گروهی رخ داد.");
+
                         console.error(err);
                     },
                 });
@@ -333,11 +321,8 @@
 
                         },
                         error: function(err) {
-                            Swal.fire({
-                                icon: "error",
-                                title: "خطا!",
-                                text: "مشکلی در حذف گروهی رخ داد.",
-                            });
+                            toastr.success("خطایی در عملیات رخ داد.");
+
                             console.error(err);
                         },
                     });

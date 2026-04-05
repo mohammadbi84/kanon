@@ -19,19 +19,23 @@ class FieldController extends Controller
         if (request()->ajax()) {
             $clusters = null;
             if ($clusterId) {
-                $fields = Field::with('cluster')
+                $fields = Field::with('cluster', 'professions')
                     ->when($clusterId, fn($q) => $q->where('cluster_id', $clusterId))
                     ->latest()
                     ->get();
             } else {
                 $clusters = Cluster::all();
-                $fields = Field::with('cluster')->latest()->get();
+                $fields = Field::with('cluster', 'professions')->latest()->get();
             }
             return response()->json(['data' => $fields, 'clusters' => $clusters]);
         }
-        $fields = Field::latest()->paginate(20);
         $clusters = Cluster::with('category')->get();
-        return view('admin.fields.index', compact('fields', 'clusters'));
+
+        $cluster = [];
+        if ($clusterId) {
+            $cluster = Cluster::find($clusterId);
+        }
+        return view('admin.fields.index', compact('clusters', 'cluster'));
     }
 
     public function store(Request $request)
@@ -73,8 +77,13 @@ class FieldController extends Controller
 
     public function delete($id)
     {
-        Field::findOrFail($id)->delete();
-        return response()->json(['success' => 'رشته با موفقیت حذف شد.']);
+        $field = Field::findOrFail($id);
+        if ($field->professions()->count() == 0) {
+            $field->delete();
+            return response()->json(['success' => true, 'message' => 'رشته با موفقیت حذف شد.']);
+        } else {
+            return response()->json(['success' => false, 'message' => 'رشته دارای حرفه یا سند حرفه میباشد.']);
+        }
     }
 
     public function bulkDelete(Request $request)
@@ -84,7 +93,12 @@ class FieldController extends Controller
             return response()->json(['success' => false, 'message' => 'هیچ آی‌دی‌ای ارسال نشده است.'], 400);
         }
 
-        Field::whereIn('id', $ids)->delete();
+        $fields = Field::whereIn('id', $ids)->get();
+        foreach ($fields as $key => $field) {
+            if ($field->professions()->count() == 0) {
+                $field->delete();
+            }
+        }
         return response()->json(['success' => true, 'message' => 'رکوردها با موفقیت حذف شدند.']);
     }
 }

@@ -313,23 +313,14 @@
                             ),
                         },
                         success: function(res) {
-                            Swal.fire({
-                                icon: "success",
-                                title: "موفق!",
-                                text: "رکورد با موفقیت حذف شدند.",
-                                timer: 2000,
-                                timerProgressBar: true,
-                                showConfirmButton: false,
-                            });
+                            toastr.success("رکورد با موفقیت حذف شد.");
+
                             dt_basic.ajax.reload(null, false);
                             $("#bulk-actions").addClass("d-none");
                         },
                         error: function(err) {
-                            Swal.fire({
-                                icon: "error",
-                                title: "خطا!",
-                                text: "مشکلی در حذف رخ داد.",
-                            });
+                            toastr.error("خطایی در حذف رخ داد.");
+
                             console.error(err);
                         },
                     });
@@ -407,23 +398,14 @@
                                 ids: ids,
                             },
                             success: function(res) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "موفق!",
-                                    text: "رکوردها با موفقیت حذف شدند.",
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    showConfirmButton: false,
-                                });
+                                toastr.success("رکورد ها با موفقیت حذف شدند.");
+
                                 dt_basic.ajax.reload(null, false);
                                 $("#bulk-actions").addClass("d-none");
                             },
                             error: function(err) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "خطا!",
-                                    text: "مشکلی در حذف گروهی رخ داد.",
-                                });
+                                toastr.error("خطایی در حذف گروهی رخ داد.");
+
                                 console.error(err);
                             },
                         });
@@ -464,23 +446,14 @@
                     $.post("{{ route('admin.benefit.store') }}", values,
                         function(res) {
                             if (res.success) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "موفق!",
-                                    text: res.message,
-                                    timer: 1500,
-                                    showConfirmButton: false,
-                                });
+
+                                toastr.success(res.message);
+
                                 dt_basic.ajax.reload(); // اگر میخوای جدول بروز بشه
                                 $('#createModal').modal('hide');
                             } else {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "خطا!",
-                                    text: res.message,
-                                    timer: 1500,
-                                    showConfirmButton: false,
-                                });
+                                toastr.error(res.message);
+
                             }
 
                         });

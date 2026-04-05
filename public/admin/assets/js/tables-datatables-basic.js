@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     { data: "", title: "" }, // ستونی که برای responsive استفاده میشه
                     { data: "id", title: "شناسه" },
                     { data: "id", visible: false }, // ستون مخفی برای sort
-                    { data: "id", title: "شناسه" },
+                    { data: "id", title: "ردیف" },
                     { data: "name", title: "نام شغل" },
                     { data: "", title: "عملیات" }, // ستون آخر برای دکمه‌ها
                 ],
@@ -47,6 +47,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         targets: 0,
                         render: function (data, type, full, meta) {
                             return "";
+                        },
+                    },
+                    {
+                        targets: 3, // ستون شماره ردیف (مطابق ایندکس خودت)
+                        data: null,
+                        title: "ردیف",
+                        orderable: true,
+                        searchable: false,
+                        render: function (data, type, full, meta) {
+                            return meta.row + 1; // شماره ردیف
                         },
                     },
                     {
@@ -204,23 +214,18 @@ document.addEventListener("DOMContentLoaded", function () {
                                 ),
                             },
                             success: function (res) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "موفق!",
-                                    text: "رکوردها با موفقیت حذف شدند.",
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    showConfirmButton: false,
-                                });
+                                if (res.success) {
+                                    toastr.success(res.message);
+                                } else {
+                                    toastr.error(res.message);
+                                }
+
                                 dt_basic.ajax.reload(null, false);
                                 $("#bulk-actions").addClass("d-none");
                             },
                             error: function (err) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "خطا!",
-                                    text: "مشکلی در حذف گروهی رخ داد.",
-                                });
+                                toastr.error(err.message);
+
                                 console.error(err);
                             },
                         });
@@ -294,23 +299,18 @@ document.addEventListener("DOMContentLoaded", function () {
                                     ids: ids,
                                 },
                                 success: function (res) {
-                                    Swal.fire({
-                                        icon: "success",
-                                        title: "موفق!",
-                                        text: "رکوردها با موفقیت حذف شدند.",
-                                        timer: 2000,
-                                        timerProgressBar: true,
-                                        showConfirmButton: false,
-                                    });
+                                    if (res.success) {
+                                        toastr.success(res.message);
+                                    } else {
+                                        toastr.error(res.message);
+                                    }
+
                                     dt_basic.ajax.reload(null, false);
                                     $("#bulk-actions").addClass("d-none");
                                 },
                                 error: function (err) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: "خطا!",
-                                        text: "مشکلی در حذف گروهی رخ داد.",
-                                    });
+                                    toastr.error(err.message);
+
                                     console.error(err);
                                 },
                             });
@@ -326,7 +326,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     { data: "", title: "" }, // ستونی که برای responsive استفاده میشه
                     { data: "id", title: "شناسه" },
                     { data: "id", visible: false }, // ستون مخفی برای sort
-                    { data: "id", title: "شناسه" },
+                    { data: "id", title: "ردیف" },
                     { data: "name", title: "نوع کاردانش" },
                     { data: "", title: "عملیات" }, // ستون آخر برای دکمه‌ها
                 ],
@@ -340,6 +340,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         targets: 0,
                         render: function (data, type, full, meta) {
                             return "";
+                        },
+                    },
+                    {
+                        targets: 3, // ستون شماره ردیف (مطابق ایندکس خودت)
+                        data: null,
+                        title: "ردیف",
+                        orderable: true,
+                        searchable: false,
+                        render: function (data, type, full, meta) {
+                            return meta.row + 1; // شماره ردیف
                         },
                     },
                     {
@@ -498,23 +508,18 @@ document.addEventListener("DOMContentLoaded", function () {
                                 ),
                             },
                             success: function (res) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "موفق!",
-                                    text: "رکورد با موفقیت حذف شدند.",
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    showConfirmButton: false,
-                                });
+                                if (res.success) {
+                                    toastr.success(res.message);
+                                } else {
+                                    toastr.error(res.message);
+                                }
+
                                 dt_basic.ajax.reload(null, false);
                                 $("#bulk-actions").addClass("d-none");
                             },
                             error: function (err) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "خطا!",
-                                    text: "مشکلی در حذف رخ داد.",
-                                });
+                                toastr.error(err.message);
+
                                 console.error(err);
                             },
                         });
@@ -588,23 +593,18 @@ document.addEventListener("DOMContentLoaded", function () {
                                     ids: ids,
                                 },
                                 success: function (res) {
-                                    Swal.fire({
-                                        icon: "success",
-                                        title: "موفق!",
-                                        text: "رکوردها با موفقیت حذف شدند.",
-                                        timer: 2000,
-                                        timerProgressBar: true,
-                                        showConfirmButton: false,
-                                    });
+                                    if (res.success) {
+                                        toastr.success(res.message);
+                                    } else {
+                                        toastr.error(res.message);
+                                    }
+
                                     dt_basic.ajax.reload(null, false);
                                     $("#bulk-actions").addClass("d-none");
                                 },
                                 error: function (err) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: "خطا!",
-                                        text: "مشکلی در حذف گروهی رخ داد.",
-                                    });
+                                    toastr.error(err.message);
+
                                     console.error(err);
                                 },
                             });
@@ -618,9 +618,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 ajax: "/admin2/categories",
                 columns: [
                     { data: "", title: "" }, // ستونی که برای responsive استفاده میشه
-                    { data: "id", title: "شناسه" },
+                    { data: "id", title: "ردیف" },
                     { data: "id", visible: false }, // ستون مخفی برای sort
-                    { data: "id", title: "شناسه" },
+                    { data: "", title: "ردیف" },
                     { data: "name", title: "نام رسته" },
                     { data: "", title: "عملیات" }, // ستون آخر برای دکمه‌ها
                 ],
@@ -634,6 +634,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         targets: 0,
                         render: function (data, type, full, meta) {
                             return "";
+                        },
+                    },
+                    {
+                        targets: 3, // ستون شماره ردیف (مطابق ایندکس خودت)
+                        data: null,
+                        title: "ردیف",
+                        orderable: true,
+                        searchable: false,
+                        render: function (data, type, full, meta) {
+                            return meta.row + 1; // شماره ردیف
                         },
                     },
                     {
@@ -665,34 +675,19 @@ document.addEventListener("DOMContentLoaded", function () {
                         orderable: false,
                         searchable: false,
                         render: function (data, type, full, meta) {
-                            return (
-                                // clusters
-                                '<a href="/admin2/clusters?category_id=' +
-                                full.id +
-                                '"' +
-                                'class="btn btn-sm btn-success item-show" ' +
-                                'data-id="' +
-                                full.id +
-                                '">' +
-                                "خوشه ها </a> " +
-                                // edit
-                                '<a href="/admin2/categories/' +
-                                full.id +
-                                '"' +
-                                'class="btn btn-sm btn-icon btn-primary item-edit" ' +
-                                'data-id="' +
-                                full.id +
-                                '">' +
-                                '<i class="bx bxs-edit"></i>' +
-                                "</a> " +
-                                // delete
-                                '<button class="btn btn-sm btn-icon btn-danger item-delete" ' +
-                                'data-id="' +
-                                full.id +
-                                '">' +
-                                '<i class="bx bxs-trash"></i>' +
-                                "</button>"
-                            );
+                            return `
+                                <a href="/admin2/clusters?category_id=${full.id}" class="btn btn-sm btn-success item-show" data-id="${full.id}">
+                                خوشه ها  <span class="ms-2">( ${full.clusters.length} )</span>
+                                </a>
+
+                                <a href="/admin2/categories/${full.id}" data-id="${full.id}" class="btn btn-sm btn-icon btn-primary item-edit">
+                                <i class="bx bxs-edit"></i>
+                                </a>
+
+                                <button class="btn btn-sm btn-icon btn-danger item-delete" data-id="${full.id}">
+                                <i class="bx bxs-trash"></i>
+                                </button>
+                                `;
                         },
                     },
                 ],
@@ -803,23 +798,17 @@ document.addEventListener("DOMContentLoaded", function () {
                                 ),
                             },
                             success: function (res) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "موفق!",
-                                    text: "رکورد با موفقیت حذف شدند.",
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    showConfirmButton: false,
-                                });
+                                if (res.success) {
+                                    toastr.success(res.message);
+                                } else {
+                                    toastr.error(res.message);
+                                }
+
                                 dt_basic.ajax.reload(null, false);
                                 $("#bulk-actions").addClass("d-none");
                             },
                             error: function (err) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "خطا!",
-                                    text: "مشکلی در حذف رخ داد.",
-                                });
+                                toastr.error(err.message);
                                 console.error(err);
                             },
                         });
@@ -893,23 +882,18 @@ document.addEventListener("DOMContentLoaded", function () {
                                     ids: ids,
                                 },
                                 success: function (res) {
-                                    Swal.fire({
-                                        icon: "success",
-                                        title: "موفق!",
-                                        text: "رکوردها با موفقیت حذف شدند.",
-                                        timer: 2000,
-                                        timerProgressBar: true,
-                                        showConfirmButton: false,
-                                    });
+                                    if (res.success) {
+                                        toastr.success(res.message);
+                                    } else {
+                                        toastr.error(res.message);
+                                    }
+
                                     dt_basic.ajax.reload(null, false);
                                     $("#bulk-actions").addClass("d-none");
                                 },
                                 error: function (err) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: "خطا!",
-                                        text: "مشکلی در حذف گروهی رخ داد.",
-                                    });
+                                    toastr.error(err.message);
+
                                     console.error(err);
                                 },
                             });
@@ -934,7 +918,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     { data: "", title: "" }, // ستونی که برای responsive استفاده میشه
                     { data: "id", title: "شناسه" },
                     { data: "id", visible: false }, // ستون مخفی برای sort
-                    { data: "id", title: "شناسه" },
+                    { data: "id", title: "ردیف" },
                     { data: "name", title: "نام خوشه" },
                     { data: "category.name", title: "رسته مربوطه" },
                     { data: "", title: "عملیات" }, // ستون آخر برای دکمه‌ها
@@ -949,6 +933,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         targets: 0,
                         render: function (data, type, full, meta) {
                             return "";
+                        },
+                    },
+                    {
+                        targets: 3, // ستون شماره ردیف (مطابق ایندکس خودت)
+                        data: null,
+                        title: "ردیف",
+                        orderable: true,
+                        searchable: false,
+                        render: function (data, type, full, meta) {
+                            return meta.row + 1; // شماره ردیف
                         },
                     },
                     {
@@ -980,34 +974,18 @@ document.addEventListener("DOMContentLoaded", function () {
                         orderable: false,
                         searchable: false,
                         render: function (data, type, full, meta) {
-                            return (
-                                // fields
-                                '<a href="/admin2/fields?cluster_id=' +
-                                full.id +
-                                '"' +
-                                'class="btn btn-sm btn-success item-show" ' +
-                                'data-id="' +
-                                full.id +
-                                '">' +
-                                "رشته ها </a> " +
-                                // edit
-                                '<a href="/admin2/clusters/' +
-                                full.id +
-                                '"' +
-                                'class="btn btn-sm btn-icon btn-primary item-edit" ' +
-                                'data-id="' +
-                                full.id +
-                                '">' +
-                                '<i class="bx bxs-edit"></i>' +
-                                "</a> " +
-                                // delete
-                                '<button class="btn btn-sm btn-icon btn-danger item-delete" ' +
-                                'data-id="' +
-                                full.id +
-                                '">' +
-                                '<i class="bx bxs-trash"></i>' +
-                                "</button>"
-                            );
+                            return `<a href="/admin2/fields?cluster_id=${full.id}" class="btn btn-sm btn-success item-show" data-id="${full.id}">
+                                رشته ها  <span class="ms-2">( ${full.fields.length} )</span>
+                                </a>
+
+                                <a href="/admin2/clusters/${full.id}" data-id="${full.id}" class="btn btn-sm btn-icon btn-primary item-edit">
+                                <i class="bx bxs-edit"></i>
+                                </a>
+
+                                <button class="btn btn-sm btn-icon btn-danger item-delete" data-id="${full.id}">
+                                <i class="bx bxs-trash"></i>
+                                </button>
+                                `;
                         },
                     },
                 ],
@@ -1162,23 +1140,18 @@ document.addEventListener("DOMContentLoaded", function () {
                                 ),
                             },
                             success: function (res) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "موفق!",
-                                    text: "رکورد با موفقیت حذف شدند.",
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    showConfirmButton: false,
-                                });
+                                if (res.success) {
+                                    toastr.success(res.message);
+                                } else {
+                                    toastr.error(res.message);
+                                }
+
                                 dt_basic.ajax.reload(null, false);
                                 $("#bulk-actions").addClass("d-none");
                             },
                             error: function (err) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "خطا!",
-                                    text: "مشکلی در حذف رخ داد.",
-                                });
+                                toastr.error(err.message);
+
                                 console.error(err);
                             },
                         });
@@ -1252,23 +1225,17 @@ document.addEventListener("DOMContentLoaded", function () {
                                     ids: ids,
                                 },
                                 success: function (res) {
-                                    Swal.fire({
-                                        icon: "success",
-                                        title: "موفق!",
-                                        text: "رکوردها با موفقیت حذف شدند.",
-                                        timer: 2000,
-                                        timerProgressBar: true,
-                                        showConfirmButton: false,
-                                    });
+                                    if (res.success) {
+                                        toastr.success(res.message);
+                                    } else {
+                                        toastr.error(res.message);
+                                    }
+
                                     dt_basic.ajax.reload(null, false);
                                     $("#bulk-actions").addClass("d-none");
                                 },
                                 error: function (err) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: "خطا!",
-                                        text: "مشکلی در حذف گروهی رخ داد.",
-                                    });
+                                    toastr.error(err.message);
                                     console.error(err);
                                 },
                             });
@@ -1293,7 +1260,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     { data: "", title: "" }, // ستونی که برای responsive استفاده میشه
                     { data: "id", title: "شناسه" },
                     { data: "id", visible: false }, // ستون مخفی برای sort
-                    { data: "id", title: "شناسه" },
+                    { data: "id", title: "ردیف" },
                     { data: "name", title: "نام رشته" },
                     { data: "cluster.name", title: "خوشه مربوطه" },
                     { data: "", title: "عملیات" }, // ستون آخر برای دکمه‌ها
@@ -1308,6 +1275,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         targets: 0,
                         render: function (data, type, full, meta) {
                             return "";
+                        },
+                    },
+                    {
+                        targets: 3, // ستون شماره ردیف (مطابق ایندکس خودت)
+                        data: null,
+                        title: "ردیف",
+                        orderable: true,
+                        searchable: false,
+                        render: function (data, type, full, meta) {
+                            return meta.row + 1; // شماره ردیف
                         },
                     },
                     {
@@ -1339,43 +1316,22 @@ document.addEventListener("DOMContentLoaded", function () {
                         orderable: false,
                         searchable: false,
                         render: function (data, type, full, meta) {
-                            return (
-                                // professions
-                                '<a href="/admin2/professions?field_id=' +
-                                full.id +
-                                '"' +
-                                'class="btn btn-sm btn-success item-show" ' +
-                                'data-id="' +
-                                full.id +
-                                '">' +
-                                "حرفه ها </a> " +
-                                // certificates
-                                '<a href="/admin2/certificates?field_id=' +
-                                full.id +
-                                '"' +
-                                'class="btn btn-sm btn-success item-show" ' +
-                                'data-id="' +
-                                full.id +
-                                '">' +
-                                "سند حرفه ها </a> " +
-                                // edit
-                                '<a href="/admin2/fields/' +
-                                full.id +
-                                '"' +
-                                'class="btn btn-sm btn-icon btn-primary item-edit" ' +
-                                'data-id="' +
-                                full.id +
-                                '">' +
-                                '<i class="bx bxs-edit"></i>' +
-                                "</a> " +
-                                // delete
-                                '<button class="btn btn-sm btn-icon btn-danger item-delete" ' +
-                                'data-id="' +
-                                full.id +
-                                '">' +
-                                '<i class="bx bxs-trash"></i>' +
-                                "</button>"
-                            );
+                            return `<a href="/admin2/professions?field_id=${full.id}" class="btn btn-sm btn-success item-show" data-id="${full.id}">
+                                حرفه ها (${full.professions.length})
+                                </a>
+
+                                <a href="/admin2/certificates?field_id=${full.id}" class="btn btn-sm btn-success item-show" data-id="${full.id}">
+                                سند حرفه ها (0)
+                                </a>
+
+                                <a href="/admin2/fields/${full.id}" data-id="${full.id}" class="btn btn-sm btn-icon btn-primary item-edit">
+                                <i class="bx bxs-edit"></i>
+                                </a>
+
+                                <button class="btn btn-sm btn-icon btn-danger item-delete" data-id="${full.id}">
+                                <i class="bx bxs-trash"></i>
+                                </button>
+                                `;
                         },
                     },
                 ],
@@ -1530,23 +1486,16 @@ document.addEventListener("DOMContentLoaded", function () {
                                 ),
                             },
                             success: function (res) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "موفق!",
-                                    text: "رکورد با موفقیت حذف شدند.",
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    showConfirmButton: false,
-                                });
+                                if (res.success) {
+                                    toastr.success(res.message);
+                                } else {
+                                    toastr.error(res.message);
+                                }
                                 dt_basic.ajax.reload(null, false);
                                 $("#bulk-actions").addClass("d-none");
                             },
                             error: function (err) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "خطا!",
-                                    text: "مشکلی در حذف رخ داد.",
-                                });
+                                toastr.error(err.message);
                                 console.error(err);
                             },
                         });
@@ -1620,23 +1569,18 @@ document.addEventListener("DOMContentLoaded", function () {
                                     ids: ids,
                                 },
                                 success: function (res) {
-                                    Swal.fire({
-                                        icon: "success",
-                                        title: "موفق!",
-                                        text: "رکوردها با موفقیت حذف شدند.",
-                                        timer: 2000,
-                                        timerProgressBar: true,
-                                        showConfirmButton: false,
-                                    });
+                                    if (res.success) {
+                                        toastr.success(res.message);
+                                    } else {
+                                        toastr.error(res.message);
+                                    }
+
                                     dt_basic.ajax.reload(null, false);
                                     $("#bulk-actions").addClass("d-none");
                                 },
                                 error: function (err) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: "خطا!",
-                                        text: "مشکلی در حذف گروهی رخ داد.",
-                                    });
+                                    toastr.error(err.message);
+
                                     console.error(err);
                                 },
                             });
@@ -1663,6 +1607,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     { data: "", title: "" }, // Responsive
                     { data: "id", title: "شناسه" },
                     { data: "id", visible: false },
+                    { data: "id", title: "ردیف" },
                     { data: "name", title: "نام حرفه" },
                     { data: "field.name", title: "رشته مربوطه" },
                     {
@@ -1690,6 +1635,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         targets: 0,
                         render: function () {
                             return "";
+                        },
+                    },
+                    {
+                        targets: 3, // ستون شماره ردیف (مطابق ایندکس خودت)
+                        data: null,
+                        title: "ردیف",
+                        orderable: true,
+                        searchable: false,
+                        render: function (data, type, full, meta) {
+                            return meta.row + 1; // شماره ردیف
                         },
                     },
                     {
@@ -2127,23 +2082,18 @@ document.addEventListener("DOMContentLoaded", function () {
                                 ),
                             },
                             success: function (res) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "موفق!",
-                                    text: "رکورد با موفقیت حذف شدند.",
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    showConfirmButton: false,
-                                });
+                                if (res.success) {
+                                    toastr.success(res.message);
+                                } else {
+                                    toastr.error(res.message);
+                                }
+
                                 dt_basic.ajax.reload(null, false);
                                 $("#bulk-actions").addClass("d-none");
                             },
                             error: function (err) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "خطا!",
-                                    text: "مشکلی در حذف رخ داد.",
-                                });
+                                toastr.error(err.message);
+
                                 console.error(err);
                             },
                         });
@@ -2217,23 +2167,18 @@ document.addEventListener("DOMContentLoaded", function () {
                                     ids: ids,
                                 },
                                 success: function (res) {
-                                    Swal.fire({
-                                        icon: "success",
-                                        title: "موفق!",
-                                        text: "رکوردها با موفقیت حذف شدند.",
-                                        timer: 2000,
-                                        timerProgressBar: true,
-                                        showConfirmButton: false,
-                                    });
+                                    if (res.success) {
+                                        toastr.success(res.message);
+                                    } else {
+                                        toastr.error(res.message);
+                                    }
+
                                     dt_basic.ajax.reload(null, false);
                                     $("#bulk-actions").addClass("d-none");
                                 },
                                 error: function (err) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: "خطا!",
-                                        text: "مشکلی در حذف گروهی رخ داد.",
-                                    });
+                                    toastr.error(err.message);
+
                                     console.error(err);
                                 },
                             });
@@ -2373,6 +2318,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     { data: "", title: "" },
                     { data: "id", title: "شناسه" },
                     { data: "id", visible: false },
+                    { data: "id", title: "ردیف" },
                     { data: "title", title: "عنوان شهریه" },
                     { data: "city.title", title: "شهر" },
                     { data: "start_date", title: "شروع" },
@@ -2389,6 +2335,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         targets: 0,
                         render: function (data, type, full, meta) {
                             return "";
+                        },
+                    },
+                    {
+                        targets: 3, // ستون شماره ردیف (مطابق ایندکس خودت)
+                        data: null,
+                        title: "ردیف",
+                        orderable: true,
+                        searchable: false,
+                        render: function (data, type, full, meta) {
+                            return meta.row + 1; // شماره ردیف
                         },
                     },
                     {
@@ -2597,23 +2553,17 @@ document.addEventListener("DOMContentLoaded", function () {
                                 ),
                             },
                             success: function (res) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "موفق!",
-                                    text: "رکوردها با موفقیت حذف شدند.",
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    showConfirmButton: false,
-                                });
+                                if (res.success) {
+                                    toastr.success(res.message);
+                                } else {
+                                    toastr.error(res.message);
+                                }
+
                                 dt_basic.ajax.reload(null, false);
                                 $("#bulk-actions").addClass("d-none");
                             },
                             error: function (err) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "خطا!",
-                                    text: "مشکلی در حذف گروهی رخ داد.",
-                                });
+                                toastr.error(err.message);
                                 console.error(err);
                             },
                         });
@@ -2687,23 +2637,18 @@ document.addEventListener("DOMContentLoaded", function () {
                                     ids: ids,
                                 },
                                 success: function (res) {
-                                    Swal.fire({
-                                        icon: "success",
-                                        title: "موفق!",
-                                        text: "رکوردها با موفقیت حذف شدند.",
-                                        timer: 2000,
-                                        timerProgressBar: true,
-                                        showConfirmButton: false,
-                                    });
+                                    if (res.success) {
+                                        toastr.success(res.message);
+                                    } else {
+                                        toastr.error(res.message);
+                                    }
+
                                     dt_basic.ajax.reload(null, false);
                                     $("#bulk-actions").addClass("d-none");
                                 },
                                 error: function (err) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: "خطا!",
-                                        text: "مشکلی در حذف گروهی رخ داد.",
-                                    });
+                                    toastr.error(err.message);
+
                                     console.error(err);
                                 },
                             });
@@ -2742,13 +2687,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     $.post("/admin2/articles/store", values, function (res) {
                         // console.log("Server Response:", res);
                         // offCanvasEl.hide();
-                        Swal.fire({
-                            icon: "success",
-                            title: "موفق!",
-                            text: res.success,
-                            timer: 1500,
-                            showConfirmButton: false,
-                        });
+                        toastr.success("مقاله با موفقیت ذخیره شد.");
 
                         dt_basic.ajax.reload(); // اگر میخوای جدول بروز بشه
                     });
@@ -2805,13 +2744,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     $.post("/admin2/bookmark/store", values, function (res) {
                         // console.log("Server Response:", res);
                         // offCanvasEl.hide();
-                        Swal.fire({
-                            icon: "success",
-                            title: "موفق!",
-                            text: res.success,
-                            timer: 1500,
-                            showConfirmButton: false,
-                        });
+                        toastr.success(res.success);
 
                         dt_basic.ajax.reload(); // اگر میخوای جدول بروز بشه
                     });

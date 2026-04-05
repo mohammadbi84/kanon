@@ -322,11 +322,8 @@
                         dt_advertisement.ajax.reload(null, false);
                     },
                     error: function(err) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "خطا!",
-                            text: "مشکلی در حذف رخ داد.",
-                        });
+                        toastr.error("مشکلی در حذف گروهی رخ داد.");
+
                         console.error(err);
                     },
                 });

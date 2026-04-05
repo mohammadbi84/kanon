@@ -11,11 +11,10 @@ class CategoryController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $categories = Category::latest()->get();
+            $categories = Category::with('clusters')->latest()->get();
             return response()->json(['data' => $categories]);
         }
-        $categories = Category::latest()->paginate(20);
-        return view('admin.categories.index', compact('categories'));
+        return view('admin.categories.index');
     }
 
     public function store(Request $request)
@@ -46,8 +45,13 @@ class CategoryController extends Controller
 
     public function delete($id)
     {
-        Category::findOrFail($id)->delete();
-        return response()->json(['success' => 'رسته با موفقیت حذف شد.']);
+        $cat = Category::findOrFail($id);
+        if ($cat->clusters()->count() == 0) {
+            $cat->delete();
+            return response()->json(['success' => true, 'message' => 'رسته با موفقیت حذف شد.']);
+        } else {
+            return response()->json(['success' => false, 'message' => 'رسته دارای خوشه میباشد.']);
+        }
     }
 
     public function bulkDelete(Request $request)
@@ -57,7 +61,12 @@ class CategoryController extends Controller
             return response()->json(['success' => false, 'message' => 'هیچ آی‌دی‌ای ارسال نشده است.'], 400);
         }
 
-        Category::whereIn('id', $ids)->delete();
+        $categories = Category::whereIn('id', $ids)->get();
+        foreach ($categories as $key => $category) {
+            if ($category->clusters()->count() == 0) {
+                $category->delete();
+            }
+        }
         return response()->json(['success' => true, 'message' => 'رکوردها با موفقیت حذف شدند.']);
     }
 }

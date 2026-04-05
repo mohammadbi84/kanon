@@ -63,7 +63,7 @@
                     {
                         data: "max_slots",
                         title: "حداکثر آگهی",
-                        render : function(data){
+                        render: function(data) {
                             return data ? `${data} عدد` : '--'
                         }
                     },
@@ -208,11 +208,7 @@
                         dt_positions.ajax.reload(null, false);
                     },
                     error: function(err) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "خطا!",
-                            text: "مشکلی در حذف رخ داد.",
-                        });
+                        toastr.success("مشکلی در حذف رخ داد.");
                         console.error(err);
                     },
                 });
@@ -283,11 +279,8 @@
                             $("#bulk-actions .bulk-toggle").prop("disabled", true);
                         },
                         error: function(err) {
-                            Swal.fire({
-                                icon: "error",
-                                title: "خطا!",
-                                text: "مشکلی در حذف گروهی رخ داد.",
-                            });
+                            toastr.error("مشکلی در حذف گروهی رخ داد.");
+
                             console.error(err);
                         },
                     });

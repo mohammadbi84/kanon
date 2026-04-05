@@ -189,11 +189,8 @@
                         dt_academy.ajax.reload(null, false);
                     },
                     error: function(err) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "خطا!",
-                            text: "مشکلی در حذف رخ داد.",
-                        });
+                        toastr.error(err.message);
+
                         console.error(err);
                     },
                 });
@@ -265,11 +262,8 @@
 
                         },
                         error: function(err) {
-                            Swal.fire({
-                                icon: "error",
-                                title: "خطا!",
-                                text: "مشکلی در حذف گروهی رخ داد.",
-                            });
+                            toastr.success(err.message);
+
                             console.error(err);
                         },
                     });

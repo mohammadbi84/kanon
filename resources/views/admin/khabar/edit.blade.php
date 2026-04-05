@@ -128,6 +128,7 @@
             theme: 'snow'
         });
         const hiddenInput = document.querySelector('#body');
+        hiddenInput.value = fullEditor.root.innerHTML;
 
         fullEditor.on('text-change', function() {
             hiddenInput.value = fullEditor.root.innerHTML;

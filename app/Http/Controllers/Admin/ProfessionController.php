@@ -40,8 +40,12 @@ class ProfessionController extends Controller
         $kardaneshes = Kardanesh::all();
         $jobtypes = Jobtype::all();
         $fieldId = $request->get('field_id');
+        $field = [];
+        if ($fieldId) {
+            $field = Field::find($fieldId);
+        }
 
-        return view('admin.professions.index', compact('fields', 'kardaneshes', 'jobtypes', 'fieldId'));
+        return view('admin.professions.index', compact('fields', 'kardaneshes', 'jobtypes', 'fieldId', 'field'));
     }
 
     // 🆕 افزودن حرفه جدید
@@ -307,7 +311,7 @@ class ProfessionController extends Controller
                 $file->move('uploads/professions/images', $pathName);
 
                 $data['image_path'] = $imagePath . $pathName;
-            }else {
+            } else {
                 $data['image_path'] = null; // اگر فایلی آپلود نشده، مقدار آن را حذف کن
             }
 
@@ -319,7 +323,7 @@ class ProfessionController extends Controller
                 $file->move('uploads/professions/files', $pathName);
 
                 $data['standard_file'] = $filePath . $pathName;
-            }else {
+            } else {
                 $data['standard_file'] = null; // اگر فایلی آپلود نشده، مقدار آن را حذف کن
             }
 
@@ -368,7 +372,7 @@ class ProfessionController extends Controller
         $profession = Profession::findOrFail($id);
         $profession->delete();
 
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true, 'message' => 'حرفه با موفقیت حذف شد']);
     }
 
     // 🗑️ حذف گروهی
@@ -377,6 +381,6 @@ class ProfessionController extends Controller
         $ids = $request->input('ids', []);
         Profession::whereIn('id', $ids)->delete();
 
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true, 'message' => 'حرفه ها با موفقیت حذف شدند.']);
     }
 }

@@ -389,8 +389,8 @@ html[dir=rtl] .switch-lg .switch-toggle-slider::after {
 
 html[dir=rtl] table.dataTable>thead>tr>th:not(.sorting_disabled),
 table.dataTable>thead>tr>td:not(.sorting_disabled) {
-  padding-right: 1.5rem;
-  padding-left: 30px;
+  padding-right: 40px;
+    padding-left: 1.5rem;
 }
 
 html[dir=rtl] table.dataTable thead .sorting::before,
@@ -403,7 +403,7 @@ html[dir=rtl] table.dataTable thead .sorting_asc::after,
 html[dir=rtl] table.dataTable thead .sorting_desc::after,
 html[dir=rtl] table.dataTable thead .sorting_asc_disabled::after,
 html[dir=rtl] table.dataTable thead .sorting_desc_disabled::after {
-  left: 0.8rem !important;
+  right: 0.8rem !important;
 }
 
 html .alert-dismissible .btn-close {
@@ -768,7 +768,7 @@ html[dir=rtl] .offset-11 {
   html .drag-target {
     width: 30px;
   }
-  
+
 	html[dir=rtl] .drag-target {
 		right: 0;
 		left: auto;

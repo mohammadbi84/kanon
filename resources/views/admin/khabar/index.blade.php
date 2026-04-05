@@ -368,23 +368,14 @@
                             ),
                         },
                         success: function(res) {
-                            Swal.fire({
-                                icon: "success",
-                                title: "موفق!",
-                                text: "رکورد با موفقیت حذف شدند.",
-                                timer: 2000,
-                                timerProgressBar: true,
-                                showConfirmButton: false,
-                            });
+                            toastr.success("رکورد با موفقیت حذف شد.");
+
                             dt_basic.ajax.reload(null, false);
                             $("#bulk-actions").addClass("d-none");
                         },
                         error: function(err) {
-                            Swal.fire({
-                                icon: "error",
-                                title: "خطا!",
-                                text: "مشکلی در حذف رخ داد.",
-                            });
+                            toastr.error("خطایی در حذف رخ داد.");
+
                             console.error(err);
                         },
                     });
@@ -462,23 +453,14 @@
                                 ids: ids,
                             },
                             success: function(res) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "موفق!",
-                                    text: "رکوردها با موفقیت حذف شدند.",
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    showConfirmButton: false,
-                                });
+                                toastr.success("رکورد ها با موفقیت حذف شدند.");
+
                                 dt_basic.ajax.reload(null, false);
                                 $("#bulk-actions").addClass("d-none");
                             },
                             error: function(err) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "خطا!",
-                                    text: "مشکلی در حذف گروهی رخ داد.",
-                                });
+                                toastr.error("خطایی در حذف گروهی رخ داد.");
+
                                 console.error(err);
                             },
                         });
@@ -513,12 +495,12 @@
                 contentType: false,
                 processData: false,
                 success: function(res) {
-                    Swal.fire("موفق!", "تصویر با موفقیت آپلود شد.", "success");
+                    toastr.success("تصویر با موفقیت آپلود شد.");
                     $("#khabar_image").val("");
                     loadPopupFiles(khabarId);
                 },
                 error: function() {
-                    Swal.fire("خطا!", "آپلود تصویر با خطا مواجه شد.", "error");
+                    toastr.success("خطایی در آپلود تصویر رخ داد.");
                 }
             });
         });
@@ -557,7 +539,7 @@
             $.post(`/admin2/khabar/status/${id}`, {
                 _token: $('meta[name="csrf-token"]').attr("content")
             }, function() {
-                Swal.fire("موفق!", "وضعیت تصویر تغییر کرد.", "success");
+                toastr.success("وضعیت عکس با موفقیت تغییر کرد.");
                 loadPopupFiles($("#khabar_id").val());
             });
         });
@@ -581,12 +563,12 @@
                             _token: $('meta[name="csrf-token"]').attr("content")
                         },
                         success: function() {
-                            Swal.fire("موفق!", "تصویر حذف شد.", "success");
+                            toastr.success("تصویر با موفقیت حذف شد.");
+
                             loadPopupFiles($("#khabar_id").val());
                         },
                         error: function() {
-                            Swal.fire("خطا!", "مشکلی در حذف تصویر رخ داد.",
-                                "error");
+                            toastr.success("مشکلی در حذف تصویر رخ داد.");
                         }
                     });
                 }
@@ -655,13 +637,8 @@
                     $.post("/admin2/khabar/store", values, function(res) {
                         console.log("Server Response:", res);
                         // offCanvasEl.hide();
-                        Swal.fire({
-                            icon: "success",
-                            title: "موفق!",
-                            text: res.success,
-                            timer: 1500,
-                            showConfirmButton: false,
-                        });
+                        toastr.success("آگهی با موفقیت ذخیره شد.");
+
                         dt_basic.ajax.reload(); // اگر میخوای جدول بروز بشه
                     });
                 },
