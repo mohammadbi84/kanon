@@ -1,6 +1,12 @@
 @extends('admin.layout.master')
 
 @section('content')
+    <h5 class="breadcrumb-wrapper mb-4">
+        <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
+        <a href="{{ route('admin.tuitions.index') }}" class="text-muted">نرخ شهریه</a> <span class="text-muted">/</span>
+        <span class="">{{ $tuition->title }}</span>
+        <span class="text-muted">/ حرفه ها</span>
+    </h5>
     <div class="card p-3">
         <h4 class="mb-3">مدیریت مبالغ حرفه‌ها برای شهریه: {{ $tuition->title }}</h4>
 

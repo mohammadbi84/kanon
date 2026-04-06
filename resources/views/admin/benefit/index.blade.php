@@ -5,6 +5,10 @@
     <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/quill/editor-fa.css') }}">
 @endsection
 @section('content')
+    <h5 class="breadcrumb-wrapper mb-4">
+        <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
+        <span class="">مزایای گواهینامه ها</span>
+    </h5>
     <!-- DataTable with Buttons -->
     <div class="card">
         <div class="card-datatable table-responsive pt-0 p-3">
@@ -33,7 +37,6 @@
                         <div class="col-sm-12">
                             <label class="form-label" for="title">عنوان</label>
                             <div class="input-group input-group-merge">
-                                <span id="title2" class="input-group-text"><i class="bx bx-check-square"></i></span>
                                 <input type="text" id="title" class="form-control dt-full-name" name="title"
                                     placeholder="عنوان" aria-label="John Doe" aria-describedby="title2">
                             </div>
@@ -154,7 +157,7 @@
                 }, // ستون مخفی برای sort
                 {
                     data: "id",
-                    title: "شناسه"
+                    title: "ردیف"
                 },
                 {
                     data: "title",
@@ -193,6 +196,16 @@
                     },
                     responsivePriority: 4,
                 },
+                                    {
+                        targets: 3, // ستون شماره ردیف (مطابق ایندکس خودت)
+                        data: null,
+                        title: "ردیف",
+                        orderable: true,
+                        searchable: false,
+                        render: function (data, type, full, meta) {
+                            return meta.row + 1; // شماره ردیف
+                        },
+                    },
                 {
                     targets: 2,
                     searchable: false,

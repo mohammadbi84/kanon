@@ -2,6 +2,12 @@
 @section('head')
 @endsection
 @section('content')
+    <h5 class="breadcrumb-wrapper mb-4">
+        <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
+        <a href="{{ route('admin.kardanesh.index') }}" class="text-muted">نوع کاردانش</a> <span class="text-muted">/</span>
+        <span class="">{{ $kardanesh->name }}</span>
+        <span class="text-muted">/ ویرایش</span>
+    </h5>
     <div class="card">
         <form action="{{ route('admin.kardanesh.update', ['id' => $kardanesh->id]) }}" method="post"
             class="add-new-record row g-2 p-5" id="form-add-new-record">

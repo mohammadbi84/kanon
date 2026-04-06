@@ -4,6 +4,10 @@
 @endsection
 
 @section('content')
+    <h5 class="breadcrumb-wrapper mb-4">
+        <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
+        <span>درخواست ها ثبت نام</span>
+    </h5>
     <div class="card">
         <div class="card-datatable table-responsive pt-0 p-3">
             {{-- جدول آموزشگاه ها --}}
@@ -52,7 +56,7 @@
                     }, // ستون مخفی برای sort
                     {
                         data: "id",
-                        title: "شناسه"
+                        title: "ردیف"
                     },
                     {
                         data: "name",
@@ -91,6 +95,16 @@
                         },
                         responsivePriority: 4,
                         orderable: false,
+                    },
+                                        {
+                        targets: 3, // ستون شماره ردیف (مطابق ایندکس خودت)
+                        data: null,
+                        title: "ردیف",
+                        orderable: true,
+                        searchable: false,
+                        render: function (data, type, full, meta) {
+                            return meta.row + 1; // شماره ردیف
+                        },
                     },
                     {
                         targets: 2,

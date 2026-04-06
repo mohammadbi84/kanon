@@ -6,6 +6,11 @@
 @endsection
 
 @section('content')
+    <h5 class="breadcrumb-wrapper mb-4">
+        <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
+        <a href="{{ route('admin.academy.index') }}" class="text-muted">آموزشگاه ها</a> <span class="text-muted">/</span>
+        <span class="">ثبت آموزشگاه جدید</span>
+    </h5>
     <div class="card">
         <div class="card-body pt-0 p-3">
             <form action="{{ route('admin.academy.store') }}" method="POST" enctype="multipart/form-data">

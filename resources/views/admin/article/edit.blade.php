@@ -5,6 +5,12 @@
     <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/quill/editor-fa.css') }}">
 @endsection
 @section('content')
+    <h5 class="breadcrumb-wrapper mb-4">
+        <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
+        <a href="{{ route('admin.articles.index') }}" class="text-muted">صفحات داخلی</a> <span class="text-muted">/</span>
+        <span>{{ $article->title }}</span>
+        <span class="text-muted">/ ویرایش</span>
+    </h5>
     <div class="card">
         <form action="{{ route('admin.articles.update', ['id' => $article->id]) }}" method="post"
             class="add-new-record row g-2 p-5" id="form-add-new-record">
@@ -13,8 +19,8 @@
                 <label class="form-label" for="title">عنوان صفحه</label>
                 <div class="input-group input-group-merge">
                     <span id="title2" class="input-group-text"><i class="bx bx-check-square"></i></span>
-                    <input type="text" id="title" value="{{$article->title}}" class="form-control dt-full-name" name="title"
-                        placeholder="عنوان صفحه" aria-label="John Doe" aria-describedby="title2">
+                    <input type="text" id="title" value="{{ $article->title }}" class="form-control dt-full-name"
+                        name="title" placeholder="عنوان صفحه" aria-label="John Doe" aria-describedby="title2">
                 </div>
             </div>
             <div class="col-sm-12">

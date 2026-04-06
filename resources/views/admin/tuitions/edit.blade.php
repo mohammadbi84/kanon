@@ -5,6 +5,12 @@
 @endsection
 
 @section('content')
+    <h5 class="breadcrumb-wrapper mb-4">
+        <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
+        <a href="{{ route('admin.tuitions.index') }}" class="text-muted">نرخ شهریه</a> <span class="text-muted">/</span>
+        <span class="">{{ $tuition->title }}</span>
+        <span class="text-muted">/ ویرایش</span>
+    </h5>
     <div class="card">
         <div class="card-body p-4">
             <h5 class="mb-4">ویرایش شهریه: {{ $tuition->title }}</h5>

@@ -2,6 +2,12 @@
 @section('head')
 @endsection
 @section('content')
+    <h5 class="breadcrumb-wrapper mb-4">
+        <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
+        <a href="{{ route('admin.academy.index') }}" class="text-muted">آموزشگاه ها</a> <span class="text-muted">/</span>
+        <span class="">{{$academy->name}}</span>
+        <span class="text-muted">/ پروفایل</span>
+    </h5>
     <div class="row">
         <!-- User Sidebar -->
         <div class="col-xl-4 col-lg-5 col-md-5 order-1 order-md-0">

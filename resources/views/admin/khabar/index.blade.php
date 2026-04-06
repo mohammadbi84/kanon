@@ -5,6 +5,10 @@
     <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/quill/editor-fa.css') }}">
 @endsection
 @section('content')
+    <h5 class="breadcrumb-wrapper mb-4">
+        <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
+        <span class="">اخبار</span>
+    </h5>
     <!-- DataTable with Buttons -->
     <div class="card">
         <div class="card-datatable table-responsive pt-0 p-3">
@@ -13,7 +17,6 @@
                 <div class="col-sm-12">
                     <label class="form-label" for="title">عنوان خبر</label>
                     <div class="input-group input-group-merge">
-                        <span id="title2" class="input-group-text"><i class="bx bx-check-square"></i></span>
                         <input type="text" id="title" class="form-control dt-full-name" name="title"
                             placeholder="عنوان خبر" aria-label="John Doe" aria-describedby="title2">
                     </div>
@@ -80,8 +83,8 @@
                     <input type="hidden" id="khabar_id">
                     <div class="mb-3">
                         <div class="input-group">
-                            <button class="btn btn-outline-primary" type="button" id="image" data-input="khabar_image"
-                                data-preview="imageHolder">عکس جدید</button>
+                            <button class="btn btn-outline-primary" type="button" id="image"
+                                data-input="khabar_image" data-preview="imageHolder">عکس جدید</button>
                             <input type="text" id="khabar_image" name="image" class="form-control"
                                 placeholder="نام کاربری گیرنده" aria-label="Recipient's username"
                                 aria-describedby="button-addon2">
@@ -215,7 +218,7 @@
                 }, // ستون مخفی برای sort
                 {
                     data: "id",
-                    title: "شناسه"
+                    title: "ردیف"
                 },
                 {
                     data: "title",
@@ -262,6 +265,16 @@
                         selectAllRender: '<input type="checkbox" class="form-check-input mt-0 align-middle">',
                     },
                     responsivePriority: 4,
+                },
+                {
+                    targets: 3, // ستون شماره ردیف (مطابق ایندکس خودت)
+                    data: null,
+                    title: "ردیف",
+                    orderable: true,
+                    searchable: false,
+                    render: function(data, type, full, meta) {
+                        return meta.row + 1; // شماره ردیف
+                    },
                 },
                 {
                     targets: 2,

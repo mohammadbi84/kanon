@@ -5,6 +5,10 @@
     <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/quill/editor-fa.css') }}">
 @endsection
 @section('content')
+    <h5 class="breadcrumb-wrapper mb-4">
+        <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
+        <span>صفحات داخلی</span>
+    </h5>
     <!-- DataTable with Buttons -->
     <div class="card">
         <div class="card-datatable table-responsive pt-0 p-3">
@@ -141,7 +145,7 @@
                 }, // ستون مخفی برای sort
                 {
                     data: "id",
-                    title: "شناسه"
+                    title: "ردیف"
                 },
                 {
                     data: "title",
@@ -179,6 +183,16 @@
                         selectAllRender: '<input type="checkbox" class="form-check-input mt-0 align-middle">',
                     },
                     responsivePriority: 4,
+                },
+                {
+                    targets: 3, // ستون شماره ردیف (مطابق ایندکس خودت)
+                    data: null,
+                    title: "ردیف",
+                    orderable: true,
+                    searchable: false,
+                    render: function(data, type, full, meta) {
+                        return meta.row + 1; // شماره ردیف
+                    },
                 },
                 {
                     targets: 2,

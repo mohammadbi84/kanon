@@ -4,6 +4,10 @@
 @endsection
 
 @section('content')
+    <h5 class="breadcrumb-wrapper mb-4">
+        <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
+        <span class="">نرخ شهریه</span>
+    </h5>
     <!-- DataTable with Buttons -->
     <div class="card">
         <div class="card-datatable table-responsive pt-0 p-3">
@@ -18,7 +22,6 @@
                 <div class="col-sm-12">
                     <label class="form-label" for="title">عنوان شهریه</label>
                     <div class="input-group input-group-merge">
-                        <span class="input-group-text"><i class="bx bx-credit-card"></i></span>
                         <input type="text" id="title" class="form-control" name="title"
                                placeholder="مثلاً شهریه تابستان ۱۴۰۴" required>
                     </div>

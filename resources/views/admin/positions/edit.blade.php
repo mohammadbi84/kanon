@@ -2,15 +2,20 @@
 @section('head')
 @endsection
 @section('content')
+    <h5 class="breadcrumb-wrapper mb-4">
+        <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
+        <a href="{{ route('admin.positions.index') }}" class="text-muted">موقعیت های آگهی</a> <span class="text-muted">/</span>
+        <span>{{ $position->name }}</span>
+        <span class="text-muted">/ ویرایش</span>
+    </h5>
     <div class="card">
         <form action="{{ route('admin.positions.update', ['position' => $position]) }}" method="post"
             class="add-new-record row g-2 p-5" id="form-add-new-record">
             @csrf
-            @method("PUT")
+            @method('PUT')
             <div class="col-sm-12 mb-3">
                 <label class="form-label" for="name">عنوان صفحه</label>
                 <div class="input-group input-group-merge">
-                    <span id="name2" class="input-group-text"><i class="bx bx-check-square"></i></span>
                     <input type="text" id="name" class="form-control dt-full-name" name="name"
                         placeholder="عنوان صفحه" value="{{ $position->name }}" aria-describedby="name2">
                 </div>
