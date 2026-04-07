@@ -31,7 +31,7 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title secondary-font" id="modalCenterTitle">رشته جدید</h5>
+                            <h5 class="modal-title secondary-font" id="modalCenterTitle">ایجاد رشته جدید</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -52,9 +52,8 @@
                                 @if (!$categoryId)
                                     {{-- اگر cluster_id در URL نبود --}}
                                     <div class="col-sm-12 mt-3">
-                                        <label class="form-label" for="cluster_id">انتخاب خوشه</label>
                                         <select id="cluster_id" name="cluster_id" class="form-select select2" required>
-                                            <option value="" selected disabled>انتخاب کنید...</option>
+                                            <option value="" selected disabled>انتخاب خوشه . . .</option>
                                             @foreach ($clusters as $cluster)
                                                 <option value="{{ $cluster->id }}">{{ $cluster->name }}</option>
                                             @endforeach
@@ -88,7 +87,61 @@
                 </thead>
             </table>
             <div id="bulk-actions" class="">
-                <button id="bulk-delete" class="btn btn-danger" disabled>حذف انتخابی‌ها</button>
+                <div class="btn-group" id="action_group" style="display: none">
+                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        انتخاب عملیـات
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <button class="dropdown-item text-danger" id="bulk-delete" href="#">
+                                <i class=" bx bx-trash"></i>
+                                حذف انتخابی ها
+                            </button>
+                        </li>
+                        <li><a class="dropdown-item" href="#">عمل دیگر</a></li>
+                        <li><a class="dropdown-item" href="#">یک عمل دیگر</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Edit -->
+    <div class="modal fade" id="modalEdit" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title secondary-font" id="modalEditTitle">ویرایش خوشه</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post" class="add-new-record pt-0 row g-2 px-3" id="form-edit-record">
+                        @csrf
+                        <div class="col-sm-12">
+                            <input type="hidden" id="id" class="form-control" name="id">
+                        </div>
+                        {{-- فیلد نام رشته --}}
+                        <div class="col-sm-12">
+                            <div class="custom-input-group">
+                                <input type="text" id="name" class="form-control" name="name">
+                                <label class="form-label" for="name">نام رشته</label>
+                            </div>
+                        </div>
+                        {{-- اگر cluster_id در URL نبود --}}
+                        <div class="col-sm-12 mt-3">
+                            <select id="cluster_id" name="cluster_id" class="form-select select2" required>
+                                <option value="" selected disabled>انتخاب خوشه . . .</option>
+                                @foreach ($clusters as $cluster)
+                                    <option value="{{ $cluster->id }}">{{ $cluster->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-sm-12 mt-3">
+                            <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1">ذخیره</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -159,14 +212,13 @@
                     },
                 },
                 {
-                    // For Checkboxes
                     targets: 1,
                     orderable: false,
                     render: function() {
-                        return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle">';
+                        return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle row-check">';
                     },
                     checkboxes: {
-                        selectRow: true,
+                        selectRow: false, // فقط با چک‌باکس، نه روی کل ردیف
                         selectAllRender: '<input type="checkbox" class="form-check-input mt-0 align-middle">',
                     },
                     responsivePriority: 4,
@@ -194,9 +246,9 @@
                                 سند حرفه ها (0)
                                 </a>
 
-                                <a href="/admin2/fields/${full.id}" data-id="${full.id}" class="btn btn-sm btn-icon btn-primary item-edit">
+                                <button data-id="${full.id}" class="btn btn-sm btn-icon btn-primary item-edit">
                                 <i class="bx bxs-edit"></i>
-                                </a>
+                                </button>
 
                                 <button class="btn btn-sm btn-icon btn-danger item-delete" data-id="${full.id}">
                                 <i class="bx bxs-trash"></i>
@@ -261,6 +313,20 @@
             '<h5 class="card-title mb-0">لیست رشته ها</h5>' +
             '<small class="text-muted ms-2">( {{ $fields_count }} رکورد )</small>'
         );
+        dt_basic.on('change', '.row-check', function() {
+            const row = dt_basic.row($(this).closest('tr'));
+
+            if (this.checked) {
+                row.select();
+            } else {
+                row.deselect();
+            }
+        });
+        dt_basic.on('user-select', function(e, dt, type, cell, originalEvent) {
+            if (!$(originalEvent.target).hasClass('row-check')) {
+                e.preventDefault();
+            }
+        });
         // delete one item----------------------------------------------------------------------------------------------------------------
         dt_basic.on("click", ".item-delete", function() {
             const id = $(this).data("id");
@@ -324,8 +390,10 @@
                 }).count();
                 if (selected > 0) {
                     // $("#bulk-actions").removeClass("d-none");
+                    $("#bulk-actions #action_group").show();
                     $("#bulk-actions #bulk-delete").prop("disabled", false);
                 } else {
+                    $("#bulk-actions #action_group").hide();
                     $("#bulk-actions #bulk-delete").prop("disabled", true);
                 }
             }
@@ -441,6 +509,80 @@
                     dt_basic.ajax.reload(); // اگر میخوای جدول بروز بشه
                 });
             },
+        });
+
+        // edit with modal -----------------------------------------------------------------------------------------------------------
+        $(document).on("click", ".item-edit", function() {
+            const id = $(this).data("id");
+
+            // لودینگ یا غیر فعال‌کردن فرم قبل از درخواست (اختیاری)
+            $("#modalEdit .modal-body").addClass("opacity-50");
+            // نمایش مودال
+            $("#modalEdit").modal("show");
+
+            $.ajax({
+                url: "/admin2/fields/" + id,
+                method: "GET",
+                success: function(res) {
+                    // فرض می‌کنیم سرور دیتا رو در res.data برمی‌گردونه
+                    $("#modalEdit #id").val(res.data.id);
+                    $("#modalEdit #name").val(res.data.name);
+                    $("#modalEdit #name").parent().addClass("filled");
+                    $("#modalEdit #cluster_id").val(res.data.cluster_id);
+
+                    // برگشتن فرم به حالت عادی
+                    $("#modalEdit .modal-body").removeClass("opacity-50");
+                },
+                error: function() {
+                    toastr.error('خطا در ارتباط با سرور');
+                }
+            });
+
+            initOffcanvasForm({
+                formId: "form-edit-record",
+                // offcanvasId: "add-new-record",
+                triggerSelector: ".create-new",
+                fields: {
+                    id: {
+                        type: "hidden"
+                    },
+                    name: {
+                        label: "نام رشته",
+                        required: true,
+                        type: "text",
+                    },
+                    cluster_id: {
+                        label: "انتخاب رسته",
+                        required: true,
+                        type: "select",
+                        options: [], // پر می‌کنیمش با ajax
+                    },
+                },
+                onSubmit: function(values) {
+                    console.log("Form Data:", values);
+
+                    // اضافه کردن CSRF token
+                    values._token = $('meta[name="csrf-token"]').attr(
+                        "content",
+                    );
+
+                    // ارسال Ajax
+                    $.post("/admin2/fields/update", values, function(res) {
+                        if (res.success) {
+                            toastr.success(res.message);
+                        } else {
+                            toastr.error(res.message);
+                        }
+                        // offCanvasEl.hide();
+
+                        dt_basic.ajax.reload(); // اگر میخوای جدول بروز بشه
+                        $("#modalEdit").modal("hide");
+
+                    }).fail(function(xhr) {
+                        toastr.error(xhr.message);
+                    });
+                },
+            });
         });
     </script>
 @endsection

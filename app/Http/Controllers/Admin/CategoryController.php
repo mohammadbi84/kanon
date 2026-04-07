@@ -15,7 +15,7 @@ class CategoryController extends Controller
             return response()->json(['data' => $categories]);
         }
         $categories_count = Category::count();
-        return view('admin.categories.index',compact('categories_count'));
+        return view('admin.categories.index', compact('categories_count'));
     }
 
     public function store(Request $request)
@@ -36,16 +36,20 @@ class CategoryController extends Controller
 
     public function edit($id)
     {
+        if (request()->ajax()) {
+            $category = Category::findOrFail($id);
+            return response()->json(['data' => $category]);
+        }
         $category = Category::findOrFail($id);
         return view('admin.categories.edit', compact('category'));
     }
 
-    public function update($id, Request $request)
+    public function update(Request $request)
     {
-        $category = Category::findOrFail($id);
+        $category = Category::findOrFail($request->id);
         $request->validate(['name' => 'required|string|max:255']);
         $category->update(['name' => $request->name]);
-        return redirect()->route('admin.categories.index')->with('success', 'رسته با موفقیت ویرایش شد.');
+        return response()->json(['success' => true, 'message' => 'رسته با موفقیت ویرایش شد.']);
     }
 
     public function delete($id)

@@ -110,8 +110,8 @@ Route::name('admin.')->group(function () {
         Route::post('/store', [CategoryController::class, 'store'])->name('categories.store');
         Route::delete('/delete/{id}', [CategoryController::class, 'delete'])->name('categories.delete');
         Route::post('/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('categories.bulkDelete');
+        Route::post('/update', [CategoryController::class, 'update'])->name('categories.update');
         Route::get('/{id}', [CategoryController::class, 'edit'])->name('categories.edit');
-        Route::post('/{id}', [CategoryController::class, 'update'])->name('categories.update');
     });
 
     // ================== Clusters ==================
@@ -120,8 +120,8 @@ Route::name('admin.')->group(function () {
         Route::post('/store', [ClusterController::class, 'store'])->name('clusters.store');
         Route::delete('/delete/{id}', [ClusterController::class, 'delete'])->name('clusters.delete');
         Route::post('/bulk-delete', [ClusterController::class, 'bulkDelete'])->name('clusters.bulkDelete');
+        Route::post('/update', [ClusterController::class, 'update'])->name('clusters.update');
         Route::get('/{id}', [ClusterController::class, 'edit'])->name('clusters.edit');
-        Route::post('/{id}', [ClusterController::class, 'update'])->name('clusters.update');
     });
 
     // ================== Fields ====================
@@ -130,8 +130,8 @@ Route::name('admin.')->group(function () {
         Route::post('/store', [FieldController::class, 'store'])->name('fields.store');
         Route::delete('/delete/{id}', [FieldController::class, 'delete'])->name('fields.delete');
         Route::post('/bulk-delete', [FieldController::class, 'bulkDelete'])->name('fields.bulkDelete');
+        Route::post('/update', [FieldController::class, 'update'])->name('fields.update');
         Route::get('/{id}', [FieldController::class, 'edit'])->name('fields.edit');
-        Route::post('/{id}', [FieldController::class, 'update'])->name('fields.update');
     });
 
     // ================== Professions ==================

@@ -64,14 +64,18 @@ class FieldController extends Controller
 
     public function edit($id)
     {
+        if (request()->ajax()) {
+            $field = Field::findOrFail($id);
+            return response()->json(['data' => $field]);
+        }
         $field = Field::findOrFail($id);
         $clusters = Cluster::get();
         return view('admin.fields.edit', compact('field', 'clusters'));
     }
 
-    public function update($id, Request $request)
+    public function update(Request $request)
     {
-        $field = Field::findOrFail($id);
+        $field = Field::findOrFail($request->id);
         $request->validate([
             'name' => 'required|string|max:255',
             'cluster_id' => 'required|exists:clusters,id',
@@ -81,7 +85,7 @@ class FieldController extends Controller
             'cluster_id|exists' => 'خوشه انتخابی نامعتبر است.',
         ]);
         $field->update($request->only('name', 'cluster_id'));
-        return redirect()->route('admin.fields.index')->with('success', 'رشته با موفقیت ویرایش شد.');
+        return response()->json(['success' => true, 'message' => 'رشته با موفقیت ویرایش شد.']);
     }
 
     public function delete($id)

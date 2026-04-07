@@ -62,15 +62,20 @@ class ClusterController extends Controller
 
     public function edit($id)
     {
+        if (request()->ajax()) {
+            $cluster = Cluster::findOrFail($id);
+            return response()->json(['data' => $cluster]);
+        }
         $cluster = Cluster::findOrFail($id);
         $categories = Category::all();
         return view('admin.clusters.edit', compact('cluster', 'categories'));
     }
 
-    public function update($id, Request $request)
+    public function update(Request $request)
     {
-        $cluster = Cluster::findOrFail($id);
+        $cluster = Cluster::findOrFail($request->id);
         $request->validate([
+            'id' => 'required|exists:clusters,id',
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
         ], [
@@ -79,7 +84,7 @@ class ClusterController extends Controller
             'category|exists' => 'رسته انتخابی نامعتبر است.',
         ]);
         $cluster->update($request->only('name', 'category_id'));
-        return redirect()->route('admin.clusters.index')->with('success', 'خوشه با موفقیت ویرایش شد.');
+        return response()->json(['success' => true, 'message' => 'خوشه با موفقیت ویرایش شد.']);
     }
 
     public function delete($id)

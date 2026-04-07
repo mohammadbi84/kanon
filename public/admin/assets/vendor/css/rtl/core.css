@@ -163,7 +163,9 @@ p {
   margin-top: 0;
   margin-bottom: 1rem;
 }
-
+.opacity-50{
+    opacity: 0.5;
+}
 abbr[title] {
   -webkit-text-decoration: underline dotted;
           text-decoration: underline dotted;

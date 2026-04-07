@@ -322,6 +322,11 @@ function initOffcanvasForm({
         console.log("فرم با موفقیت ریست شد");
     }
 
+    const modalCenter = document.getElementById("modalCenter");
+    modalCenter.addEventListener("hidden.bs.modal", function () {
+        resetFormCompletely();
+    });
+
     // ساخت Validation
     fv = FormValidation.formValidation(formEl, {
         fields: validationFields,
