@@ -56,7 +56,7 @@ class ProfessionController extends Controller
             'field_id' => 'required|exists:fields,id',
             'name' => 'required|string|max:255',
             'old_standard_code' => 'required|string|max:255',
-            'new_standard_code' => 'required|string|max:255',
+            'new_standard_code' => 'required|string|max:255|unique:professions,new_standard_code',
             'theory_hour' => 'nullable|integer|min:0',
             'theory_minute' => 'nullable|integer|min:0|max:59',
             'practice_hour' => 'nullable|integer|min:0',
@@ -121,7 +121,6 @@ class ProfessionController extends Controller
             'image_path' => 'تصویر',
             'standard_file' => 'فایل استاندارد',
         ];
-
         // اعتبارسنجی داده‌ها
         $validator = Validator::make($request->all(), $rules, $messages, $attributes);
 
@@ -131,6 +130,10 @@ class ProfessionController extends Controller
                 'message' => 'خطا در اعتبارسنجی داده‌ها',
                 'errors' => $validator->errors()
             ], 422);
+        }
+
+        if (Profession::where('field_id', $request->field_id)->where('name', $request->name)->first()) {
+            return response()->json(['success' => false, 'message' => 'حرفه با این نام و رشته وجود دارد.']);
         }
 
         try {

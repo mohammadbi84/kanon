@@ -19,8 +19,9 @@ class TuitionController extends Controller
             return response()->json(['data' => $tuitions]);
         }
 
-        $cities = City::where('active', true)->get();
-        return view('admin.tuitions.index', compact('cities'));
+        $cities = City::where('active', true)->whereNotNull('parent')->orderBy('title','asc')->get();
+        $tuitions_count = Tuition::count();
+        return view('admin.tuitions.index', compact('cities','tuitions_count'));
     }
 
     /**

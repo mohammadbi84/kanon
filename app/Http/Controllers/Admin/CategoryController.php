@@ -14,19 +14,24 @@ class CategoryController extends Controller
             $categories = Category::with('clusters')->latest()->get();
             return response()->json(['data' => $categories]);
         }
-        return view('admin.categories.index');
+        $categories_count = Category::count();
+        return view('admin.categories.index',compact('categories_count'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:categories,name',
         ], [
             'name.required' => 'نام رسته الزامی است.',
         ]);
 
+        if (Category::where('name', $request->name)->first()) {
+            return response()->json(['success' => false, 'message' => 'رسته با این نام وجود دارد.']);
+        }
+
         Category::create(['name' => $request->name]);
-        return response()->json(['success' => 'رسته با موفقیت اضافه شد.']);
+        return response()->json(['success' => true, 'message' => 'رسته با موفقیت اضافه شد.']);
     }
 
     public function edit($id)

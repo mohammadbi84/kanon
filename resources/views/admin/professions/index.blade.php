@@ -10,7 +10,11 @@
     <h5 class="breadcrumb-wrapper mb-4">
         <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
         @if ($fieldId)
-            <a href="{{ route('admin.clusters.index') }}" class="text-muted">{{ $field?->name }}</a> <span
+            <a href="{{ route('admin.clusters.index') }}" class="text-muted">رسته {{ $field?->cluster->category->name }}</a>
+            <span class="text-muted">/</span>
+            <a href="{{ route('admin.clusters.index') }}" class="text-muted">خوشه {{ $field?->cluster?->name }}</a> <span
+                class="text-muted">/</span>
+            <a href="{{ route('admin.clusters.index') }}" class="text-muted">رشته {{ $field?->name }}</a> <span
                 class="text-muted">/</span>
         @endif
         <span>حرفه ها</span>

@@ -34,7 +34,12 @@ class ClusterController extends Controller
         if ($categoryId) {
             $category = Category::find($categoryId);
         }
-        return view('admin.clusters.index', compact('categories', 'category'));
+        if ($categoryId) {
+            $cluster_count = Cluster::when($categoryId, fn($q) => $q->where('category_id', $categoryId))->count();
+        } else {
+            $cluster_count = Cluster::count();
+        }
+        return view('admin.clusters.index', compact('categories', 'category', 'cluster_count'));
     }
 
     public function store(Request $request)
@@ -47,9 +52,12 @@ class ClusterController extends Controller
             'category|required' => 'انتخاب رسته الزامی است.',
             'category|exists' => 'رسته انتخابی نامعتبر است.',
         ]);
+        if (Cluster::where('category_id', $request->category_id)->where('name', $request->name)->first()) {
+            return response()->json(['success' => false, 'message' => 'خوشه با این نام و رسته وجود دارد.']);
+        }
 
         Cluster::create($request->only('name', 'category_id'));
-        return response()->json(['success' => 'خوشه با موفقیت اضافه شد.']);
+        return response()->json(['success' => true, 'message' => 'خوشه با موفقیت اضافه شد.']);
     }
 
     public function edit($id)

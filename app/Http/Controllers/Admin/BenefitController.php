@@ -32,7 +32,7 @@ class BenefitController extends Controller
         }
 
         Benefit::create($validator->validated());
-        return response()->json(['success' => 'محتوا با موفقیت اضافه شد.']);
+        return response()->json(['success' => true, 'message' => 'محتوا با موفقیت ذخیره شد.']);
     }
 
     public function edit($id)
@@ -52,13 +52,13 @@ class BenefitController extends Controller
             'text.required' => 'محتوا الزامی است.',
         ]);
         $benefit->update($request->all());
-        return redirect()->route('admin.benefit.index')->with('success', 'محتوا با موفقیت ویرایش شد.');
+        return response()->json(['success' => true, 'message' => 'محتوا با موفقیت ویرایش شد.']);
     }
 
     public function delete($id)
     {
         Benefit::findOrFail($id)->delete();
-        return response()->json(['success' => 'محتوا با موفقیت حذف شد.']);
+        return response()->json(['success' => true, 'message' => 'محتوا با موفقیت حذف شد.']);
     }
 
     public function bulkDelete(Request $request)

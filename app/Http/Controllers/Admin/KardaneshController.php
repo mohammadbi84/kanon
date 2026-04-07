@@ -14,8 +14,8 @@ class KardaneshController extends Controller
             $kardaneshs =Kardanesh::latest()->get();
             return response()->json(['data' => $kardaneshs]);
         }
-        $kardaneshs =Kardanesh::latest()->paginate(20);
-        return view('admin.kardaneshs.index', compact('kardaneshs'));
+        $kardaneshs_count =Kardanesh::count();
+        return view('admin.kardaneshs.index', compact('kardaneshs_count'));
     }
     public function store(Request $request)
     {

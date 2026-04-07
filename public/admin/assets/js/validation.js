@@ -273,6 +273,7 @@ function initOffcanvasForm({
                 case "password":
                 case "date":
                     input.value = "";
+                    input.parentElement.classList.remove("filled");
                     break;
                 case "checkbox":
                 case "radio":
@@ -296,11 +297,16 @@ function initOffcanvasForm({
         select2Inputs.forEach((select) => {
             $(select).val(null).trigger("change");
         });
+        const selectInputs = formEl.querySelectorAll("select");
+        selectInputs.forEach((select) => {
+            $(select).val(null).trigger("change");
+        });
 
         // ریست کردن textarea
         const textareas = formEl.querySelectorAll("textarea");
         textareas.forEach((textarea) => {
             textarea.value = "";
+            textarea.parentElement.classList.remove("filled");
             if (textarea.style.height !== "auto") {
                 textarea.style.height = "auto";
             }
@@ -313,7 +319,6 @@ function initOffcanvasForm({
                 dateInput._flatpickr.clear();
             }
         });
-
         console.log("فرم با موفقیت ریست شد");
     }
 

@@ -1103,3 +1103,83 @@ html .ql-editor.ql-blank::before {
 html .sticky-wrapper.is-sticky .card-header.sticky-element {
   border-radius: 0;
 }
+
+
+
+/* استایل مشترک برای input و textarea */
+.custom-input-group {
+    position: relative;
+    margin-bottom: 5px;
+}
+
+.custom-input-group input,
+.custom-input-group textarea {
+    outline: 0px solid transparent !important;
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    font-family: inherit;
+    font-size: 15px;
+    transition: border-color 0.3s;
+    resize: vertical;
+    background-color: #f2f2f2a1;
+}
+
+.custom-input-group input:focus,
+.custom-input-group textarea:focus {
+    border-color: var(--bs-blue);
+    background-color: #fff;
+    /* box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15); */
+}
+
+.custom-input-group.filled input,
+.custom-input-group.filled textarea {
+    /* border-color: var(--bs-blue); */
+    background-color: #fff;
+    /* box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15); */
+}
+
+.custom-input-group label {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: 0.2s;
+    pointer-events: none;
+    color: #666;
+    background: transparent;
+    font-size: 14px;
+}
+
+.custom-input-group input:focus+label,
+.custom-input-group.filled input+label,
+.custom-input-group textarea:focus+label,
+.custom-input-group.filled textarea+label {
+    top: 0px;
+    right: 10px;
+    background: white;
+    padding: 0 8px;
+    font-size: 11px;
+    /* color: var(--bs-blue); */
+}
+
+.custom-input-group .clear-btn {
+    display: none;
+    position: absolute;
+    left: 10px;
+    top: 56%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-weight: bold;
+    color: #888;
+    font-size: 1.2rem;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 18px;
+}
+
+.custom-input-group.filled .clear-btn {
+    display: block;
+}

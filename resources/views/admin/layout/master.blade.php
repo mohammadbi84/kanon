@@ -108,6 +108,8 @@
 
     {{-- <script src="{{asset('admin/assets/js/tables-datatables-extensions.js')}}"></script> --}}
 
+    <script src="{{asset('admin/assets/js/inputs.js')}}"></script>
+
     {{-- sweet alert sweetalert2 --}}
     <script src="{{ asset('admin/assets/vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
     <script src="{{ asset('admin/assets/js/extended-ui-sweetalert2.js') }}"></script>
@@ -118,7 +120,7 @@
         toastr.options = {
             "closeButton": true,
             "progressBar": true, // نوار تایمر
-            "positionClass": "toast-top-right",
+            "positionClass": "toast-top-center",
             "timeOut": "3000", // مدت زمان نمایش (۳ ثانیه)
             "extendedTimeOut": "1000", // زمان اضافی پس از hover
             "showDuration": "300",

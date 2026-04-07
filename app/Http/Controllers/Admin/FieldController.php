@@ -35,7 +35,12 @@ class FieldController extends Controller
         if ($clusterId) {
             $cluster = Cluster::find($clusterId);
         }
-        return view('admin.fields.index', compact('clusters', 'cluster'));
+        if ($clusterId) {
+            $fields_count = Field::when($clusterId, fn($q) => $q->where('cluster_id', $clusterId))->count();
+        } else {
+            $fields_count = Field::count();
+        }
+        return view('admin.fields.index', compact('clusters', 'cluster', 'fields_count'));
     }
 
     public function store(Request $request)
@@ -49,8 +54,12 @@ class FieldController extends Controller
             'cluster_id|exists' => 'خوشه انتخابی نامعتبر است.',
         ]);
 
+        if (Field::where('cluster_id', $request->cluster_id)->where('name', $request->name)->first()) {
+            return response()->json(['success' => false, 'message' => 'رشته با این نام و رسته وجود دارد.']);
+        }
+
         Field::create($request->only('name', 'cluster_id'));
-        return response()->json(['success' => 'رشته با موفقیت اضافه شد.']);
+        return response()->json(['success' => false, 'message' => 'رشته با موفقیت اضافه شد.']);
     }
 
     public function edit($id)

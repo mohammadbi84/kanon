@@ -14,8 +14,8 @@ class JobtypeController extends Controller
             $jobtypes = Jobtype::latest()->get();
             return response()->json(['data' => $jobtypes]);
         }
-        $jobtypes = Jobtype::latest()->paginate(20);
-        return view('admin.jobtypes.index', compact('jobtypes'));
+        $jobtypes_count = Jobtype::count();
+        return view('admin.jobtypes.index', compact('jobtypes_count'));
     }
     public function store(Request $request)
     {
