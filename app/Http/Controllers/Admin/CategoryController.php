@@ -78,4 +78,35 @@ class CategoryController extends Controller
         }
         return response()->json(['success' => true, 'message' => 'رکوردها با موفقیت حذف شدند.']);
     }
+
+    public function toggle(Category $category)
+    {
+        $category->update([
+            'active' => !$category->active
+        ]);
+        return response()->json(['success' => true, 'message' => 'وضعیت با موفقیت تغییر کرد.']);
+    }
+    public function bulkToggle(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'هیچ آی‌دی‌ای ارسال نشده است.'
+            ], 400);
+        }
+
+        $categories = Category::whereIn('id', $ids)->get();
+        foreach ($categories as $key => $category) {
+            $category->update([
+                'active' => $request->status,
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'وضعیت ها با موفقیت تغییر کرد.'
+        ]);
+    }
 }

@@ -24,12 +24,12 @@ class ClusterController extends Controller
                     ->latest()
                     ->get();
             } else {
-                $categories = Category::all();
+                $categories = Category::active()->get();
                 $clusters = Cluster::with('category', 'fields')->latest()->get();
             }
             return response()->json(['data' => $clusters, 'categories' => $categories]);
         }
-        $categories = Category::all();
+        $categories = Category::active()->get();
         $category = [];
         if ($categoryId) {
             $category = Category::find($categoryId);
@@ -67,7 +67,7 @@ class ClusterController extends Controller
             return response()->json(['data' => $cluster]);
         }
         $cluster = Cluster::findOrFail($id);
-        $categories = Category::all();
+        $categories = Category::active()->get();
         return view('admin.clusters.edit', compact('cluster', 'categories'));
     }
 
@@ -112,5 +112,36 @@ class ClusterController extends Controller
             }
         }
         return response()->json(['success' => true, 'message' => 'رکوردها با موفقیت حذف شدند.']);
+    }
+
+    public function toggle(Cluster $cluster)
+    {
+        $cluster->update([
+            'active' => !$cluster->active
+        ]);
+        return response()->json(['success' => true, 'message' => 'وضعیت با موفقیت تغییر کرد.']);
+    }
+    public function bulkToggle(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'هیچ آی‌دی‌ای ارسال نشده است.'
+            ], 400);
+        }
+
+        $clusters = Cluster::whereIn('id', $ids)->get();
+        foreach ($clusters as $key => $cluster) {
+            $cluster->update([
+                'active' => $request->status,
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'وضعیت ها با موفقیت تغییر کرد.'
+        ]);
     }
 }

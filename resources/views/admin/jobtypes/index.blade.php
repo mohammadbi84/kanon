@@ -55,6 +55,34 @@
             </div>
         </div>
     </div>
+    <!-- Modal Edit -->
+    <div class="modal fade" id="modalEdit" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title secondary-font" id="modalEditTitle">ویرایش نوع شغل</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post" class="add-new-record pt-0 row g-2 px-3" id="form-edit-record">
+                        @csrf
+                        <div class="col-sm-12">
+                            <input type="hidden" id="id" class="form-control" name="id">
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="custom-input-group">
+                                <input type="text" id="name" class="form-control" name="name">
+                                <label class="form-label" for="name">نام نوع شغل</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-3">
+                            <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1">ذخیره</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('script')
     <script src="{{ asset('admin/assets/js/validation.js') }}"></script>
@@ -109,14 +137,13 @@
                     },
                 },
                 {
-                    // For Checkboxes
                     targets: 1,
                     orderable: false,
                     render: function() {
-                        return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle">';
+                        return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle row-check">';
                     },
                     checkboxes: {
-                        selectRow: true,
+                        selectRow: false, // فقط با چک‌باکس، نه روی کل ردیف
                         selectAllRender: '<input type="checkbox" class="form-check-input mt-0 align-middle">',
                     },
                     responsivePriority: 4,
@@ -136,23 +163,15 @@
                     orderable: false,
                     searchable: false,
                     render: function(data, type, full, meta) {
-                        return (
-                            '<a href="/admin2/jobtype/' +
-                            full.id +
-                            '"' +
-                            'class="btn btn-sm btn-icon btn-primary item-edit" ' +
-                            'data-id="' +
-                            full.id +
-                            '">' +
-                            '<i class="bx bxs-edit"></i>' +
-                            "</a> " +
-                            '<button class="btn btn-sm btn-icon btn-danger item-delete" ' +
-                            'data-id="' +
-                            full.id +
-                            '">' +
-                            '<i class="bx bxs-trash"></i>' +
-                            "</button>"
-                        );
+                        return `
+                                <button data-id="${full.id}" class="btn btn-sm btn-icon btn-primary item-edit">
+                                <i class="bx bxs-edit"></i>
+                                </button>
+
+                                <button class="btn btn-sm btn-icon btn-danger item-delete" data-id="${full.id}">
+                                <i class="bx bxs-trash"></i>
+                                </button>
+                                `;
                     },
                 },
             ],
@@ -209,9 +228,23 @@
         });
         $("#bulk-actions").appendTo(".bulk-holder");
         $("div.head-label").html(
-            '<h5 class="card-title mb-0">لیست نوع شغل ها</h5>'+
+            '<h5 class="card-title mb-0">لیست نوع شغل ها</h5>' +
             '<small class="text-muted ms-2">( {{ $jobtypes_count }} رکورد )</small>'
         );
+        dt_basic.on('change', '.row-check', function() {
+            const row = dt_basic.row($(this).closest('tr'));
+
+            if (this.checked) {
+                row.select();
+            } else {
+                row.deselect();
+            }
+        });
+        dt_basic.on('user-select', function(e, dt, type, cell, originalEvent) {
+            if (!$(originalEvent.target).hasClass('row-check')) {
+                e.preventDefault();
+            }
+        });
         // add new record-------------------------------------------------------------------------------------------------------------
         initOffcanvasForm({
             formId: "form-add-new-record",
@@ -374,5 +407,74 @@
                 });
             });
         }
+
+        // edit with modal -----------------------------------------------------------------------------------------------------------
+        $(document).on("click", ".item-edit", function() {
+            const id = $(this).data("id");
+
+            // لودینگ یا غیر فعال‌کردن فرم قبل از درخواست (اختیاری)
+            $("#modalEdit .modal-body").addClass("opacity-50");
+            // نمایش مودال
+            $("#modalEdit").modal("show");
+
+            $.ajax({
+                url: "/admin2/jobtype/" + id,
+                method: "GET",
+                success: function(res) {
+                    // فرض می‌کنیم سرور دیتا رو در res.data برمی‌گردونه
+                    $("#modalEdit #id").val(res.data.id);
+                    $("#modalEdit #name").val(res.data.name);
+                    $("#modalEdit #name").parent().addClass("filled");
+
+                    // برگشتن فرم به حالت عادی
+                    $("#modalEdit .modal-body").removeClass("opacity-50");
+                },
+                error: function() {
+                    toastr.error('خطا در ارتباط با سرور');
+                }
+            });
+
+            initOffcanvasForm({
+                formId: "form-edit-record",
+                // offcanvasId: "add-new-record",
+                triggerSelector: ".create-new",
+                fields: {
+                    name: {
+                        label: "نام نوع شغل",
+                        required: true,
+                        type: "text",
+                    },
+                    id: {
+                        label: "ایدی نوع شغل",
+                        required: true,
+                        type: "hidden",
+                    },
+                },
+                onSubmit: function(values) {
+                    console.log("Form Data:", values);
+
+                    // اضافه کردن CSRF token
+                    values._token = $('meta[name="csrf-token"]').attr(
+                        "content",
+                    );
+
+                    // ارسال Ajax
+                    $.post("/admin2/jobtype/update", values, function(res) {
+                        if (res.success) {
+                            toastr.success(res.message);
+                        } else {
+                            toastr.error(res.message);
+                        }
+                        // offCanvasEl.hide();
+
+                        dt_basic.ajax.reload(); // اگر میخوای جدول بروز بشه
+                        $("#modalEdit").modal("hide");
+
+                    }).fail(function(xhr) {
+                        toastr.error("نوع شغل با این نام وجود دارد.");
+                    });
+                },
+            });
+        });
     </script>
 @endsection

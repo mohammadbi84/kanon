@@ -24,12 +24,12 @@ class FieldController extends Controller
                     ->latest()
                     ->get();
             } else {
-                $clusters = Cluster::all();
+                $clusters = Cluster::active()->get();
                 $fields = Field::with('cluster', 'professions')->latest()->get();
             }
             return response()->json(['data' => $fields, 'clusters' => $clusters]);
         }
-        $clusters = Cluster::with('category')->get();
+        $clusters = Cluster::with('category')->active()->get();
 
         $cluster = [];
         if ($clusterId) {
@@ -113,5 +113,36 @@ class FieldController extends Controller
             }
         }
         return response()->json(['success' => true, 'message' => 'رکوردها با موفقیت حذف شدند.']);
+    }
+
+    public function toggle(Field $field)
+    {
+        $field->update([
+            'active' => !$field->active
+        ]);
+        return response()->json(['success' => true, 'message' => 'وضعیت با موفقیت تغییر کرد.']);
+    }
+    public function bulkToggle(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'هیچ آی‌دی‌ای ارسال نشده است.'
+            ], 400);
+        }
+
+        $fields = Field::whereIn('id', $ids)->get();
+        foreach ($fields as $key => $field) {
+            $field->update([
+                'active' => $request->status,
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'وضعیت ها با موفقیت تغییر کرد.'
+        ]);
     }
 }

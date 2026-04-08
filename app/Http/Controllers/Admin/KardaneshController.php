@@ -11,10 +11,10 @@ class KardaneshController extends Controller
     public function index()
     {
         if (Request()->ajax()) {
-            $kardaneshs =Kardanesh::latest()->get();
+            $kardaneshs = Kardanesh::latest()->get();
             return response()->json(['data' => $kardaneshs]);
         }
-        $kardaneshs_count =Kardanesh::count();
+        $kardaneshs_count = Kardanesh::count();
         return view('admin.kardaneshs.index', compact('kardaneshs_count'));
     }
     public function store(Request $request)
@@ -32,12 +32,15 @@ class KardaneshController extends Controller
     }
     public function edit($id)
     {
-        $kardanesh =Kardanesh::findOrFail($id);
+        $kardanesh = Kardanesh::findOrFail($id);
+        if (Request()->ajax()) {
+            return response()->json(['data' => $kardanesh]);
+        }
         return view('admin.kardaneshs.edit', compact('kardanesh'));
     }
-    public function update($id ,Request $request)
+    public function update(Request $request)
     {
-        $job =Kardanesh::findOrFail($id);
+        $job = Kardanesh::findOrFail($request->id);
         $request->validate([
             'name' => 'required|string',
         ], [
@@ -46,13 +49,13 @@ class KardaneshController extends Controller
         ]);
         $job->name = $request->name;
         $job->save();
-        return redirect(route('admin.kardanesh.index'))->with('success','نوع کاردانش با موفقیت ویرایش شد.');
+        return response()->json(['success' => true, 'message' => 'نوع شغل با موفقیت ویرایش شد.']);
     }
     public function delete($id)
     {
-        $kardaneshs =Kardanesh::findOrFail($id);
+        $kardaneshs = Kardanesh::findOrFail($id);
         $kardaneshs->delete();
-        return response()->json(['success' => 'نوع شغل با موفقیت حذف شد.']);
+        return response()->json(['success' => true, 'message' => 'نوع شغل با موفقیت حذف شد.']);
     }
     public function bulkDelete(Request $request)
     {
@@ -65,7 +68,7 @@ class KardaneshController extends Controller
             ], 400);
         }
 
-       Kardanesh::whereIn('id', $ids)->delete();
+        Kardanesh::whereIn('id', $ids)->delete();
 
         return response()->json([
             'success' => true,

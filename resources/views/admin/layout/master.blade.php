@@ -118,7 +118,7 @@
 
     <script>
         toastr.options = {
-            "closeButton": true,
+            "closeButton": false,
             "progressBar": true, // نوار تایمر
             "positionClass": "toast-top-center",
             "timeOut": "3000", // مدت زمان نمایش (۳ ثانیه)

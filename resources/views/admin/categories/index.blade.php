@@ -44,7 +44,7 @@
             </div>
         </div>
         <div class="card-datatable table-responsive pt-0 p-3">
-            <table class="dt-select-table categories table">
+            <table class="dt-select-table categories table table-hover">
                 <thead>
                     <tr>
                         {{-- filled with ajax --}}
@@ -64,8 +64,12 @@
                                 حذف انتخابی ها
                             </button>
                         </li>
-                        <li><a class="dropdown-item" href="#">عمل دیگر</a></li>
-                        <li><a class="dropdown-item" href="#">یک عمل دیگر</a></li>
+                        <li>
+                            <button class="dropdown-item bulk-toggle" data-status="1" disabled>انتشار همه</button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item bulk-toggle" data-status="0" disabled>عدم انتشار همه</button>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -130,6 +134,10 @@
                 },
                 {
                     data: "",
+                    title: "انتشار"
+                },
+                {
+                    data: "",
                     title: "عملیات"
                 }, // ستون آخر برای دکمه‌ها
             ],
@@ -176,6 +184,25 @@
                     targets: 4,
                 },
                 {
+                    targets: -2,
+                    title: "وضعیت",
+                    orderable: false,
+                    searchable: false,
+                    render: function(data, type, full, meta) {
+                        return full.active ?
+                            `
+                            <button data-id="${full.id}" class="btn text-success btn-icon item-toggle">
+                                <i class="bx bx-check"></i>
+                            </button>
+                        ` :
+                            `
+                            <button data-id="${full.id}" class="btn text-danger btn-icon item-toggle">
+                                <i class="bx bx-x"></i>
+                            </button>
+                        `;
+                    },
+                },
+                {
                     targets: -1,
                     title: "عملیات",
                     orderable: false,
@@ -186,11 +213,11 @@
                                 خوشه ها  <span class="ms-2">( ${full.clusters.length} )</span>
                                 </a>
 
-                                <button data-id="${full.id}" class="btn btn-sm btn-icon btn-primary item-edit">
+                                <button data-id="${full.id}" class="btn btn-sm btn-icon btn-primary item-edit" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="<small>ویرایش</small>">
                                 <i class="bx bxs-edit"></i>
                                 </button>
 
-                                <button class="btn btn-sm btn-icon btn-danger item-delete" data-id="${full.id}">
+                                <button class="btn btn-sm btn-icon btn-danger item-delete" data-id="${full.id}" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="<small>حذف</small>">
                                 <i class="bx bxs-trash"></i>
                                 </button>
                                 `;
@@ -254,6 +281,13 @@
             '<small class="text-muted ms-2">( {{ $categories_count }} رکورد )</small>'
         );
 
+        dt_basic.on('draw', function() {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+
         dt_basic.on('change', '.row-check', function() {
             const row = dt_basic.row($(this).closest('tr'));
 
@@ -273,6 +307,11 @@
             const id = $(this).data("id");
 
             if (!id) return;
+
+            // برداشتن فوکوس از روی دکمه (مهم!)
+            if (document.activeElement && document.activeElement instanceof HTMLElement) {
+                document.activeElement.blur();
+            }
 
             Swal.fire({
                 title: `آیا از حذف این رکورد مطمئن هستید؟`,
@@ -333,9 +372,11 @@
                     // $("#bulk-actions").removeClass("d-none");
                     $("#bulk-actions #action_group").show();
                     $("#bulk-actions #bulk-delete").prop("disabled", false);
+                    $("#bulk-actions .bulk-toggle").prop("disabled", false);
                 } else {
                     $("#bulk-actions #action_group").hide();
                     $("#bulk-actions #bulk-delete").prop("disabled", true);
+                    $("#bulk-actions .bulk-toggle").prop("disabled", true);
                 }
             }
 
@@ -350,6 +391,7 @@
                     .toArray();
             }
 
+            // delete
             btnBulk.on("click", function() {
                 const ids = getSelectedIds();
 
@@ -401,7 +443,69 @@
                     }
                 });
             });
+
+            // toggle selected
+            $(".bulk-toggle").on("click", function() {
+                const ids = getSelectedIds();
+                const status = $(this).data("status");
+
+                if (ids.length === 0) {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "هیچ رکوردی انتخاب نشده!",
+                        confirmButtonText: "باشه",
+                    });
+                    return;
+                }
+
+                $.ajax({
+                    url: "/admin2/categories/bulk-toggle",
+                    type: "POST",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr(
+                            "content"
+                        ),
+                        ids: ids,
+                        status: status,
+                    },
+                    success: function(res) {
+                        toastr.success(res.message);
+                        dt_basic.ajax.reload(null, false);
+                        $("#bulk-actions .bulk-toggle").prop("disabled", true);
+                    },
+                    error: function(err) {
+                        toastr.error("خطا در ارتباط با سرور.");
+
+                        console.error(err);
+                    },
+                });
+            });
         }
+
+        // toggle one item----------------------------------------------------------------------------------------------------------------
+        dt_basic.on("click", ".item-toggle", function() {
+            const id = $(this).data("id");
+
+            if (!id) return;
+            $.ajax({
+                url: "/admin2/categories/" + id + "/toggle",
+                type: "patch",
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr(
+                        "content"
+                    ),
+                },
+                success: function(res) {
+                    dt_basic.ajax.reload(null, false);
+                    toastr.success(res.message);
+                },
+                error: function(err) {
+                    toastr.error("خطا در ارتباط با سرور.");
+                    console.error(err);
+                },
+            });
+        });
+
         // add new record-------------------------------------------------------------------------------------------------------------
         initOffcanvasForm({
             formId: "form-add-new-record",

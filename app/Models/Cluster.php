@@ -8,7 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Cluster extends Model
 {
     use HasFactory;
-    protected $fillable = ['category_id', 'name'];
+    protected $fillable = ['category_id', 'name', 'active'];
+
+    protected $casts = [
+        'active' => 'boolean',
+    ];
 
     public function category()
     {
@@ -18,5 +22,13 @@ class Cluster extends Model
     public function fields()
     {
         return $this->hasMany(Field::class);
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('active', true)
+            ->whereHas('category', function ($query) {
+                $query->where('active', true);
+            });
     }
 }

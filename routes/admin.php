@@ -80,8 +80,8 @@ Route::name('admin.')->group(function () {
         Route::post('/store', [JobtypeController::class, 'store'])->name('jobtype.store');
         Route::delete('/delete/{id}', [JobtypeController::class, 'delete'])->name('jobtype.delete');
         Route::post('/bulk-delete', [JobTypeController::class, 'bulkDelete'])->name('jobtype.bulkDelete');
+        Route::post('/update', [JobtypeController::class, 'update'])->name('jobtype.update');
         Route::get('/{id}', [JobtypeController::class, 'edit'])->name('jobtype.edit');
-        Route::post('/{id}', [JobtypeController::class, 'update'])->name('jobtype.update');
     });
     // ================== kardanesh ==================
     Route::prefix('/kardanesh')->group(function () {
@@ -89,8 +89,8 @@ Route::name('admin.')->group(function () {
         Route::post('/store', [KardaneshController::class, 'store'])->name('kardanesh.store');
         Route::delete('/delete/{id}', [KardaneshController::class, 'delete'])->name('kardanesh.delete');
         Route::post('/bulk-delete', [KardaneshController::class, 'bulkDelete'])->name('kardanesh.bulkDelete');
+        Route::post('/update', [KardaneshController::class, 'update'])->name('kardanesh.update');
         Route::get('/{id}', [KardaneshController::class, 'edit'])->name('kardanesh.edit');
-        Route::post('/{id}', [KardaneshController::class, 'update'])->name('kardanesh.update');
     });
     // ================== Tuitions ==================
     Route::prefix('/tuitions')->name('tuitions.')->group(function () {
@@ -108,30 +108,36 @@ Route::name('admin.')->group(function () {
     Route::prefix('/categories')->group(function () {
         Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
         Route::post('/store', [CategoryController::class, 'store'])->name('categories.store');
+        Route::post('/bulk-toggle', [CategoryController::class, 'bulkToggle'])->name('categories.bulkToggle');
         Route::delete('/delete/{id}', [CategoryController::class, 'delete'])->name('categories.delete');
         Route::post('/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('categories.bulkDelete');
         Route::post('/update', [CategoryController::class, 'update'])->name('categories.update');
         Route::get('/{id}', [CategoryController::class, 'edit'])->name('categories.edit');
+        Route::patch('/{category}/toggle', [CategoryController::class, 'toggle'])->name('categories.toggle');
     });
 
     // ================== Clusters ==================
     Route::prefix('/clusters')->group(function () {
         Route::get('/', [ClusterController::class, 'index'])->name('clusters.index');
         Route::post('/store', [ClusterController::class, 'store'])->name('clusters.store');
+        Route::post('/bulk-toggle', [ClusterController::class, 'bulkToggle'])->name('clusters.bulkToggle');
         Route::delete('/delete/{id}', [ClusterController::class, 'delete'])->name('clusters.delete');
         Route::post('/bulk-delete', [ClusterController::class, 'bulkDelete'])->name('clusters.bulkDelete');
         Route::post('/update', [ClusterController::class, 'update'])->name('clusters.update');
         Route::get('/{id}', [ClusterController::class, 'edit'])->name('clusters.edit');
+        Route::patch('/{cluster}/toggle', [ClusterController::class, 'toggle'])->name('clusters.toggle');
     });
 
     // ================== Fields ====================
     Route::prefix('/fields')->group(function () {
         Route::get('/', [FieldController::class, 'index'])->name('fields.index');
         Route::post('/store', [FieldController::class, 'store'])->name('fields.store');
+        Route::post('/bulk-toggle', [FieldController::class, 'bulkToggle'])->name('fields.bulkToggle');
         Route::delete('/delete/{id}', [FieldController::class, 'delete'])->name('fields.delete');
         Route::post('/bulk-delete', [FieldController::class, 'bulkDelete'])->name('fields.bulkDelete');
         Route::post('/update', [FieldController::class, 'update'])->name('fields.update');
         Route::get('/{id}', [FieldController::class, 'edit'])->name('fields.edit');
+        Route::patch('/{field}/toggle', [FieldController::class, 'toggle'])->name('fields.toggle');
     });
 
     // ================== Professions ==================

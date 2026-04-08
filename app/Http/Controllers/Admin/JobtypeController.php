@@ -33,11 +33,14 @@ class JobtypeController extends Controller
     public function edit($id)
     {
         $job = Jobtype::findOrFail($id);
+        if (Request()->ajax()) {
+            return response()->json(['data' => $job]);
+        }
         return view('admin.jobtypes.edit', compact('job'));
     }
-    public function update($id ,Request $request)
+    public function update(Request $request)
     {
-        $job = Jobtype::findOrFail($id);
+        $job = Jobtype::findOrFail($request->id);
         $request->validate([
             'name' => 'required|string',
         ], [
@@ -46,13 +49,13 @@ class JobtypeController extends Controller
         ]);
         $job->name = $request->name;
         $job->save();
-        return redirect(route('admin.jobtype.index'))->with('success','نوع شغل با موفقیت ویرایش شد.');
+        return response()->json(['success' => true, 'message' => 'نوع شغل با موفقیت ویرایش شد.']);
     }
     public function delete($id)
     {
         $jobtype = Jobtype::findOrFail($id);
         $jobtype->delete();
-        return response()->json(['success' => 'نوع شغل با موفقیت حذف شد.']);
+        return response()->json(['success' => true, 'message' => 'نوع شغل با موفقیت حذف شد.']);
     }
     public function bulkDelete(Request $request)
     {

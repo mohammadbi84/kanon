@@ -8,7 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Field extends Model
 {
     use HasFactory;
-    protected $fillable = ['cluster_id', 'name', 'description'];
+    protected $fillable = ['cluster_id', 'name', 'active'];
+
+    protected $casts = [
+        'active' => 'boolean',
+    ];
 
     public function cluster()
     {
@@ -21,6 +25,17 @@ class Field extends Model
     }
     public function academies()
     {
-        return $this->belongsToMany(Academy::class,'academy_fields')->withTimestamps();
+        return $this->belongsToMany(Academy::class, 'academy_fields')->withTimestamps();
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('active', true)
+            ->whereHas('cluster', function ($query) {
+                $query->where('active', true)
+                    ->whereHas('category', function ($query) {
+                        $query->where('active', true);
+                    });
+            });
     }
 }
