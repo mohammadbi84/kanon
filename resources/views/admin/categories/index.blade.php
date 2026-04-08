@@ -340,7 +340,7 @@
                             }
 
                             dt_basic.ajax.reload(null, false);
-                            $("#bulk-actions").addClass("d-none");
+                            // $("#bulk-actions").addClass("d-none");
                         },
                         error: function(err) {
                             toastr.error(err.message);
