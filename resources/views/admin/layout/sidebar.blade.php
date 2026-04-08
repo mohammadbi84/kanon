@@ -57,7 +57,6 @@
                 <div>داشبورد</div>
             </a>
         </li>
-        <li class="menu-header small text-uppercase"><span class="menu-header-text">پیکربندی</span></li>
         <li class="menu-item @if (Route::currentRouteName() == 'admin.jobtype.index' ||
                 Route::currentRouteName() == 'admin.jobtype.edit' ||
                 Route::currentRouteName() == 'admin.categories.index' ||
@@ -68,8 +67,6 @@
                 Route::currentRouteName() == 'admin.fields.edit' ||
                 Route::currentRouteName() == 'admin.professions.index' ||
                 Route::currentRouteName() == 'admin.professions.edit' ||
-                Route::currentRouteName() == 'admin.tuitions.index' ||
-                Route::currentRouteName() == 'admin.tuitions.edit' ||
                 Route::currentRouteName() == 'admin.kardanesh.index' ||
                 Route::currentRouteName() == 'admin.kardanesh.edit') open @endif">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -85,11 +82,6 @@
                 <li class="menu-item @if (Route::currentRouteName() == 'admin.kardanesh.index' || Route::currentRouteName() == 'admin.kardanesh.edit') active @endif">
                     <a href="{{ route('admin.kardanesh.index') }}" class="menu-link">
                         <div>نوع کاردانش</div>
-                    </a>
-                </li>
-                <li class="menu-item @if (Route::currentRouteName() == 'admin.tuitions.index' || Route::currentRouteName() == 'admin.tuitions.edit') active @endif">
-                    <a href="{{ route('admin.tuitions.index') }}" class="menu-link">
-                        <div>نرخ شهریه</div>
                     </a>
                 </li>
                 <li class="menu-item @if (Route::currentRouteName() == 'admin.categories.index' || Route::currentRouteName() == 'admin.categories.edit') active @endif">
@@ -119,10 +111,30 @@
                 </li>
             </ul>
         </li>
+        <li class="menu-item @if (Route::currentRouteName() == 'admin.tuitions.index' || Route::currentRouteName() == 'admin.tuitions.edit') active @endif">
+            <a href="{{ route('admin.tuitions.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-coin"></i>
+                <div>مدیریت نرخ شهریه</div>
+            </a>
+        </li>
+        <li class="menu-item @if (Route::currentRouteName() == 'test' || Route::currentRouteName() == 'test') open @endif">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-dollar"></i>
+                <div>مدیریت امور مالی</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item @if (Route::currentRouteName() == 'test') active @endif">
+                    <a href="#" class="menu-link">
+                        <div>نوع شغل</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
         <li class="menu-item @if (Route::currentRouteName() == 'admin.popups.index' ||
                 Route::currentRouteName() == 'admin.articles.index' ||
                 Route::currentRouteName() == 'admin.positions.index' ||
                 Route::currentRouteName() == 'admin.advertisement.index' ||
+                Route::currentRouteName() == 'admin.benefit.index' ||
                 Route::currentRouteName() == 'admin.bookmark.index') open @endif">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-grid-alt"></i>
@@ -149,6 +161,11 @@
                         <div>صفحات داخلی</div>
                     </a>
                 </li>
+                <li class="menu-item @if (Route::currentRouteName() == 'admin.benefit.index') active @endif">
+                    <a href="{{ route('admin.benefit.index') }}" class="menu-link">
+                        <div>مزایای گواهینامه ها</div>
+                    </a>
+                </li>
                 {{-- <li class="menu-item @if (Route::currentRouteName() == 'admin.bookmark.index') active @endif">
                     <a href="{{route('admin.bookmark.index')}}" class="menu-link">
                         <div>بوکمارک</div>
@@ -156,16 +173,15 @@
                 </li> --}}
             </ul>
         </li>
-        <li class="menu-item @if (Route::currentRouteName() == 'admin.academy.index' ||
-                Route::currentRouteName() == 'admin.academy.pending') open @endif">
+        <li class="menu-item @if (Route::currentRouteName() == 'admin.academy.index' || Route::currentRouteName() == 'admin.academy.pending') open @endif">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-badge"></i>
-                <div>آموزشگاه ها</div>
+                <div>مدیریت اعضا</div>
             </a>
             <ul class="menu-sub">
                 <li class="menu-item @if (Route::currentRouteName() == 'admin.academy.index') active @endif">
                     <a href="{{ route('admin.academy.index') }}" class="menu-link">
-                        <div>آموزشگاه ها</div>
+                        <div>آموزشگاه های آزاد</div>
                     </a>
                 </li>
                 <li class="menu-item @if (Route::currentRouteName() == 'admin.academy.pending') active @endif">
@@ -178,14 +194,21 @@
         <li class="menu-item @if (Route::currentRouteName() == 'admin.khabar.index') active @endif">
             <a href="{{ route('admin.khabar.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-news"></i>
-                <div>اخبار</div>
+                <div>مدیریت اخبار</div>
             </a>
         </li>
-        <li class="menu-item @if (Route::currentRouteName() == 'admin.benefit.index') active @endif">
-            <a href="{{ route('admin.benefit.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-news"></i>
-                <div>مزایای گواهینامه ها</div>
+        <li class="menu-item @if (Route::currentRouteName() == 'test' || Route::currentRouteName() == 'test') open @endif">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-cog"></i>
+                <div>تنظیمات کلی سایت</div>
             </a>
+            <ul class="menu-sub">
+                <li class="menu-item @if (Route::currentRouteName() == 'test') active @endif">
+                    <a href="#" class="menu-link">
+                        <div>نوع شغل</div>
+                    </a>
+                </li>
+            </ul>
         </li>
     </ul>
 </aside>

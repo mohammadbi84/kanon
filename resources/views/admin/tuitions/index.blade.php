@@ -182,7 +182,6 @@
                     render: function(data, type, full, meta) {
                         return `
                             <a href="/admin2/tuitions/${full.id}/professions" class="btn btn-sm btn-info item-details">
-                                <i class="bx bx-show"></i>
                                 حرفه‌ها
                             </a>
                         <button class="btn btn-sm btn-warning show-certificates">
