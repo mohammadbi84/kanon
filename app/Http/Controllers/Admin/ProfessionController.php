@@ -25,7 +25,7 @@ class ProfessionController extends Controller
             $fields = null;
             if ($fieldId) {
                 $professions = Profession::with('field', 'kardanesh', 'jobtype')
-                    // ->when($fieldId, fn($q) => $q->where('field_id', $fieldId))
+                    ->when($fieldId, fn($q) => $q->where('field_id', $fieldId))
                     ->latest()
                     ->get();
             } else {
@@ -35,19 +35,33 @@ class ProfessionController extends Controller
             return response()->json(['data' => $professions, 'fields' => $fields]);
         }
 
-        // رشته‌ها برای فرم ایجاد
-        $fields = Field::all();
-        $kardaneshes = Kardanesh::all();
-        $jobtypes = Jobtype::all();
-        $fieldId = $request->get('field_id');
         $field = [];
         if ($fieldId) {
             $field = Field::find($fieldId);
         }
-
-        return view('admin.professions.index', compact('fields', 'kardaneshes', 'jobtypes', 'fieldId', 'field'));
+        if ($fieldId) {
+            $professions_count = Profession::when($fieldId, fn($q) => $q->where('field_id', $fieldId))->count();
+        } else {
+            $professions_count = Profession::count();
+        }
+        return view('admin.professions.index', compact('fieldId', 'field', 'professions_count'));
     }
 
+    public function create(Request $request)
+    {
+        // return $request;
+        // رشته‌ها برای فرم ایجاد
+        $fields = Field::orderBy('name', 'asc')->get();
+        $kardaneshes = Kardanesh::orderBy('name', 'asc')->get();
+        $jobtypes = Jobtype::orderBy('name', 'asc')->get();
+        $fieldId = $request->fieldId ?? null;
+
+        $field = [];
+        if ($fieldId) {
+            $field = Field::find($fieldId);
+        }
+        return view('admin.professions.create', compact('fields', 'field', 'kardaneshes', 'jobtypes', 'fieldId'));
+    }
     // 🆕 افزودن حرفه جدید
     public function store(Request $request)
     {
@@ -55,10 +69,10 @@ class ProfessionController extends Controller
         $rules = [
             'field_id' => 'required|exists:fields,id',
             'name' => 'required|string|max:255',
-            'old_standard_code' => 'required|string|max:255',
-            'new_standard_code' => 'required|string|max:255|unique:professions,new_standard_code',
-            'theory_hour' => 'nullable|integer|min:0',
-            'theory_minute' => 'nullable|integer|min:0|max:59',
+            'new_standard_code' => 'required|integer|unique:professions,new_standard_code|digits:15',
+            'old_standard_code' => 'nullable|string|max:255',
+            'theory_hour' => 'required|integer|min:0',
+            'theory_minute' => 'required|integer|min:0|max:59',
             'practice_hour' => 'nullable|integer|min:0',
             'practice_minute' => 'nullable|integer|min:0|max:59',
             'project_hour' => 'nullable|integer|min:0',
@@ -70,6 +84,7 @@ class ProfessionController extends Controller
             'education_level' => 'nullable|string|max:255',
             'kardanesh_id' => 'nullable|exists:kardaneshes,id',
             'jobtype_id' => 'nullable|exists:jobtypes,id',
+            'min_education_id' => 'nullable|exists:min_education,id',
             'trainer_qualification' => 'nullable|string|max:255',
             'draft_date' => 'nullable|date',
             'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -186,8 +201,21 @@ class ProfessionController extends Controller
                 if ($totalMinutes > 0) {
                     $data['total_hour'] = floor($totalMinutes / 60);
                     $data['total_minute'] = $totalMinutes % 60;
+                } else {
+                    $data['total_hour'] = 0;
+                    $data['total_minute'] = 0;
                 }
             }
+
+            $data['theory_hour'] = $data['theory_hour'] ?? 0;
+            $data['theory_minute'] = $data['theory_minute'] ?? 0;
+            $data['practice_hour'] = $data['practice_hour'] ?? 0;
+            $data['practice_minute'] = $data['practice_minute'] ?? 0;
+            $data['project_hour'] = $data['project_hour'] ?? 0;
+            $data['project_minute'] = $data['project_minute'] ?? 0;
+            $data['internship_hour'] = $data['internship_hour'] ?? 0;
+            $data['internship_minute'] = $data['internship_minute'] ?? 0;
+            $data['old_standard_code'] = $data['old_standard_code'] ?? 0;
 
             // ایجاد حرفه جدید
             $profession = Profession::create($data);
@@ -204,6 +232,18 @@ class ProfessionController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function search(Request $request)
+    {
+        $profession = Profession::where('name', 'LIKE', '%' . $request->q . '%')
+            ->orWhere('new_standard_code', 'LIKE', '%' . $request->q . '%')
+            ->first();
+
+        if ($profession) {
+            return response()->json(['success' => true, 'data' => $profession, 'message'=>'حرفه مورد نظر وجود دارد']);
+            }
+            return response()->json(['success' => false, 'data' => $profession, 'message'=>'حرفه مورد نظر پیدا نشد']);
     }
 
     // ✏️ ویرایش حرفه
@@ -385,5 +425,70 @@ class ProfessionController extends Controller
         Profession::whereIn('id', $ids)->delete();
 
         return response()->json(['success' => true, 'message' => 'حرفه ها با موفقیت حذف شدند.']);
+    }
+
+    public function toggle(Profession $profession)
+    {
+        $profession->update([
+            'active' => !$profession->active
+        ]);
+        return response()->json(['success' => true, 'message' => 'وضعیت با موفقیت تغییر کرد.']);
+    }
+    public function bulkToggle(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'هیچ آی‌دی‌ای ارسال نشده است.'
+            ], 400);
+        }
+
+        $professions = Profession::whereIn('id', $ids)->get();
+        foreach ($professions as $key => $profession) {
+            $profession->update([
+                'active' => $request->status,
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'وضعیت ها با موفقیت تغییر کرد.'
+        ]);
+    }
+
+    public function archive(Profession $profession)
+    {
+        $profession->update([
+            'archive' => !$profession->archive
+        ]);
+        if ($profession->archive) {
+            return response()->json(['success' => true, 'message' => 'حرفه با موفقیت آرشیو شد']);
+        }
+        return response()->json(['success' => true, 'message' => 'حرفه با موفقیت از آرشیو خارج شد']);
+    }
+    public function bulkArchive(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'هیچ آی‌دی‌ای ارسال نشده است.'
+            ], 400);
+        }
+
+        $professions = Profession::whereIn('id', $ids)->get();
+        foreach ($professions as $key => $profession) {
+            $profession->update([
+                'archive' => $request->status,
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'آرشیو حرفه ها با موفقیت تغییر کرد.'
+        ]);
     }
 }

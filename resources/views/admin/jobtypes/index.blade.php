@@ -319,8 +319,8 @@
         });
 
         // delete selected items----------------------------------------------------------------------------------------------------------
-        const btnBulk = $("#bulk-delete");
-        if (btnBulk) {
+        const btnBulkKardanesh = $("#bulk-delete");
+        if (btnBulkKardanesh) {
             // وقتی رکورد انتخاب شد
             dt_basic.on("select", function(e, dt, type, indexes) {
                 toggleBulkActions();
@@ -355,7 +355,7 @@
                     .toArray();
             }
 
-            btnBulk.on("click", function() {
+            btnBulkKardanesh.on("click", function() {
                 const ids = getSelectedIds();
 
                 if (ids.length === 0) {

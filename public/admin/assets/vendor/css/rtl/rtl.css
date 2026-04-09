@@ -1118,7 +1118,7 @@ html .sticky-wrapper.is-sticky .card-header.sticky-element {
 /* استایل مشترک برای input و textarea */
 .custom-input-group {
     position: relative;
-    margin-bottom: 5px;
+    /* margin-bottom: 5px; */
 }
 
 .custom-input-group input,
@@ -1132,7 +1132,7 @@ html .sticky-wrapper.is-sticky .card-header.sticky-element {
     font-size: 15px;
     transition: border-color 0.3s;
     resize: vertical;
-    background-color: #f2f2f2a1;
+    background-color: #fff;
 }
 
 .custom-input-group input:focus,
@@ -1172,6 +1172,48 @@ html .sticky-wrapper.is-sticky .card-header.sticky-element {
     font-size: 11px;
     /* color: var(--bs-blue); */
 }
+.custom-input-group input:disabled{
+    background: #f7f7f7 !important;
+}
+
+.custom-input-group.ltr input:focus,
+.custom-input-group.ltr textarea:focus {
+    direction: ltr;
+    /* box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15); */
+}
+
+.custom-input-group.ltr.filled input,
+.custom-input-group.ltr.filled textarea {
+    /* border-color: var(--bs-blue); */
+    direction: ltr;
+    /* box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15); */
+}
+
+.custom-input-group.ltr label {
+    position: absolute;
+    left: 15px;
+    right: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: 0.2s;
+    pointer-events: none;
+    color: #666;
+    background: transparent;
+    font-size: 14px;
+}
+
+.custom-input-group.ltr input:focus+label,
+.custom-input-group.ltr.filled input+label,
+.custom-input-group.ltr textarea:focus+label,
+.custom-input-group.ltr.filled textarea+label {
+    top: 0px;
+    left: 10px;
+    right: auto;
+    background: white;
+    padding: 0 8px;
+    font-size: 11px;
+    /* color: var(--bs-blue); */
+}
 
 .custom-input-group .clear-btn {
     display: none;
@@ -1191,4 +1233,19 @@ html .sticky-wrapper.is-sticky .card-header.sticky-element {
 
 .custom-input-group.filled .clear-btn {
     display: block;
+}
+
+
+.btn-custom {
+    border: 1px solid #f7f7f7;
+    background-color: #f7f7f7;
+}
+
+.btn-custom:hover {
+    border: 1px solid #f7f7f7;
+    background-color: #ebebeb;
+}
+
+.input-group-text{
+    background: #f7f7f7;
 }

@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\FieldController;
 use App\Http\Controllers\Admin\JobtypeController;
 use App\Http\Controllers\Admin\KardaneshController;
 use App\Http\Controllers\Admin\KhabarController;
+use App\Http\Controllers\Admin\MinEducationController;
 use App\Http\Controllers\Admin\PopupController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\PositionPriceController;
@@ -83,6 +84,15 @@ Route::name('admin.')->group(function () {
         Route::post('/update', [JobtypeController::class, 'update'])->name('jobtype.update');
         Route::get('/{id}', [JobtypeController::class, 'edit'])->name('jobtype.edit');
     });
+    // ================== min educations ==================
+    Route::prefix('/mineducations')->group(function () {
+        Route::get('/', [MinEducationController::class, 'index'])->name('mineducations.index');
+        Route::post('/store', [MinEducationController::class, 'store'])->name('mineducations.store');
+        Route::delete('/delete/{id}', [MinEducationController::class, 'delete'])->name('mineducations.delete');
+        Route::post('/bulk-delete', [MinEducationController::class, 'bulkDelete'])->name('mineducations.bulkDelete');
+        Route::post('/update', [MinEducationController::class, 'update'])->name('mineducations.update');
+        Route::get('/{id}', [MinEducationController::class, 'edit'])->name('mineducations.edit');
+    });
     // ================== kardanesh ==================
     Route::prefix('/kardanesh')->group(function () {
         Route::get('/', [KardaneshController::class, 'index'])->name('kardanesh.index');
@@ -143,11 +153,17 @@ Route::name('admin.')->group(function () {
     // ================== Professions ==================
     Route::prefix('/professions')->group(function () {
         Route::get('/', [ProfessionController::class, 'index'])->name('professions.index');
+        Route::get('/search', [ProfessionController::class, 'search'])->name('professions.search');
+        Route::post('/bulk-toggle', [ProfessionController::class, 'bulkToggle'])->name('professions.bulkToggle');
+        Route::post('/bulk-archive', [ProfessionController::class, 'bulkArchive'])->name('professions.bulkArchive');
+        Route::get('/create', [ProfessionController::class, 'create'])->name('professions.create');
         Route::post('/store', [ProfessionController::class, 'store'])->name('professions.store');
         Route::delete('/delete/{id}', [ProfessionController::class, 'delete'])->name('professions.delete');
         Route::post('/bulk-delete', [ProfessionController::class, 'bulkDelete'])->name('professions.bulkDelete');
         Route::get('/{id}', [ProfessionController::class, 'edit'])->name('professions.edit');
         Route::put('/{id}', [ProfessionController::class, 'update'])->name('professions.update');
+        Route::patch('/{profession}/toggle', [ProfessionController::class, 'toggle'])->name('professions.toggle');
+        Route::patch('/{profession}/archive', [ProfessionController::class, 'archive'])->name('professions.archive');
     });
 
     Route::get('/cities', [CityController::class, 'index'])->name('cities.index');

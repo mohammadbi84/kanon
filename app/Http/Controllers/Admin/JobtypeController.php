@@ -11,7 +11,7 @@ class JobtypeController extends Controller
     public function index()
     {
         if (Request()->ajax()) {
-            $jobtypes = Jobtype::latest()->get();
+            $jobtypes = Jobtype::orderBy('name','asc')->get();
             return response()->json(['data' => $jobtypes]);
         }
         $jobtypes_count = Jobtype::count();
@@ -25,10 +25,13 @@ class JobtypeController extends Controller
             'name.required' => 'نام نوع شغل الزامی است.',
             'name.string' => 'نام نوع شغل باید به صورت متنی باشد',
         ]);
+        if (Jobtype::where('name', $request->name)->first()) {
+            return response()->json(['success' => false, 'message' => 'حداقل تحصیلات با این نام وجود دارد.']);
+        }
         $item = new Jobtype();
         $item->name = $request->name;
         $item->save();
-        return response()->json(['success' => 'نوع شغل با موفقیت اضافه شد.']);
+        return response()->json(['success' => true, 'message' => 'نوع شغل با موفقیت اضافه شد.']);
     }
     public function edit($id)
     {

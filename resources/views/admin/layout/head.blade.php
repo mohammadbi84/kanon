@@ -27,6 +27,8 @@
     <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}">
     <link rel="stylesheet"
         href="{{ asset('admin/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}">
+    <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/datatables-fixedheader-bs5/fixedheader.bootstrap5.css')}}">
+
     <link rel="stylesheet"
         href="{{ asset('admin/assets/vendor/libs/datatables-checkboxes-jquery/datatables.checkboxes.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/datatables-select-bs5/select.bootstrap5.css') }}">
@@ -51,13 +53,15 @@
 
     {{-- sweetalert2 --}}
     <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/sweetalert2/sweetalert2.css') }}">
-    <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/toastr/toastr.css')}}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/toastr/toastr.css') }}">
 
 
 
     {{-- datepicker --}}
-    <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/bootstrap-datepicker/bootstrap-datepicker.css') }}">
-    <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.css') }}">
+    <link rel="stylesheet"
+        href="{{ asset('admin/assets/vendor/libs/bootstrap-datepicker/bootstrap-datepicker.css') }}">
+    <link rel="stylesheet"
+        href="{{ asset('admin/assets/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/jquery-timepicker/jquery-timepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/pickr/pickr-themes.css') }}">
 

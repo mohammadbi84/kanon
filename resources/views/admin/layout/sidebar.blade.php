@@ -57,33 +57,20 @@
                 <div>داشبورد</div>
             </a>
         </li>
-        <li class="menu-item @if (Route::currentRouteName() == 'admin.jobtype.index' ||
-                Route::currentRouteName() == 'admin.jobtype.edit' ||
-                Route::currentRouteName() == 'admin.categories.index' ||
+        <li class="menu-item @if (Route::currentRouteName() == 'admin.categories.index' ||
                 Route::currentRouteName() == 'admin.categories.edit' ||
                 Route::currentRouteName() == 'admin.clusters.index' ||
                 Route::currentRouteName() == 'admin.clusters.edit' ||
                 Route::currentRouteName() == 'admin.fields.index' ||
                 Route::currentRouteName() == 'admin.fields.edit' ||
                 Route::currentRouteName() == 'admin.professions.index' ||
-                Route::currentRouteName() == 'admin.professions.edit' ||
-                Route::currentRouteName() == 'admin.kardanesh.index' ||
-                Route::currentRouteName() == 'admin.kardanesh.edit') open @endif">
+                Route::currentRouteName() == 'admin.professions.create' ||
+                Route::currentRouteName() == 'admin.professions.edit') open @endif">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-badge-check"></i>
                 <div>مدیریت استاندارد ها</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item @if (Route::currentRouteName() == 'admin.jobtype.index' || Route::currentRouteName() == 'admin.jobtype.edit') active @endif">
-                    <a href="{{ route('admin.jobtype.index') }}" class="menu-link">
-                        <div>نوع شغل</div>
-                    </a>
-                </li>
-                <li class="menu-item @if (Route::currentRouteName() == 'admin.kardanesh.index' || Route::currentRouteName() == 'admin.kardanesh.edit') active @endif">
-                    <a href="{{ route('admin.kardanesh.index') }}" class="menu-link">
-                        <div>نوع کاردانش</div>
-                    </a>
-                </li>
                 <li class="menu-item @if (Route::currentRouteName() == 'admin.categories.index' || Route::currentRouteName() == 'admin.categories.edit') active @endif">
                     <a href="{{ route('admin.categories.index') }}" class="menu-link">
                         <div>رسته ها</div>
@@ -99,7 +86,7 @@
                         <div>رشته ها</div>
                     </a>
                 </li>
-                <li class="menu-item @if (Route::currentRouteName() == 'admin.professions.index' || Route::currentRouteName() == 'admin.professions.edit') active @endif">
+                <li class="menu-item @if (Route::currentRouteName() == 'admin.professions.index' || Route::currentRouteName() == 'admin.professions.edit' || Route::currentRouteName() == 'admin.professions.create') active @endif">
                     <a href="{{ route('admin.professions.index') }}" class="menu-link">
                         <div>حرفه ها</div>
                     </a>

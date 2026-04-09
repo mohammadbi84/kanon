@@ -10,21 +10,21 @@
     <!-- DataTable with Buttons -->
     <div class="card">
         <div class="d-flex justify-content-end align-items-center">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter_kardanesh">
                 نوع کاردانش جدید
                 <i class="bx bx-plus ms-2"></i>
             </button>
             <!-- Modal -->
-            <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
+            <div class="modal fade" id="modalCenter_kardanesh" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title secondary-font" id="modalCenterTitle">نوع کاردانش جدید</h5>
+                            <h5 class="modal-title secondary-font" id="modalCenter_kardaneshTitle">نوع کاردانش جدید</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form action="{{ route('admin.jobtype.store') }}" method="post"
-                                class="add-new-record pt-0 row g-2 mt-3 px-3" id="form-add-new-record">
+                            <form action="" method="post" class="add-new-record pt-0 row g-2 mt-3 px-3"
+                                id="form-add-new-kardanesh">
                                 <div class="col-sm-12">
                                     <div class="custom-input-group">
                                         <input type="text" id="name" class="form-control" name="name">
@@ -50,8 +50,36 @@
                     </tr>
                 </thead>
             </table>
-            <div id="bulk-actions" class="">
-                <button id="bulk-delete" class="btn btn-danger" disabled>حذف انتخابی‌ها</button>
+            <div id="bulk-actions-kardanesh" class="">
+                <button id="bulk-delete-kardanesh" class="btn btn-danger" disabled>حذف انتخابی‌ها</button>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Edit -->
+    <div class="modal fade" id="modalEdit" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title secondary-font" id="modalEditTitle">ویرایش نوع کار و دانش</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post" class="add-new-record pt-0 row g-2 px-3" id="form-edit-record-kardanesh">
+                        @csrf
+                        <div class="col-sm-12">
+                            <input type="hidden" id="id" class="form-control" name="id">
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="custom-input-group">
+                                <input type="text" id="name" class="form-control" name="name">
+                                <label class="form-label" for="name">نام نوع کار و دانش</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-3">
+                            <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1">ذخیره</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -61,7 +89,7 @@
 
     <script>
         kardanesh = $(".kardanesh");
-        dt_basic = kardanesh.DataTable({
+        dt_kardanesh = kardanesh.DataTable({
             ajax: "/admin2/kardanesh",
             columns: [{
                     data: "",
@@ -81,7 +109,7 @@
                 },
                 {
                     data: "name",
-                    title: "نوع کاردانش"
+                    title: "نام شغل"
                 },
                 {
                     data: "",
@@ -110,14 +138,13 @@
                     },
                 },
                 {
-                    // For Checkboxes
                     targets: 1,
                     orderable: false,
                     render: function() {
-                        return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle">';
+                        return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle row-check">';
                     },
                     checkboxes: {
-                        selectRow: true,
+                        selectRow: false, // فقط با چک‌باکس، نه روی کل ردیف
                         selectAllRender: '<input type="checkbox" class="form-check-input mt-0 align-middle">',
                     },
                     responsivePriority: 4,
@@ -137,23 +164,15 @@
                     orderable: false,
                     searchable: false,
                     render: function(data, type, full, meta) {
-                        return (
-                            '<a href="/admin2/kardanesh/' +
-                            full.id +
-                            '"' +
-                            'class="btn btn-sm btn-icon btn-primary item-edit" ' +
-                            'data-id="' +
-                            full.id +
-                            '">' +
-                            '<i class="bx bxs-edit"></i>' +
-                            "</a> " +
-                            '<button class="btn btn-sm btn-icon btn-danger item-delete" ' +
-                            'data-id="' +
-                            full.id +
-                            '">' +
-                            '<i class="bx bxs-trash"></i>' +
-                            "</button>"
-                        );
+                        return `
+                                <button data-id="${full.id}" class="btn btn-sm btn-icon btn-primary item-edit-kardanesh">
+                                <i class="bx bxs-edit"></i>
+                                </button>
+
+                                <button class="btn btn-sm btn-icon btn-danger item-delete-kardanesh" data-id="${full.id}">
+                                <i class="bx bxs-trash"></i>
+                                </button>
+                                `;
                     },
                 },
             ],
@@ -208,19 +227,32 @@
                 style: "multi",
             },
         });
-        $("#bulk-actions").appendTo(".bulk-holder");
+        $("#bulk-actions-kardanesh").appendTo(".bulk-holder");
         $("div.head-label").html(
-            '<h5 class="card-title mb-0">نوع کاردانش ها</h5>' +
-            '<small class="text-muted ms-2">( {{ $kardaneshs_count }} رکورد )</small>'
+            '<h5 class="card-title mb-0">لیست نوع کار و دانش ها</h5>'
         );
+        dt_kardanesh.on('change', '.row-check', function() {
+            const row = dt_kardanesh.row($(this).closest('tr'));
+
+            if (this.checked) {
+                row.select();
+            } else {
+                row.deselect();
+            }
+        });
+        dt_kardanesh.on('user-select', function(e, dt, type, cell, originalEvent) {
+            if (!$(originalEvent.target).hasClass('row-check')) {
+                e.preventDefault();
+            }
+        });
         // add new record-------------------------------------------------------------------------------------------------------------
         initOffcanvasForm({
-            formId: "form-add-new-record",
+            formId: "form-add-new-kardanesh",
             // offcanvasId: "add-new-record",
             triggerSelector: ".create-new",
             fields: {
                 name: {
-                    label: "نام نوع کاردانش",
+                    label: "نام نوع کار و دانش",
                     required: true,
                     type: "text",
                 },
@@ -238,16 +270,15 @@
                     console.log("Server Response:", res);
                     // offCanvasEl.hide();
 
-                    dt_basic.ajax.reload(); // اگر میخوای جدول بروز بشه
+                    dt_kardanesh.ajax.reload(); // اگر میخوای جدول بروز بشه
                 });
             },
         });
         // delete one item----------------------------------------------------------------------------------------------------------------
-        dt_basic.on("click", ".item-delete", function() {
+        dt_kardanesh.on("click", ".item-delete-kardanesh", function() {
             const id = $(this).data("id");
 
             if (!id) return;
-
             Swal.fire({
                 title: `آیا از حذف این رکورد مطمئن هستید؟`,
                 text: "این عملیات غیرقابل بازگشت است!",
@@ -274,8 +305,9 @@
                                 toastr.error(res.message);
                             }
 
-                            dt_basic.ajax.reload(null, false);
-                            $("#bulk-actions").addClass("d-none");
+                            dt_kardanesh.ajax.reload(null, false);
+                            $("#bulk-actions-kardanesh #bulk-delete-kardanesh").prop("disabled",
+                                true);
                         },
                         error: function(err) {
                             toastr.error(err.message);
@@ -288,34 +320,34 @@
         });
 
         // delete selected items----------------------------------------------------------------------------------------------------------
-        const btnBulk = $("#bulk-delete");
-        if (btnBulk) {
+        const btnBulkKardanesh = $("#bulk-delete-kardanesh");
+        if (btnBulkKardanesh) {
             // وقتی رکورد انتخاب شد
-            dt_basic.on("select", function(e, dt, type, indexes) {
+            dt_kardanesh.on("select", function(e, dt, type, indexes) {
                 toggleBulkActions();
             });
 
             // وقتی رکورد از انتخاب خارج شد
-            dt_basic.on("deselect", function(e, dt, type, indexes) {
+            dt_kardanesh.on("deselect", function(e, dt, type, indexes) {
                 toggleBulkActions();
             });
 
             // تابع برای نمایش / مخفی کردن باکس عملیات
             function toggleBulkActions() {
-                const selected = dt_basic.rows({
+                const selected = dt_kardanesh.rows({
                     selected: true
                 }).count();
                 if (selected > 0) {
-                    // $("#bulk-actions").removeClass("d-none");
-                    $("#bulk-actions #bulk-delete").prop("disabled", false);
+                    // $("#bulk-actions-kardanesh").removeClass("d-none");
+                    $("#bulk-actions-kardanesh #bulk-delete-kardanesh").prop("disabled", false);
                 } else {
-                    $("#bulk-actions #bulk-delete").prop("disabled", true);
+                    $("#bulk-actions-kardanesh #bulk-delete-kardanesh").prop("disabled", true);
                 }
             }
 
             // گرفتن ID ها
             function getSelectedIds() {
-                return dt_basic
+                return dt_kardanesh
                     .rows({
                         selected: true
                     })
@@ -324,7 +356,7 @@
                     .toArray();
             }
 
-            btnBulk.on("click", function() {
+            btnBulkKardanesh.on("click", function() {
                 const ids = getSelectedIds();
 
                 if (ids.length === 0) {
@@ -363,8 +395,9 @@
                                     toastr.error(res.message);
                                 }
 
-                                dt_basic.ajax.reload(null, false);
-                                $("#bulk-actions #bulk-delete").prop("disabled", true);
+                                dt_kardanesh.ajax.reload(null, false);
+                                $("#bulk-actions-kardanesh #bulk-delete-kardanesh").prop(
+                                    "disabled", true);
                             },
                             error: function(err) {
                                 toastr.error(err.message);
@@ -376,5 +409,74 @@
                 });
             });
         }
+
+        // edit with modal -----------------------------------------------------------------------------------------------------------
+        $(document).on("click", ".item-edit-kardanesh", function() {
+            const id = $(this).data("id");
+
+            // لودینگ یا غیر فعال‌کردن فرم قبل از درخواست (اختیاری)
+            $("#modalEdit .modal-body").addClass("opacity-50");
+            // نمایش مودال
+            $("#modalEdit").modal("show");
+
+            $.ajax({
+                url: "/admin2/kardanesh/" + id,
+                method: "GET",
+                success: function(res) {
+                    // فرض می‌کنیم سرور دیتا رو در res.data برمی‌گردونه
+                    $("#modalEdit #id").val(res.data.id);
+                    $("#modalEdit #name").val(res.data.name);
+                    $("#modalEdit #name").parent().addClass("filled");
+
+                    // برگشتن فرم به حالت عادی
+                    $("#modalEdit .modal-body").removeClass("opacity-50");
+                },
+                error: function() {
+                    toastr.error('خطا در ارتباط با سرور');
+                }
+            });
+
+            initOffcanvasForm({
+                formId: "form-edit-record-kardanesh",
+                // offcanvasId: "add-new-record",
+                triggerSelector: ".create-new",
+                fields: {
+                    name: {
+                        label: "نام نوع کار و دانش",
+                        required: true,
+                        type: "text",
+                    },
+                    id: {
+                        label: "ایدی نوع کار و دانش",
+                        required: true,
+                        type: "hidden",
+                    },
+                },
+                onSubmit: function(values) {
+                    console.log("Form Data:", values);
+
+                    // اضافه کردن CSRF token
+                    values._token = $('meta[name="csrf-token"]').attr(
+                        "content",
+                    );
+
+                    // ارسال Ajax
+                    $.post("/admin2/kardanesh/update", values, function(res) {
+                        if (res.success) {
+                            toastr.success(res.message);
+                        } else {
+                            toastr.error(res.message);
+                        }
+                        // offCanvasEl.hide();
+
+                        dt_kardanesh.ajax.reload(); // اگر میخوای جدول بروز بشه
+                        $("#modalEdit").modal("hide");
+
+                    }).fail(function(xhr) {
+                        toastr.error("نوع کار و دانش با این نام وجود دارد.");
+                    });
+                },
+            });
+        });
     </script>
 @endsection

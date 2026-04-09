@@ -11,7 +11,7 @@
         <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
         <span class="text-muted">مدیریت استاندارد ها / </span>
         @if ($categoryId)
-            <a href="{{ route('admin.clusters.index') }}" class="text-muted">رسته {{ $cluster?->category?->name }}</a> <span
+            <a href="{{ route('admin.categories.index') }}" class="text-muted">رسته {{ $cluster?->category?->name }}</a> <span
                 class="text-muted">/</span>
             <a href="{{ route('admin.clusters.index') }}" class="text-muted">خوشه {{ $cluster?->name }}</a> <span
                 class="text-muted">/</span>
@@ -166,13 +166,8 @@
                 },
             },
             columns: [{
-                    data: "",
-                    title: ""
+                    data: "id"
                 }, // ستونی که برای responsive استفاده میشه
-                {
-                    data: "id",
-                    title: "شناسه"
-                },
                 {
                     data: "id",
                     visible: false
@@ -199,15 +194,17 @@
                 }, // ستون آخر برای دکمه‌ها
             ],
             columnDefs: [{
-                    // For Responsive
-                    className: "control",
-                    orderable: false,
-                    searchable: false,
-                    responsivePriority: 2,
+                    // For Checkboxes
                     targets: 0,
-                    render: function(data, type, full, meta) {
-                        return "";
+                    searchable: false,
+                    orderable: false,
+                    render: function() {
+                        return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle">';
                     },
+                    checkboxes: {
+                        selectRow: true,
+                        selectAllRender: '<input type="checkbox" class="form-check-input mt-0 align-middle">'
+                    }
                 },
                 {
                     targets: 3, // ستون شماره ردیف (مطابق ایندکس خودت)
@@ -243,9 +240,12 @@
                 {
                     targets: -2,
                     title: "وضعیت",
-                    orderable: false,
+                    orderable: true,
                     searchable: false,
                     render: function(data, type, full, meta) {
+                        if (type == 'sort') {
+                            return full.active ? '1' : '0';
+                        }
                         return full.active ?
                             `
                             <button data-id="${full.id}" class="btn text-success btn-icon item-toggle">
@@ -335,6 +335,12 @@
                 style: "multi",
             },
         });
+                if (window.Helpers.isNavbarFixed()) {
+            var navHeight = $('#layout-navbar').outerHeight();
+            new $.fn.dataTable.FixedHeader(dt_basic).headerOffset(navHeight);
+        } else {
+            new $.fn.dataTable.FixedHeader(dt_basic);
+        }
         $("#bulk-actions").appendTo(".bulk-holder");
         $("div.head-label").html(
             '<h5 class="card-title mb-0">لیست رشته ها</h5>' +
@@ -346,7 +352,7 @@
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         });
-        dt_basic.on('change', '.row-check', function() {
+        dt_basic.on('click', '.dt-checkboxes', function() {
             const row = dt_basic.row($(this).closest('tr'));
 
             if (this.checked) {
@@ -429,7 +435,7 @@
                     // $("#bulk-actions").removeClass("d-none");
                     $("#bulk-actions #action_group").show();
                     $("#bulk-actions #bulk-delete").prop("disabled", false);
-                    $("#bulk-actions .bulk-toggle").prop("disabled", true);
+                    $("#bulk-actions .bulk-toggle").prop("disabled", false);
                 } else {
                     $("#bulk-actions #action_group").hide();
                     $("#bulk-actions #bulk-delete").prop("disabled", true);

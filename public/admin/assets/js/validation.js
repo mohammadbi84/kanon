@@ -257,7 +257,7 @@ function initOffcanvasForm({
     // تابع برای ریست کردن کامل فرم
     function resetFormCompletely() {
         // ریست کردن اعتبارسنجی
-        fv.resetForm();
+        // fv.resetForm();
 
         // ریست کردن تمام فیلدهای input
         const inputs = formEl.querySelectorAll(
@@ -323,9 +323,11 @@ function initOffcanvasForm({
     }
 
     const modalCenter = document.getElementById("modalCenter");
-    modalCenter.addEventListener("hidden.bs.modal", function () {
-        resetFormCompletely();
-    });
+    if (modalCenter) {
+        modalCenter.addEventListener("hidden.bs.modal", function () {
+            resetFormCompletely();
+        });
+    }
 
     // ساخت Validation
     fv = FormValidation.formValidation(formEl, {
@@ -333,9 +335,19 @@ function initOffcanvasForm({
         plugins: {
             trigger: new FormValidation.plugins.Trigger(),
             bootstrap5: new FormValidation.plugins.Bootstrap5({
-                rowSelector:
-                    ".col-sm-12, .col-sm-6, .col-sm-3, .col-12, col-md-6, form-group",
-            }),
+          // Use this for enabling/changing valid/invalid class
+          // eleInvalidClass: '',
+          eleValidClass: '',
+          rowSelector: function (field, ele) {
+            // field is the field name & ele is the field element
+            switch (field) {
+              case 'formValidationCheckbox':
+                return '.col-12';
+              default:
+                return '.row';
+            }
+          }
+        }),
             submitButton: new FormValidation.plugins.SubmitButton(),
             autoFocus: new FormValidation.plugins.AutoFocus(),
         },

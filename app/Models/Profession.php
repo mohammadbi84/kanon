@@ -26,10 +26,18 @@ class Profession extends Model
         'education_level',
         'kardanesh_id',
         'jobtype_id',
+        'min_education_id',
         'trainer_qualification',
         'draft_date',
         'image_path',
-        'standard_file'
+        'standard_file',
+        'active',
+        'archive'
+    ];
+
+    protected $casts = [
+        'active' => 'boolean',
+        'archive' => 'boolean',
     ];
 
     public function field()
@@ -46,8 +54,22 @@ class Profession extends Model
     }
     public function tuitions()
     {
-        return $this->belongsToMany(Tuition::class,'profession_tuitions')
+        return $this->belongsToMany(Tuition::class, 'profession_tuitions')
             ->withPivot(['price_in_person', 'price_virtual', 'price_online'])
             ->withTimestamps();
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('active', true)
+            ->whereHas('field', function ($query) {
+                $query->where('active', true)
+                    ->whereHas('cluster', function ($query) {
+                        $query->where('active', true)
+                            ->whereHas('category', function ($query) {
+                                $query->where('active', true);
+                            });
+                    });
+            });
     }
 }

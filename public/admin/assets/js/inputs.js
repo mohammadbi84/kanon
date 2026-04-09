@@ -1,4 +1,3 @@
-
 // مقداردهی اولیه برای بررسی محتوای از پیش پر شده
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("input, textarea").forEach(function (element) {
@@ -15,6 +14,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 parent.classList.add("filled");
             } else {
                 parent.classList.remove("filled");
+            }
+
+            if (parent.classList.contains("only-number")) {
+                e.target.value = e.target.value.replace(/[^0-9]/g, "");
             }
         });
     });

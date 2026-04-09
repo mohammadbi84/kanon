@@ -11,7 +11,7 @@ class KardaneshController extends Controller
     public function index()
     {
         if (Request()->ajax()) {
-            $kardaneshs = Kardanesh::latest()->get();
+            $kardaneshs = Kardanesh::orderBy('name','asc')->get();
             return response()->json(['data' => $kardaneshs]);
         }
         $kardaneshs_count = Kardanesh::count();
@@ -22,13 +22,16 @@ class KardaneshController extends Controller
         $request->validate([
             'name' => 'required|string',
         ], [
-            'name.required' => 'نام نوع شغل الزامی است.',
-            'name.string' => 'نام نوع شغل باید به صورت متنی باشد',
+            'name.required' => 'نام کاردانش الزامی است.',
+            'name.string' => 'نام کاردانش باید به صورت متنی باشد',
         ]);
+        if (Kardanesh::where('name', $request->name)->first()) {
+            return response()->json(['success' => false, 'message' => 'حداقل تحصیلات با این نام وجود دارد.']);
+        }
         $item = new Kardanesh();
         $item->name = $request->name;
         $item->save();
-        return response()->json(['success' => 'نوع شغل با موفقیت اضافه شد.']);
+        return response()->json(['success' => true, 'message' => 'کاردانش با موفقیت اضافه شد.']);
     }
     public function edit($id)
     {
@@ -49,13 +52,13 @@ class KardaneshController extends Controller
         ]);
         $job->name = $request->name;
         $job->save();
-        return response()->json(['success' => true, 'message' => 'نوع شغل با موفقیت ویرایش شد.']);
+        return response()->json(['success' => true, 'message' => 'کاردانش با موفقیت ویرایش شد.']);
     }
     public function delete($id)
     {
         $kardaneshs = Kardanesh::findOrFail($id);
         $kardaneshs->delete();
-        return response()->json(['success' => true, 'message' => 'نوع شغل با موفقیت حذف شد.']);
+        return response()->json(['success' => true, 'message' => 'کاردانش با موفقیت حذف شد.']);
     }
     public function bulkDelete(Request $request)
     {
