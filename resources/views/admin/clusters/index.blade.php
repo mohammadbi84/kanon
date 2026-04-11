@@ -19,62 +19,66 @@
 
     <!-- DataTable with Buttons -->
     <div class="card">
-        <div class="d-flex justify-content-end align-items-center">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter">
-                خوشه جدید
-                <i class="bx bx-plus ms-2"></i>
-            </button>
-            <!-- Modal -->
-            <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title secondary-font" id="modalCenterTitle">ایجاد خوشه جدید</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form action="{{ route('admin.clusters.store') }}" method="post"
-                                class="add-new-record pt-0 row g-2 mt-3 px-3" id="form-add-new-record">
-                                @csrf
+        <div class="card-datatable table-responsive p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="head-label d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">لیست خوشه ها</h5>
+                    <small class="text-muted ms-2">( {{ $cluster_count }} رکورد )</small>
+                </div>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter">
+                    خوشه جدید
+                    <i class="bx bx-plus ms-2"></i>
+                </button>
+                <!-- Modal -->
+                <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title secondary-font" id="modalCenterTitle">ایجاد خوشه جدید</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{ route('admin.clusters.store') }}" method="post"
+                                    class="add-new-record pt-0 row g-2 mt-3 px-3" id="form-add-new-record">
+                                    @csrf
 
-                                {{-- فیلد نام خوشه --}}
-                                <div class="col-sm-12">
-                                    <div class="custom-input-group">
-                                        <input type="text" id="name" class="form-control" name="name">
-                                        <label class="form-label" for="name">نام خوشه</label>
-                                    </div>
-                                </div>
-
-                                @if (!$categoryId)
-                                    {{-- اگر category_id در URL نبود --}}
-                                    <div class="col-sm-12 mt-3">
-                                        <select id="category_id" name="category_id" class="form-select" required>
-                                            <option value="" selected disabled>انتخاب رسته . . .</option>
-                                            @foreach ($categories as $cat)
-                                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @else
+                                    {{-- فیلد نام خوشه --}}
                                     <div class="col-sm-12">
-                                        <div class="input-group input-group-merge">
-                                            <input type="hidden" name="category_id" value="{{ $categoryId }}">
+                                        <div class="custom-input-group">
+                                            <input type="text" id="name" class="form-control" name="name">
+                                            <label class="form-label" for="name">نام خوشه</label>
                                         </div>
                                     </div>
-                                @endif
 
-                                <div class="col-sm-12 mt-3">
-                                    <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1">ثبت</button>
-                                    <button type="submit" class="btn btn-outline-primary data-submit me-sm-3 me-1"
-                                        data-bs-dismiss="modal">ثبت و خروج</button>
-                                </div>
-                            </form>
+                                    @if (!$categoryId)
+                                        {{-- اگر category_id در URL نبود --}}
+                                        <div class="col-sm-12 mt-3">
+                                            <select id="category_id" name="category_id" class="form-select" required>
+                                                <option value="" selected disabled>انتخاب رسته . . .</option>
+                                                @foreach ($categories as $cat)
+                                                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    @else
+                                        <div class="col-sm-12">
+                                            <div class="input-group input-group-merge">
+                                                <input type="hidden" name="category_id" value="{{ $categoryId }}">
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    <div class="col-sm-12 mt-3">
+                                        <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1">ثبت</button>
+                                        <button type="submit" class="btn btn-outline-primary data-submit me-sm-3 me-1"
+                                            data-bs-dismiss="modal">ثبت و خروج</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="card-datatable table-responsive pt-0 p-3">
             <table class="dt-select-table clusters table table-hover">
                 <thead>
                     <tr>
@@ -205,7 +209,7 @@
                     }
                 },
                 {
-                    targets: 3, // ستون شماره ردیف (مطابق ایندکس خودت)
+                    targets: 2, // ستون شماره ردیف (مطابق ایندکس خودت)
                     data: null,
                     title: "ردیف",
                     orderable: true,
@@ -213,23 +217,6 @@
                     render: function(data, type, full, meta) {
                         return meta.row + 1; // شماره ردیف
                     },
-                },
-                {
-                    targets: 1,
-                    orderable: false,
-                    render: function() {
-                        return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle row-check">';
-                    },
-                    checkboxes: {
-                        selectRow: false, // فقط با چک‌باکس، نه روی کل ردیف
-                        selectAllRender: '<input type="checkbox" class="form-check-input mt-0 align-middle">',
-                    },
-                    responsivePriority: 4,
-                },
-                {
-                    targets: 2,
-                    searchable: false,
-                    visible: false,
                 },
                 {
                     responsivePriority: 1,
@@ -281,7 +268,7 @@
             order: [
                 [2, "desc"]
             ],
-            dom: '<"card-header flex-column flex-md-row"<"head-label d-flex justify-content-between align-items-center text-center"><"dt-action-buttons text-end primary-font pt-3 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t' +
+            dom: '<"card-header flex-column flex-md-row"<"dt-action-buttons text-end primary-font pt-3 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t' +
                 "<'row d-flex align-items-center justify-content-between'<'col-md-4'<'bulk-holder'>><'col-md-8 d-flex justify-content-between'i p>>",
             displayLength: 10,
             lengthMenu: [10, 25, 50, 75, 100],
@@ -336,10 +323,6 @@
             new $.fn.dataTable.FixedHeader(dt_basic);
         }
         $("#bulk-actions").appendTo(".bulk-holder");
-        $("div.head-label").html(
-            '<h5 class="card-title mb-0">لیست خوشه ها</h5>' +
-            '<small class="text-muted ms-2">( {{ $cluster_count }} رکورد )</small>'
-        );
         dt_basic.on('draw', function() {
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function(tooltipTriggerEl) {

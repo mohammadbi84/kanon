@@ -51,7 +51,7 @@ class ProfessionController extends Controller
     {
         // return $request;
         // رشته‌ها برای فرم ایجاد
-        $fields = Field::orderBy('name', 'asc')->get();
+        $fields = Field::orderBy('name', 'asc')->active()->get();
         $kardaneshes = Kardanesh::orderBy('name', 'asc')->get();
         $jobtypes = Jobtype::orderBy('name', 'asc')->get();
         $fieldId = $request->fieldId ?? null;

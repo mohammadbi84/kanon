@@ -21,22 +21,28 @@
     </h5>
     <!-- DataTable with Buttons -->
     <div class="card">
-        <div class="card-datatable table-responsive">
-            <div class="d-flex justify-content-end align-items-center gap-3">
-                <div class="btn-group">
-                    <button type="button" class="btn border btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <i class="bx bx-menu"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="javascript:void(0);">خروجی اکسل</a></li>
-                        <li><a class="dropdown-item" href="javascript:void(0);">ورودی اکسل</a></li>
-                    </ul>
+        <div class="card-datatable table-responsive p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="head-label d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">لیست حرفه ها</h5>
+                    <small class="text-muted ms-2">( {{ $professions_count }} رکورد )</small>
                 </div>
-                <a href="{{ route('admin.professions.create', ['fieldId' => $fieldId]) }}" class="btn btn-primary">
-                    حرفه جدید
-                    <i class="bx bx-plus ms-2"></i>
-                </a>
+                <div class="d-flex justify-content-end align-items-center gap-3">
+                    <div class="btn-group">
+                        <button type="button" class="btn border btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="bx bx-menu"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="javascript:void(0);">خروجی اکسل</a></li>
+                            <li><a class="dropdown-item" href="javascript:void(0);">ورودی اکسل</a></li>
+                        </ul>
+                    </div>
+                    <a href="{{ route('admin.professions.create', ['fieldId' => $fieldId]) }}" class="btn btn-primary">
+                        حرفه جدید
+                        <i class="bx bx-plus ms-2"></i>
+                    </a>
+                </div>
             </div>
             <table class="dt-select-table professions table">
                 <thead>
@@ -187,7 +193,7 @@
                     }
                 },
                 {
-                    targets: 3, // ستون شماره ردیف (مطابق ایندکس خودت)
+                    targets: 2, // ستون شماره ردیف (مطابق ایندکس خودت)
                     data: null,
                     title: "ردیف",
                     orderable: true,
@@ -195,23 +201,6 @@
                     render: function(data, type, full, meta) {
                         return meta.row + 1; // شماره ردیف
                     },
-                },
-                {
-                    targets: 1,
-                    orderable: false,
-                    render: function() {
-                        return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle row-check">';
-                    },
-                    checkboxes: {
-                        selectRow: false, // فقط با چک‌باکس، نه روی کل ردیف
-                        selectAllRender: '<input type="checkbox" class="form-check-input mt-0 align-middle">',
-                    },
-                    responsivePriority: 4,
-                },
-                {
-                    targets: 2,
-                    searchable: false,
-                    visible: false,
                 },
                 {
                     responsivePriority: 1,
@@ -289,7 +278,7 @@
             order: [
                 [2, "desc"]
             ],
-            dom: '<"card-header flex-column flex-md-row"<"head-label d-flex justify-content-between align-items-center text-center"><"dt-action-buttons text-end primary-font pt-3 pt-md-0"B>>' +
+            dom: '<"card-header flex-column flex-md-row"<"dt-action-buttons text-end primary-font pt-3 pt-md-0"B>>' +
                 '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t' +
                 "<'row d-flex align-items-center justify-content-between'<'col-md-4'<'bulk-holder'>><'col-md-8 d-flex justify-content-between'i p>>",
             displayLength: 10,
@@ -340,12 +329,6 @@
 
         // انتقال اکشن‌ها
         $("#bulk-actions").appendTo(".bulk-holder");
-
-        // عنوان جدول
-        $("div.head-label").html(
-            '<h5 class="card-title mb-0">لیست حرفه ها</h5>' +
-            '<small class="text-muted ms-2">( {{ $professions_count }} رکورد )</small>'
-        );
 
         dt_basic.on('draw', function() {
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
