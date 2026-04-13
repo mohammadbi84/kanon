@@ -222,7 +222,7 @@
 
             <div class="row">
                 {{-- فیلدهای کد استاندارد --}}
-                <div class="col-sm-4 mb-4">
+                <div class="col-sm-3 mb-4">
                     <div class="custom-input-group">
                         <input type="text" id="old_standard_code" name="old_standard_code" class="form-control">
                         <label class="form-label" for="old_standard_code">کد استاندارد قدیم</label>
@@ -230,18 +230,25 @@
                 </div>
 
                 {{-- تاریخ تدوین --}}
-                <div class="col-sm-4 mb-4">
+                <div class="col-sm-3 mb-4">
                     <div class="custom-input-group">
                         <input type="date" id="draft_date" name="draft_date" class="form-control">
                         <label class="form-label" for="draft_date">تاریخ تدوین</label>
                     </div>
                 </div>
 
-                <div class="col-sm-4 mb-4">
+                <div class="col-sm-3 mb-4">
                     <div class="custom-input-group">
                         <input type="text" id="trainer_qualification" name="trainer_qualification"
                             class="form-control">
                         <label class="form-label" for="trainer_qualification">صلاحیت مربی</label>
+                    </div>
+                </div>
+                <div class="col-sm-3 mb-4">
+                    <div class="custom-input-group">
+                        <input type="text" id="prerequisites" name="prerequisites"
+                            class="form-control">
+                        <label class="form-label" for="prerequisites">پیش نیاز</label>
                     </div>
                 </div>
 
@@ -816,6 +823,10 @@
                     label: "صلاحیت حرفه‌ای مربی",
                     type: "text",
                 },
+                prerequisites: {
+                    label: "پیش نیاز",
+                    type: "text",
+                },
                 draft_date: {
                     label: "تاریخ تدوین",
                     type: "date",
@@ -918,6 +929,10 @@
                 },
                 trainer_qualification: {
                     label: "صلاحیت حرفه‌ای مربی",
+                    type: "text",
+                },
+                prerequisites: {
+                    label: "پیش نیاز",
                     type: "text",
                 },
                 draft_date: {

@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Kardanesh extends Model
 {
     use HasFactory;
+    protected $fillable = ['name'];
+
     public function professions()
     {
         return $this->hasMany(Profession::class);

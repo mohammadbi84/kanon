@@ -35,20 +35,20 @@ class SiteController extends Controller
 {
     public function index(Request $request)
     {
-        $page = StaticPageVisit::firstOrCreate(['slug' => 'home']);
+        // $page = StaticPageVisit::firstOrCreate(['slug' => 'home']);
 
-        $existingVisit = $page->visits()
-            ->where('ip_address', request()->ip())
-            ->orWhere('agent', request()->userAgent())
-            ->where('created_at', '>=', now()->subDay())
-            ->first();
+        // $existingVisit = $page->visits()
+        //     ->where('ip_address', request()->ip())
+        //     ->orWhere('agent', request()->userAgent())
+        //     ->where('created_at', '>=', now()->subDay())
+        //     ->first();
 
-        if (!$existingVisit) {
-            $page->visits()->create([
-                'ip_address' => request()->ip(),
-                'agent' => request()->userAgent(),
-            ]);
-        }
+        // if (!$existingVisit) {
+        //     $page->visits()->create([
+        //         'ip_address' => request()->ip(),
+        //         'agent' => request()->userAgent(),
+        //     ]);
+        // }
 
 
         $khabars = Khabar::active()->get();

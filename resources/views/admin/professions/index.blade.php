@@ -29,13 +29,17 @@
                 </div>
                 <div class="d-flex justify-content-end align-items-center gap-3">
                     <div class="btn-group">
-                        <button type="button" class="btn border btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                        <button type="button" class="btn border btn-icon dropdown-toggle hide-arrow"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bx bx-menu"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="javascript:void(0);">خروجی اکسل</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0);">ورودی اکسل</a></li>
+                            <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="">خروجی اکسل</button>
+                            </li>
+                            <li><button class="dropdown-item" data-bs-toggle="modal"
+                                    data-bs-target="#modalImportExcel">ورودی اکسل</button></li>
+                            <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modalReport">گزارش
+                                    گیری</button></li>
                         </ul>
                     </div>
                     <a href="{{ route('admin.professions.create', ['fieldId' => $fieldId]) }}" class="btn btn-primary">
@@ -94,7 +98,79 @@
         </div>
     </div>
 
-    <div class="modal fade" id="professionDetailsModal" tabindex="-1" aria-labelledby="detailsLabel" aria-hidden="true">
+    <!-- Modal -->
+    <div class="modal fade" id="modalImportExcel" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title secondary-font" id="modalImportExcelTitle">آپلود حرفه ها از اکسل</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('admin.professions.uploadExcel') }}" method="post" id="formUpload"
+                        enctype="multipart/form-data">
+                        @csrf
+                        {{-- فیلد آپلود اکسل --}}
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="custom-file-upload">
+                                    <label for="file" class="upload-button">آپلود فایل اکسل</label>
+                                    <input type="file" id="file" name="file" class="custom-file-input"
+                                        style="display: none;">
+                                    <span class="file-count">فایلی انتخاب نشده</span>
+                                </div>
+                                <div class="w-100 rounded" id="file-preview"></div>
+
+                            </div>
+                            <div class="col-sm-12 mt-3">
+                                <button type="submit" id="btnSubmit" class="btn btn-primary">
+                                    وارد کردن
+
+                                </button>
+                                <button id="btnSpinner" class="btn btn-primary d-none" type="button" disabled>
+                                    <span class="spinner-border spinner-border-sm" role="status"
+                                        aria-hidden="true"></span>
+                                    درحال ذخیره
+                                </button>
+                            </div>
+                            <div class="col-12">
+                                <div id="uploadLogsContainer" class="mt-4 d-none">
+                                    <div class="card">
+                                        <div class="card-header bg-danger p-2 text-white">
+                                            <h5 class="mb-0 text-white">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                خطاهای رخ داده در آپلود
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="logsList" class="pt-2"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modalReport" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">گزارش آپلودهای انجام شده</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="upload-list" class="list-group"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- details --}}
+    <div class="modal fade" id="professionDetailsModal" tabindex="-1" aria-labelledby="detailsLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -159,11 +235,15 @@
                     data: "",
                     title: "فایل استاندارد",
                     render: function(data, type, row) {
-                        return `
-                        <a href="/${row.standard_file}" target="_blank" class="btn btn-sm btn-outline-danger">
-                            دانلود
-                            </a>
-                        `;
+                        if (row.standard_file) {
+                            return `
+                            <a href="/${row.standard_file}" target="_blank" class="btn btn-sm btn-outline-danger">
+                                دانلود
+                                </a>
+                            `;
+                        } else {
+                            return '';
+                        }
                     },
                 },
                 {
@@ -747,6 +827,314 @@
 
             $("#profession-details-content").html(html);
             $("#professionDetailsModal").modal("show");
+        });
+    </script>
+    <script>
+        $(document).on('change', '.custom-file-input', function() {
+            let fileCount = this.files.length;
+            let fileCountText = fileCount === 0 ? 'فایلی انتخاب نشده' : fileCount + ' فایل انتخاب شده';
+            // عنصر نمایشی که کنار این اینپوت هست رو پیدا کن
+            $(this).siblings('.file-count').text(fileCountText);
+        });
+
+        function removeFilePdf(button) {
+            // پیدا کردن div والد که شامل عکس، نام فایل و دکمه است
+            const previewDiv = button.closest('.mb-2.mt-3.border.bg-white.p-2.rounded');
+            if (previewDiv) {
+                previewDiv.remove();
+            }
+
+            // مهم: همچنین باید مقدار فیلد ورودی فایل را ریست کنید تا کاربر بتواند دوباره همان فایل را انتخاب کند
+            const fileInput = document.getElementById('file');
+            if (fileInput) {
+                fileInput.value = '';
+            }
+            $("#file").siblings('.file-count').text('فایلی انتخاب نشده');
+        }
+        document.getElementById('file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('file-preview');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    let sizeInKB = (file.size / 1024).toFixed(1);
+                    preview.innerHTML = `
+                    <div class="d-flex align-items-center justify-content-between mb-2 mt-3 border bg-white p-2 rounded">
+                        <div class="d-flex align-items-center">
+                            <div><i class="bx bxs-file-import text-success" style="font-size: 50px;"></i></div>
+                            <div class="me-3">
+                                <div>${file.name}</div>
+                                <small class="text-muted">${sizeInKB} KB</small>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-label-danger btn-sm rounded-3 p-1" onclick="removeFilePdf(this)">
+                            <i class="bx bx-x"></i>
+                            </button>
+                    </div>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.innerHTML = '';
+            }
+        });
+        $('#formUpload').on('submit', function(event) {
+            event.preventDefault();
+
+            const form = $(this);
+            const formActionUrl = form.attr('action') || '/admin2/professions/uploadExcel';
+
+            $.ajax({
+                url: formActionUrl,
+                type: 'POST',
+                data: new FormData(this),
+                contentType: false,
+                processData: false,
+                beforeSend: function(xhr) {
+                    $("#btnSubmit").addClass('d-none');
+                    $("#btnSpinner").removeClass('d-none');
+                    // پاک کردن لاگ‌های قبلی
+                    $("#uploadLogsContainer").addClass('d-none');
+                    $("#logsList").empty();
+                },
+                success: function(response) {
+                    $("#btnSubmit").removeClass('d-none');
+                    $("#btnSpinner").addClass('d-none');
+
+                    toastr.success(response.message || 'عملیات با موفقیت انجام شد!');
+
+                    // نمایش لاگ‌ها
+                    if (response.logs && response.logs.length > 0) {
+                        displayUploadLogs(response.logs);
+                    }
+
+                    console.log(response);
+                },
+                error: function(xhr, status, error) {
+                    $("#btnSubmit").removeClass('d-none');
+                    $("#btnSpinner").addClass('d-none');
+                    toastr.error(xhr.responseJSON?.message || 'خطایی رخ داد');
+                }
+            });
+        });
+
+        // تابع نمایش لاگ‌ها
+        function displayUploadLogs(logs) {
+            const container = $('#logsList');
+            let html = '<ul class="list-group">';
+
+            logs.forEach(function(log) {
+                // تبدیل data از string به JSON برای نمایش بهتر
+                let rowData = typeof log.data === 'string' ? JSON.parse(log.data) : log.data;
+                if (!log.success) {
+                    html += `
+                        <li class="list-group-item list-group-item-danger mb-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>
+                                    <i class="fas fa-times-circle"></i>
+                                    ردیف ${log.row_number}
+                                </strong>
+                                <span class="badge badge-danger text-dark">${log.error_message}</span>
+                                <span class="badge badge-danger text-dark">کد ایسکو: ${rowData.کد_استاندارد_ایسکو}</span>
+                            </div>
+                        </li>
+                    `;
+                }
+            });
+
+            html += '</ul>';
+
+            container.html(html);
+            $("#uploadLogsContainer").removeClass('d-none');
+        }
+    </script>
+    {{-- report --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // وقتی مدال باز میشه، داده‌ها بارگذاری بشن
+            const modal = document.getElementById('modalReport');
+            modal.addEventListener('shown.bs.modal', loadImportList);
+
+            function loadImportList() {
+                const listContainer = document.getElementById('upload-list');
+                listContainer.innerHTML = '<div class="text-center py-3">در حال بارگذاری...</div>';
+
+                fetch('/admin2/professions/imports') // روت بالا
+                    .then(res => res.json())
+                    .then(imports => {
+                        if (imports.length === 0) {
+                            listContainer.innerHTML =
+                                '<div class="text-muted text-center py-4">هنوز هیچ آپلودی انجام نشده.</div>';
+                            return;
+                        }
+
+                        let html = '';
+                        imports.forEach(imp => {
+                            html += `
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>نام فایل : ${imp.file_name}</strong>
+                                    <strong class="text-muted d-block">تاریخ آپلود : ${new Date(imp.created_at).toLocaleString('fa-IR')}</strong>
+                                </div>
+                                <button class="btn btn-sm btn-outline-secondary view-logs-btn"
+                                        data-import-id="${imp.id}">
+                                    مشاهده لاگ‌ها
+                                </button>
+                            </div>
+                            <div id="logs-${imp.id}" class="mt-2 logs-container" style="display:none;"></div>
+                        </div>
+                    `;
+                        });
+                        listContainer.innerHTML = html;
+                        attachLogButtons();
+                    })
+                    .catch(() => {
+                        listContainer.innerHTML =
+                            '<div class="text-danger text-center py-3">خطا در دریافت داده‌ها</div>';
+                    });
+            }
+
+            function attachLogButtons() {
+                document.querySelectorAll('.view-logs-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const importId = this.dataset.importId;
+                        const container = document.getElementById('logs-' + importId);
+
+                        if (container.style.display === 'block') {
+                            container.style.display = 'none';
+                            container.innerHTML = '';
+                            return;
+                        }
+
+                        container.style.display = 'block';
+                        container.innerHTML =
+                            '<div class="text-muted ps-3 py-2">در حال بارگذاری لاگ‌ها...</div>';
+
+                        fetch(`/admin2/professions/imports/${importId}/logs`)
+                            .then(res => res.json())
+                            .then(logs => {
+                                if (logs.length === 0) {
+                                    container.innerHTML =
+                                        '<div class="ps-3 py-2 text-success">بدون خطا ✅</div>';
+                                    return;
+                                }
+
+                                // تقسیم به موفق و خطادار
+                                const successLogs = [];
+                                const errorLogs = [];
+
+                                logs.forEach(log => {
+                                    let rowData = typeof log.data === 'string' ? JSON
+                                        .parse(log.data) : log.data;
+                                    if (log.success)
+                                        successLogs.push({
+                                            ...log,
+                                            rowData
+                                        });
+                                    else
+                                        errorLogs.push({
+                                            ...log,
+                                            rowData
+                                        });
+                                });
+
+                                // تابع گروه‌بندی بر اساس رشته
+                                function groupByReshte(arr) {
+                                    const grouped = {};
+                                    arr.forEach(item => {
+                                        let reshte = item.rowData.رشته ?? 'نامشخص';
+                                        if (!grouped[reshte]) grouped[reshte] = [];
+                                        grouped[reshte].push(item);
+                                    });
+                                    return grouped;
+                                }
+
+                                const groupedSuccess = groupByReshte(successLogs);
+                                const groupedError = groupByReshte(errorLogs);
+                                
+                                // ساخت HTML خروجی
+                                let logsHtml = '';
+                                // بخش خطادارها
+                                if (errorLogs.length > 0) {
+                                    logsHtml += `
+                                        <div class="border rounded p-3 bg-white">
+                                            <h6 class="text-danger mb-3">
+                                                رکوردهای خطادار — ${errorLogs.length} مورد
+                                            </h6>
+                                    `;
+
+                                    Object.keys(groupedError).forEach(reshte => {
+                                        const group = groupedError[reshte];
+                                        logsHtml += `
+                                            <div class="mb-3 border rounded p-2 bg-light">
+                                                <strong>رشته: ${reshte} (${group.length})</strong>
+                                                <ul class="list-group list-group-flush mt-2">
+                                        `;
+                                        group.forEach((log, i) => {
+                                            logsHtml += `
+                                                <li class="list-group-item list-group-item-danger">
+                                                    <div>${i + 1}</div>
+                                                    <strong>️ردیف ${log.row_number}</strong>
+                                                    <div>
+                                                        حرفه ${log.rowData.حرفه} با کد ایسکو ${log.rowData.کد_استاندارد_ایسکو}
+                                                        در رسته ${log.rowData.رسته} / خوشه ${log.rowData.خوشه} / رشته ${log.rowData.رشته} درج نگردید.
+                                                    </div>
+                                                    <div>دلیل: ${log.error_message || '—'}</div>
+                                                </li>
+                                            `;
+                                        });
+                                        logsHtml += '</ul></div>';
+                                    });
+                                    logsHtml += '</div>';
+                                }
+                                // ✅ بخش موفق‌ها
+                                if (successLogs.length > 0) {
+                                    logsHtml += `
+                                        <div class="border rounded p-3 mb-3 bg-white">
+                                            <h6 class="text-success mb-3">
+                                                رکوردهای موفق — ${successLogs.length} مورد
+                                            </h6>
+                                    `;
+
+                                    Object.keys(groupedSuccess).forEach(reshte => {
+                                        const group = groupedSuccess[reshte];
+                                        logsHtml += `
+                                            <div class="mb-3 ps-3">
+                                                <strong>رشته : ${reshte} (${group.length})</strong>
+                                                <ul class="list-group list-group-flush mt-2">
+                                        `;
+                                        group.forEach((log, i) => {
+                                            logsHtml += `
+                                            <li class="list-group-item list-group-item-success">
+                                                    <div>${i + 1}</div>
+                                                    <strong>ردیف ${log.row_number}</strong>
+                                                    <div>
+                                                        حرفه ${log.rowData.حرفه} با کد ایسکو ${log.rowData.کد_استاندارد_ایسکو}
+                                                        در رسته ${log.rowData.رسته} / خوشه ${log.rowData.خوشه} / رشته ${log.rowData.رشته} درج گردید.
+                                                    </div>
+                                                </li>
+                                            `;
+                                        });
+                                        logsHtml += '</ul></div>';
+                                    });
+
+                                    logsHtml += '</div>';
+                                }
+                                // نمایش نهایی
+                                container.innerHTML = logsHtml;
+                            })
+                            .catch(() => {
+                                container.innerHTML =
+                                    '<div class="text-danger p-3 py-2">خطا در بارگذاری لاگ‌ها</div>';
+                            });
+
+
+                    });
+                });
+            }
         });
     </script>
 @endsection

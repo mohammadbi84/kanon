@@ -3,12 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Imports\ProfessionsImport;
 use Illuminate\Http\Request;
 use App\Models\Profession;
 use App\Models\Field;
 use App\Models\Jobtype;
 use App\Models\Kardanesh;
+use App\Models\ProfessionImport;
+use App\Models\ProfessionImportLog;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProfessionController extends Controller
@@ -241,9 +247,9 @@ class ProfessionController extends Controller
             ->first();
 
         if ($profession) {
-            return response()->json(['success' => true, 'data' => $profession, 'message'=>'حرفه مورد نظر وجود دارد']);
-            }
-            return response()->json(['success' => false, 'data' => $profession, 'message'=>'حرفه مورد نظر پیدا نشد']);
+            return response()->json(['success' => true, 'data' => $profession, 'message' => 'حرفه مورد نظر وجود دارد']);
+        }
+        return response()->json(['success' => false, 'data' => $profession, 'message' => 'حرفه مورد نظر پیدا نشد']);
     }
 
     // ✏️ ویرایش حرفه
@@ -490,5 +496,53 @@ class ProfessionController extends Controller
             'success' => true,
             'message' => 'آرشیو حرفه ها با موفقیت تغییر کرد.'
         ]);
+    }
+
+    public function uploadExcel(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+        // return ('دریافت شد');
+
+        $batchId = (string)Str::uuid();
+        $import = ProfessionImport::create([
+            'batch_id' => $batchId,
+            'file_name' => $request->file('file')->getClientOriginalName(),
+        ]);
+        session()->put('import_id', $import->id);
+
+        try {
+            // استفاده از Excel::import بدون تعیین صریح نوع فایل
+            // پکیج خودش سعی می‌کنه نوع فایل رو تشخیص بده
+            Excel::import(new ProfessionsImport, $request->file('file'));
+
+            $logs = $import->logs;
+            return response()->json(['success' => true, 'message' => 'حرفه ها با موفقیت اضافه شد', 'logs' => $logs]);
+        } catch (\Exception $e) {
+            // لاگ کردن خطا برای اشکال‌زدایی
+            Log::error('Excel import error: ' . $e->getMessage(), ['file_path' => $request->file('file')->getPathname()]);
+            // برگرداندن پیام خطا به کاربر
+            return back()->withErrors(['file' => 'خطا در پردازش فایل اکسل: ' . $e->getMessage()]);
+        }
+        Excel::import(new ProfessionsImport, $request->file('file'));
+
+        return back()->with('success', 'حرفه ها با موفقیت وارد شد.');
+    }
+
+    // لیست همه آپلودها (برا نمایش در مدال)
+    public function imports()
+    {
+        $imports = ProfessionImport::latest()->get(['id', 'file_name', 'created_at']);
+        return response()->json($imports);
+    }
+
+    // لاگ‌های هر آپلود خاص
+    public function import_log($id)
+    {
+        $logs = ProfessionImportLog::where('profession_import_id', $id)
+            ->orderBy('success')
+            ->get(['row_number', 'error_message', 'data','success']);
+        return response()->json($logs);
     }
 }

@@ -28,6 +28,7 @@ class Profession extends Model
         'jobtype_id',
         'min_education_id',
         'trainer_qualification',
+        'prerequisites',
         'draft_date',
         'image_path',
         'standard_file',

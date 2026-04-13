@@ -9,6 +9,7 @@ use App\Models\Herfe;
 class Jobtype extends Model
 {
     use HasFactory;
+    protected $fillable = ['name'];
     public function professions()
     {
         return $this->hasMany(Profession::class);

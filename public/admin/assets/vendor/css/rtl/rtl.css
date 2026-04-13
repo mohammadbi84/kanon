@@ -1172,7 +1172,8 @@ html .sticky-wrapper.is-sticky .card-header.sticky-element {
     font-size: 11px;
     /* color: var(--bs-blue); */
 }
-.custom-input-group input:disabled{
+
+.custom-input-group input:disabled {
     background: #f7f7f7 !important;
 }
 
@@ -1246,6 +1247,25 @@ html .sticky-wrapper.is-sticky .card-header.sticky-element {
     background-color: #ebebeb;
 }
 
-.input-group-text{
+.input-group-text {
     background: #f7f7f7;
+}
+
+
+.custom-file-upload {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.upload-button {
+    background-color: #5a8dee;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.file-count {
+    margin-right: 5px;
+    color: #677788;
 }

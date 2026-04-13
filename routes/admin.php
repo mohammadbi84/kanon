@@ -158,6 +158,11 @@ Route::name('admin.')->group(function () {
         Route::post('/bulk-archive', [ProfessionController::class, 'bulkArchive'])->name('professions.bulkArchive');
         Route::get('/create', [ProfessionController::class, 'create'])->name('professions.create');
         Route::post('/store', [ProfessionController::class, 'store'])->name('professions.store');
+        Route::post('/uploadExcel', [ProfessionController::class, 'uploadExcel'])->name('professions.uploadExcel');
+        // لیست همه آپلودها
+        Route::get('/imports', [ProfessionController::class, 'imports'])->name('professions.imports');
+        // لاگ‌های مربوط به یک آپلود خاص
+        Route::get('/imports/{id}/logs', [ProfessionController::class, 'import_log'])->name('professions.imports.logs');
         Route::delete('/delete/{id}', [ProfessionController::class, 'delete'])->name('professions.delete');
         Route::post('/bulk-delete', [ProfessionController::class, 'bulkDelete'])->name('professions.bulkDelete');
         Route::get('/{id}', [ProfessionController::class, 'edit'])->name('professions.edit');
