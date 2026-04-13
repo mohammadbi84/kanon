@@ -17,6 +17,9 @@ class ProfessionImportLog extends Model
         'data',
     ];
 
+    protected $casts = [
+        'success' => 'boolean',
+    ];
     public function import()
     {
         return $this->belongsTo(ProfessionImport::class);

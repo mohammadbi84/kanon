@@ -68,7 +68,8 @@
                         </div>
                     </ul>
                 </div>
-                <a href="{{ route('admin.professions.index') }}{{$fieldId ? '?field_id='.$fieldId : ''}}" class="btn btn-custom">
+                <a href="{{ route('admin.professions.index') }}{{ $fieldId ? '?field_id=' . $fieldId : '' }}"
+                    class="btn btn-custom">
                     بازگشت
                     <i class="fa fa-arrow-left ms-3"></i>
                 </a>
@@ -139,8 +140,8 @@
                             <label for="">دقیقه</label>
                         </div>
                         <div class="custom-input-group only-number ltr w-50">
-                            <input type="text" id="theory_hour" name="theory_hour" class="form-control" min="0"
-                                max="1000">
+                            <input type="text" id="theory_hour" name="theory_hour" class="form-control"
+                                min="0" max="1000">
                             <label for="">ساعت</label>
                         </div>
                     </div>
@@ -246,8 +247,7 @@
                 </div>
                 <div class="col-sm-3 mb-4">
                     <div class="custom-input-group">
-                        <input type="text" id="prerequisites" name="prerequisites"
-                            class="form-control">
+                        <input type="text" id="prerequisites" name="prerequisites" class="form-control">
                         <label class="form-label" for="prerequisites">پیش نیاز</label>
                     </div>
                 </div>
@@ -768,11 +768,13 @@
                 practice_hour: {
                     label: "ساعت عملی",
                     type: "number",
+                    required: true,
                     min: 0,
                 },
                 practice_minute: {
                     label: "دقیقه عملی",
                     type: "number",
+                    required: true,
                     min: 0,
                 },
                 project_hour: {
@@ -876,11 +878,13 @@
                 practice_hour: {
                     label: "ساعت عملی",
                     type: "number",
+                    required: true,
                     min: 0,
                 },
                 practice_minute: {
                     label: "دقیقه عملی",
                     type: "number",
+                    required: true,
                     min: 0,
                 },
                 project_hour: {

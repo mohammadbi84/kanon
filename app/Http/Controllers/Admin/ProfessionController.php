@@ -517,7 +517,7 @@ class ProfessionController extends Controller
             // پکیج خودش سعی می‌کنه نوع فایل رو تشخیص بده
             Excel::import(new ProfessionsImport, $request->file('file'));
 
-            $logs = $import->logs;
+            $logs = $import->logs()->where('success', true)->get();
             return response()->json(['success' => true, 'message' => 'حرفه ها با موفقیت اضافه شد', 'logs' => $logs]);
         } catch (\Exception $e) {
             // لاگ کردن خطا برای اشکال‌زدایی
@@ -533,7 +533,7 @@ class ProfessionController extends Controller
     // لیست همه آپلودها (برا نمایش در مدال)
     public function imports()
     {
-        $imports = ProfessionImport::latest()->get(['id', 'file_name', 'created_at']);
+        $imports = ProfessionImport::with('logs')->latest()->get(['id', 'file_name', 'created_at']);
         return response()->json($imports);
     }
 
@@ -542,7 +542,13 @@ class ProfessionController extends Controller
     {
         $logs = ProfessionImportLog::where('profession_import_id', $id)
             ->orderBy('success')
-            ->get(['row_number', 'error_message', 'data','success']);
+            ->get(['row_number', 'error_message', 'data', 'success']);
         return response()->json($logs);
+    }
+
+    // لیست همه آپلودها (برا نمایش در مدال)
+    public function print()
+    {
+        return view('admin.professions.printLogs');
     }
 }

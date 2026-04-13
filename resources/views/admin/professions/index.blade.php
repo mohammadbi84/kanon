@@ -1,5 +1,50 @@
 @extends('admin.layout.master')
 @section('head')
+    <style>
+        @media print {
+
+            /* همه چیز را به جز بخش پرینتی پنهان کن */
+            @page {
+                margin: 0 !important;
+                /* حذف کامل margin چاپ */
+            }
+
+            body {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            body * {
+                visibility: hidden;
+                /* اول همه چیز را پنهان کن */
+            }
+
+            .logs-container,
+            .logs-container * {
+                visibility: visible;
+                /* بعد فقط بخش پرینتی و محتویاتش را آشکار کن */
+            }
+
+            .logs-container {
+                position: absolute;
+                /* موقعیت دهی مطلق برای اطمینان بیشتر */
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px;
+                margin: 0 !important;
+                /* عرض کامل */
+            }
+
+            /* اگر لازم بود، استایل‌های دیگری هم اینجا اضافه کن */
+            h1,
+            p,
+            ul {
+                color: black !important;
+                /* اطمینان از خوانایی */
+            }
+        }
+    </style>
 @endsection
 @section('content')
     {{-- بررسی اینکه آیا field_id از URL آمده یا نه --}}
@@ -34,12 +79,15 @@
                             <i class="bx bx-menu"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="">خروجی اکسل</button>
-                            </li>
-                            <li><button class="dropdown-item" data-bs-toggle="modal"
-                                    data-bs-target="#modalImportExcel">ورودی اکسل</button></li>
                             <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modalReport">گزارش
                                     گیری</button></li>
+                            <li><a href="#" class="dropdown-item">دانلود فایل خام نمونه</a>
+                            </li>
+                            <li><button class="dropdown-item" data-bs-toggle="modal"
+                                    data-bs-target="#modalImportExcel">آپلود اطلاعات از فایل اکسل</button></li>
+                            <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="">دانلود اطلاعات در
+                                    فایل اکسل</button>
+                            </li>
                         </ul>
                     </div>
                     <a href="{{ route('admin.professions.create', ['fieldId' => $fieldId]) }}" class="btn btn-primary">
@@ -923,7 +971,6 @@
         function displayUploadLogs(logs) {
             const container = $('#logsList');
             let html = '<ul class="list-group">';
-
             logs.forEach(function(log) {
                 // تبدیل data از string به JSON برای نمایش بهتر
                 let rowData = typeof log.data === 'string' ? JSON.parse(log.data) : log.data;
@@ -935,7 +982,7 @@
                                     <i class="fas fa-times-circle"></i>
                                     ردیف ${log.row_number}
                                 </strong>
-                                <span class="badge badge-danger text-dark">${log.error_message}</span>
+                                <span class="badge badge-danger text-dark whitespace-unset">${log.error_message}</span>
                                 <span class="badge badge-danger text-dark">کد ایسکو: ${rowData.کد_استاندارد_ایسکو}</span>
                             </div>
                         </li>
@@ -948,6 +995,23 @@
             container.html(html);
             $("#uploadLogsContainer").removeClass('d-none');
         }
+        const modal = document.getElementById('modalImportExcel');
+        modal.addEventListener('hidden.bs.modal', function() {
+            document.getElementById('formUpload').reset();
+
+            const previewDiv = $("#file-preview").html(null);
+
+            // مهم: همچنین باید مقدار فیلد ورودی فایل را ریست کنید تا کاربر بتواند دوباره همان فایل را انتخاب کند
+            const fileInput = document.getElementById('file');
+            if (fileInput) {
+                fileInput.value = '';
+            }
+            $("#file").siblings('.file-count').text('فایلی انتخاب نشده');
+
+            $("#uploadLogsContainer").addClass('d-none');
+            dt_basic.ajax.reload(null, false);
+
+        });
     </script>
     {{-- report --}}
     <script>
@@ -972,6 +1036,18 @@
 
                         let html = '';
                         imports.forEach(imp => {
+                            let successCount = 0;
+                            let errorCount = 0;
+                            const allLogs = imp.logs || []; // اطمینان از وجود logs
+
+                            // شمارش موفق و ناموفق
+                            allLogs.forEach(log => {
+                                if (log.success) {
+                                    successCount++;
+                                } else {
+                                    errorCount++;
+                                }
+                            });
                             html += `
                         <div class="list-group-item">
                             <div class="d-flex justify-content-between align-items-center">
@@ -979,9 +1055,20 @@
                                     <strong>نام فایل : ${imp.file_name}</strong>
                                     <strong class="text-muted d-block">تاریخ آپلود : ${new Date(imp.created_at).toLocaleString('fa-IR')}</strong>
                                 </div>
+                                <button class="btn btn-sm btn-outline-success view-logs-btn"
+                                        data-import-id="${imp.id}" data-status="1">
+                                    ثبت موفق ( ${successCount} )
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger view-logs-btn"
+                                        data-import-id="${imp.id}" data-status="0">
+                                    ثبت ناموفق ( ${errorCount} )
+                                </button>
                                 <button class="btn btn-sm btn-outline-secondary view-logs-btn"
-                                        data-import-id="${imp.id}">
-                                    مشاهده لاگ‌ها
+                                        data-import-id="${imp.id}" data-status="all">
+                                    مشاهده همه ( ${imp.logs.length} )
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary printBtn" id="printBtn" data-target="logs-${imp.id}" disabled>
+                                    پرینت نتایج
                                 </button>
                             </div>
                             <div id="logs-${imp.id}" class="mt-2 logs-container" style="display:none;"></div>
@@ -1001,13 +1088,16 @@
                 document.querySelectorAll('.view-logs-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const importId = this.dataset.importId;
+                        const status = this.dataset.status;
                         const container = document.getElementById('logs-' + importId);
 
-                        if (container.style.display === 'block') {
-                            container.style.display = 'none';
-                            container.innerHTML = '';
-                            return;
-                        }
+                        $("#printBtn").prop("disabled", false);
+
+                        // if (container.style.display === 'block') {
+                        //     container.style.display = 'none';
+                        //     container.innerHTML = '';
+                        //     return;
+                        // }
 
                         container.style.display = 'block';
                         container.innerHTML =
@@ -1054,15 +1144,15 @@
 
                                 const groupedSuccess = groupByReshte(successLogs);
                                 const groupedError = groupByReshte(errorLogs);
-                                
+
                                 // ساخت HTML خروجی
                                 let logsHtml = '';
                                 // بخش خطادارها
                                 if (errorLogs.length > 0) {
                                     logsHtml += `
-                                        <div class="border rounded p-3 bg-white">
+                                        <div class="border rounded p-3 bg-white ${status == 1 ? 'd-none' : ''}">
                                             <h6 class="text-danger mb-3">
-                                                رکوردهای خطادار — ${errorLogs.length} مورد
+                                                ثبت های ناموفق — ${errorLogs.length} مورد
                                             </h6>
                                     `;
 
@@ -1070,7 +1160,7 @@
                                         const group = groupedError[reshte];
                                         logsHtml += `
                                             <div class="mb-3 border rounded p-2 bg-light">
-                                                <strong>رشته: ${reshte} (${group.length})</strong>
+                                                <strong>رسته ${group[0].rowData.رسته ?? group[1].rowData.رسته ?? 'نامشخص'} / خوشه ${group[0].rowData.خوشه ?? group[0].rowData.خوشه ?? 'نامشخص'} / رشته ${reshte} ( ${group.length} مورد )</strong>
                                                 <ul class="list-group list-group-flush mt-2">
                                         `;
                                         group.forEach((log, i) => {
@@ -1079,8 +1169,7 @@
                                                     <div>${i + 1}</div>
                                                     <strong>️ردیف ${log.row_number}</strong>
                                                     <div>
-                                                        حرفه ${log.rowData.حرفه} با کد ایسکو ${log.rowData.کد_استاندارد_ایسکو}
-                                                        در رسته ${log.rowData.رسته} / خوشه ${log.rowData.خوشه} / رشته ${log.rowData.رشته} درج نگردید.
+                                                        حرفه ${log.rowData.حرفه} با کد ایسکو ${log.rowData.کد_استاندارد_ایسکو} درج نگردید.
                                                     </div>
                                                     <div>دلیل: ${log.error_message || '—'}</div>
                                                 </li>
@@ -1093,9 +1182,9 @@
                                 // ✅ بخش موفق‌ها
                                 if (successLogs.length > 0) {
                                     logsHtml += `
-                                        <div class="border rounded p-3 mb-3 bg-white">
+                                        <div class="border rounded p-3 mb-3 bg-white ${status == 0 ? 'd-none' : ''}">
                                             <h6 class="text-success mb-3">
-                                                رکوردهای موفق — ${successLogs.length} مورد
+                                                ثبت های موفق — ${successLogs.length} مورد
                                             </h6>
                                     `;
 
@@ -1103,7 +1192,7 @@
                                         const group = groupedSuccess[reshte];
                                         logsHtml += `
                                             <div class="mb-3 ps-3">
-                                                <strong>رشته : ${reshte} (${group.length})</strong>
+                                                <strong>رسته ${group[0].rowData.رسته} / خوشه ${group[0].rowData.خوشه} / رشته ${reshte} ( ${group.length} مورد )</strong>
                                                 <ul class="list-group list-group-flush mt-2">
                                         `;
                                         group.forEach((log, i) => {
@@ -1112,8 +1201,7 @@
                                                     <div>${i + 1}</div>
                                                     <strong>ردیف ${log.row_number}</strong>
                                                     <div>
-                                                        حرفه ${log.rowData.حرفه} با کد ایسکو ${log.rowData.کد_استاندارد_ایسکو}
-                                                        در رسته ${log.rowData.رسته} / خوشه ${log.rowData.خوشه} / رشته ${log.rowData.رشته} درج گردید.
+                                                        حرفه ${log.rowData.حرفه} با کد ایسکو ${log.rowData.کد_استاندارد_ایسکو} با موفقیت درج گردید.
                                                     </div>
                                                 </li>
                                             `;
@@ -1135,6 +1223,22 @@
                     });
                 });
             }
+
+            $(document).on('click', '.printBtn', function() {
+                const divId = this.dataset.target;
+                const contentToPrint = document.getElementById(divId).innerHTML;
+
+                // محتوا را URL-encode کن تا در پارامتر URL مشکلی نداشته باشد
+                const encodedContent = encodeURIComponent(contentToPrint);
+
+                // آدرس صفحه پرینت + پارامتر محتوا
+                const printUrl = `/admin2/professions/print?data=${encodedContent}`; // اگر فایل در root است
+                // اگر در فولدر است: `/your-folder/print-content.html?data=${encodedContent}`
+
+                // باز کردن صفحه پرینت در یک پنجره جدید یا tab جدید
+                window.open(printUrl, '_blank');
+            });
+
         });
     </script>
 @endsection

@@ -159,6 +159,8 @@ Route::name('admin.')->group(function () {
         Route::get('/create', [ProfessionController::class, 'create'])->name('professions.create');
         Route::post('/store', [ProfessionController::class, 'store'])->name('professions.store');
         Route::post('/uploadExcel', [ProfessionController::class, 'uploadExcel'])->name('professions.uploadExcel');
+        // پرینت لاگ ها
+        Route::get('/print', [ProfessionController::class, 'print'])->name('professions.print');
         // لیست همه آپلودها
         Route::get('/imports', [ProfessionController::class, 'imports'])->name('professions.imports');
         // لاگ‌های مربوط به یک آپلود خاص

@@ -1269,3 +1269,8 @@ html .sticky-wrapper.is-sticky .card-header.sticky-element {
     margin-right: 5px;
     color: #677788;
 }
+
+.whitespace-unset{
+    white-space: unset !important;
+    line-height: 25px;
+}

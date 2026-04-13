@@ -4,7 +4,7 @@ namespace App\Imports;
 
 use App\Models\Profession;
 use App\Models\Field;
-use App\Models\JobType;
+use App\Models\Jobtype;
 use App\Models\Kardanesh;
 use App\Models\MinEducation;
 use App\Models\ProfessionImportLog;
@@ -33,7 +33,7 @@ class ProfessionsImport implements
     public function __construct()
     {
         $this->fields     = Field::pluck('id', 'name');
-        $this->jobTypes   = JobType::pluck('id', 'name');
+        $this->jobTypes   = Jobtype::pluck('id', 'name');
         $this->kardanesh  = Kardanesh::pluck('id', 'name');
         $this->minEdu     = MinEducation::pluck('id', 'name');
 
@@ -50,28 +50,58 @@ class ProfessionsImport implements
         // 1) اعتبارسنجی‌ها
         // ------------------------------
 
+        if (empty($row['حرفه']) and empty($row['رسته']) and empty($row['خوشه']) and empty($row['کد_استاندارد_ایسکو']) and empty($row['رشته']) and empty($row['ساعت_تئوری']) and empty($row['ساعت_عملی'])) {
+            $this->logError('عدم درج فیلد های رسته، خوشه، رشته، حرفه، کد استاندارد ایسکو، ساعات تئوری و ساعات عملی.', $row);
+            return null;
+        }
+        if (empty($row['حرفه']) and empty($row['رسته']) and empty($row['خوشه']) and empty($row['کد_استاندارد_ایسکو']) and empty($row['رشته']) and empty($row['ساعت_تئوری'])) {
+            $this->logError('عدم درج فیلد های رسته، خوشه، رشته، حرفه، کد استاندارد ایسکو و ساعات تئوری.', $row);
+            return null;
+        }
+        if (empty($row['حرفه']) and empty($row['رسته']) and empty($row['خوشه']) and empty($row['کد_استاندارد_ایسکو']) and empty($row['رشته'])) {
+            $this->logError('عدم درج فیلد های رسته، خوشه، رشته، حرفه و کد استاندارد ایسکو.', $row);
+            return null;
+        }
+        if (empty($row['حرفه']) and empty($row['رسته']) and empty($row['خوشه']) and empty($row['کد_استاندارد_ایسکو'])) {
+            $this->logError('عدم درج فیلد های رسته، خوشه، حرفه و کد استاندارد ایسکو.', $row);
+            return null;
+        }
         if (empty($row['حرفه'])) {
-            $this->logError('نام خالی است', $row);
+            $this->logError('عدم درج نام حرفه', $row);
+            return null;
+        }
+        if (empty($row['رسته'])) {
+            $this->logError('عدم درج نام رسته.', $row);
+            return null;
+        }
+        if (empty($row['خوشه'])) {
+            $this->logError('عدم درج نام خوشه', $row);
             return null;
         }
 
-        if (empty($row['کد_استاندارد_ایسکو']) || strlen(trim($row['کد_استاندارد_ایسکو'])) !== 15) {
-            $this->logError('کد استاندارد جدید نامعتبر است (باید 15 رقم باشد)', $row);
+        if (empty($row['کد_استاندارد_ایسکو'])) {
+            $this->logError('عدم درج کد استاندارد ایسکو', $row);
+            return null;
+        }
+        if (strlen(trim($row['کد_استاندارد_ایسکو'])) !== 15) {
+            $this->logError('صحیح نبودن استاندارد ایسکو', $row);
             return null;
         }
 
         // رشته اجباری
         $fieldId = $this->fields[trim($row['رشته'])] ?? null;
         if (!$fieldId) {
-            $this->logError('رشته ' . $row['رشته'] . ' یافت نشد', $row);
+            $this->logError('عدم یافت رشته ' . $row['رشته'], $row);
             return null;
         }
 
-        if (
-            Profession::where('name', trim($row['حرفه']))->where('new_standard_code', trim($row['کد_استاندارد_ایسکو']))->where('field_id', $fieldId)->first() ||
-            Profession::where('name', trim($row['حرفه']))->where('field_id', $fieldId)->first()
-        ) {
-            $this->logError('حرفه با این نام و رشته وجود دارد.', $row);
+        if (Profession::where('new_standard_code', trim($row['کد_استاندارد_ایسکو']))->first()) {
+            $this->logError('تکراری بودن کد ایسکو.', $row);
+            return null;
+        }
+
+        if (Profession::where('name', trim($row['حرفه']))->where('field_id', $fieldId)->first()) {
+            $this->logError('تکراری بودن نام حرفه.', $row);
             return null;
         }
 
@@ -79,14 +109,46 @@ class ProfessionsImport implements
         // 2) تبدیل ساعت/دقیقه
         // ------------------------------
 
-        $th = (int)($row['تئوری_ساعت'] ?? 0);
-        $tm = (int)($row['تئوری_دقیقه'] ?? 0);
-        $ph = (int)($row['عملی_ساعت'] ?? 0);
-        $pm = (int)($row['عملی_دقیقه'] ?? 0);
-        $prh = (int)($row['پروژه_ساعت'] ?? 0);
-        $prm = (int)($row['پروژه_دقیقه'] ?? 0);
-        $ih = (int)($row['کارورزی_ساعت'] ?? 0);
-        $im = (int)($row['کارورزی_دقیقه'] ?? 0);
+        $th = (int)($row['ساعت_تئوری'] ?? 0);
+        if (!isset($row['ساعت_تئوری'])) {
+            $this->logError('عدم درج ساعت تئوری.', $row);
+            return null;
+        }
+        $tm = (int)($row['دقیقه_تئوری'] ?? 0);
+        if (!isset($row['دقیقه_تئوری'])) {
+            $this->logError('عدم درج دقیقه تئوری.', $row);
+            return null;
+        }
+        if ((int)($row['دقیقه_تئوری']) > 59) {
+            $this->logError('نامعتبر بودن زمان تئوری وارد شده.', $row);
+            return null;
+        }
+        $ph = (int)($row['ساعت_عملی'] ?? 0);
+        if (!isset($row['ساعت_عملی'])) {
+            $this->logError('عدم درج ساعت عملی.', $row);
+            return null;
+        }
+        $pm = (int)($row['دقیقه_عملی'] ?? 0);
+        if (!isset($row['دقیقه_عملی'])) {
+            $this->logError('عدم درج دقیقه عملی.', $row);
+            return null;
+        }
+        if ((int)($row['دقیقه_عملی']) > 59) {
+            $this->logError('نامعتبر بودن زمان عملی وارد شده.', $row);
+            return null;
+        }
+        $prh = (int)($row['ساعت_پروژه'] ?? 0);
+        $prm = (int)($row['دقیقه_پروژه'] ?? 0);
+        if ((int)($row['دقیقه_پروژه']) > 59) {
+            $this->logError('نامعتبر بودن زمان پروژه وارد شده.', $row);
+            return null;
+        }
+        $ih = (int)($row['ساعت_کارورزی'] ?? 0);
+        $im = (int)($row['دقیقه_کارورزی'] ?? 0);
+        if ((int)($row['دقیقه_کارورزی']) > 59) {
+            $this->logError('نامعتبر بودن زمان کارورزی وارد شده.', $row);
+            return null;
+        }
 
         $totalMinutes =
             ($th * 60 + $tm) +
@@ -102,19 +164,19 @@ class ProfessionsImport implements
         // ------------------------------
 
         $jobtypeId = $this->jobTypes[trim($row['نوع'] ?? '')] ?? null;
-        $kardaneshId = $this->kardanesh[trim($row['نوع_کار_و_دانش'] ?? '')] ?? null;
+        $kardaneshId = $this->kardanesh[trim($row['نوع_کارودانش'] ?? '')] ?? null;
         $minEduId = $this->minEdu[trim($row['حداقل_تحصیلات'] ?? '')] ?? null;
 
         if (!$jobtypeId && $row['نوع']) {
             $record = Jobtype::create(['name' => $row['نوع']]);
             $jobtypeId = $record->id;
         }
-        if (!$kardaneshId && $row['نوع_کار_و_دانش']) {
-            $record = Kardanesh::create(['name' => $row['نوع_کار_و_دانش']]);
+        if (!$kardaneshId && $row['نوع_کارودانش']) {
+            $record = Kardanesh::create(['name' => $row['نوع_کارودانش']]);
             $kardaneshId = $record->id;
         }
-        if (!$minEduId && $row['حداقل_تحصیلات']) {
-            $newMinEdu = MinEducation::create(['name' => $row['حداقل_تحصیلات']]);
+        if (!$minEduId && trim($row['حداقل_تحصیلات'])) {
+            $newMinEdu = MinEducation::create(['name' => trim($row['حداقل_تحصیلات'])]);
             $minEduId = $newMinEdu->id;
         }
 
@@ -181,12 +243,12 @@ class ProfessionsImport implements
     // هر بار ۱۰۰۰ ردیف
     public function chunkSize(): int
     {
-        return 1000;
+        return 100000000;
     }
 
     // هر بار ۵۰۰ رکورد insert
     public function batchSize(): int
     {
-        return 500;
+        return 1;
     }
 }
