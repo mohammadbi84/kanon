@@ -66,20 +66,115 @@
     <script>
         // دریافت محتوا از URL و قرار دادن در صفحه
         document.addEventListener('DOMContentLoaded', (event) => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const content = urlParams.get('data'); // فرض می‌کنیم پارامتر 'data' نام دارد
+            // تقسیم به موفق و خطادار
+            logs = @json($logs);
 
-            if (content) {
-                document.getElementById('contentToPrint').innerHTML = decodeURIComponent(content);
-                // بعد از قرار دادن محتوا، پرینت را آغاز کن
-                window.print();
-            } else {
-                document.getElementById('contentToPrint').innerHTML = '<p>خطا: محتوایی برای پرینت یافت نشد.</p>';
-                // اگر محتوا نبود، بلافاصله صفحه را ببند
-                setTimeout(() => {
-                    window.close();
-                }, 1000); // یک ثانیه صبر کن و ببند
+            // تقسیم به موفق و خطادار
+            const successLogs = [];
+            const errorLogs = [];
+
+            logs.forEach(log => {
+                let rowData = typeof log.data === 'string' ? JSON
+                    .parse(log.data) : log.data;
+                if (log.success)
+                    successLogs.push({
+                        ...log,
+                        rowData
+                    });
+                else
+                    errorLogs.push({
+                        ...log,
+                        rowData
+                    });
+            });
+
+            // تابع گروه‌بندی بر اساس رشته
+            function groupByReshte(arr) {
+                const grouped = {};
+                arr.forEach(item => {
+                    let reshte = item.rowData.رشته ?? 'نامشخص';
+                    if (!grouped[reshte]) grouped[reshte] = [];
+                    grouped[reshte].push(item);
+                });
+                return grouped;
             }
+
+            const groupedSuccess = groupByReshte(successLogs);
+            const groupedError = groupByReshte(errorLogs);
+
+            // ساخت HTML خروجی
+            let logsHtml = '';
+            // بخش خطادارها
+            if (errorLogs.length > 0) {
+                logsHtml += `
+                                        <div class="border rounded p-3 bg-white">
+                                            <h6 class="text-danger mb-3">
+                                                ثبت های ناموفق — ${errorLogs.length} مورد
+                                            </h6>
+                                    `;
+
+                Object.keys(groupedError).forEach(reshte => {
+                    const group = groupedError[reshte];
+                    logsHtml += `
+                                            <div class="mb-3 border rounded p-2 bg-light">
+                                                <strong>رسته ${group[0].rowData.رسته ?? group[1].rowData.رسته ?? 'نامشخص'} / خوشه ${group[0].rowData.خوشه ?? group[0].rowData.خوشه ?? 'نامشخص'} / رشته ${reshte} ( ${group.length} مورد )</strong>
+                                                <ul class="list-group list-group-flush mt-2">
+                                        `;
+                    group.forEach((log, i) => {
+                        logsHtml += `
+                                                <li class="list-group-item list-group-item-danger">
+                                                    <div>${i + 1}</div>
+                                                    <strong>️ردیف ${log.row_number}</strong>
+                                                    <div>
+                                                        حرفه ${log.rowData.حرفه} با کد ایسکو ${log.rowData.کد_استاندارد_ایسکو} درج نگردید.
+                                                    </div>
+                                                    <div>دلیل: ${log.error_message || '—'}</div>
+                                                </li>
+                                            `;
+                    });
+                    logsHtml += '</ul></div>';
+                });
+                logsHtml += '</div>';
+            }
+            // ✅ بخش موفق‌ها
+            if (successLogs.length > 0) {
+                logsHtml += `
+                                        <div class="border rounded p-3 mb-3 bg-white">
+                                            <h6 class="text-success mb-3">
+                                                ثبت های موفق — ${successLogs.length} مورد
+                                            </h6>
+                                    `;
+
+                Object.keys(groupedSuccess).forEach(reshte => {
+                    const group = groupedSuccess[reshte];
+                    logsHtml += `
+                                            <div class="mb-3 ps-3">
+                                                <strong>رسته ${group[0].rowData.رسته} / خوشه ${group[0].rowData.خوشه} / رشته ${reshte} ( ${group.length} مورد )</strong>
+                                                <ul class="list-group list-group-flush mt-2">
+                                        `;
+                    group.forEach((log, i) => {
+                        logsHtml += `
+                                            <li class="list-group-item list-group-item-success">
+                                                    <div>${i + 1}</div>
+                                                    <strong>ردیف ${log.row_number}</strong>
+                                                    <div>
+                                                        حرفه ${log.rowData.حرفه} با کد ایسکو ${log.rowData.کد_استاندارد_ایسکو} با موفقیت درج گردید.
+                                                    </div>
+                                                </li>
+                                            `;
+                    });
+                    logsHtml += '</ul></div>';
+                });
+
+                logsHtml += '</div>';
+            }
+            // نمایش نهایی
+            document.getElementById('contentToPrint').innerHTML = logsHtml;
+
+
+
+            // window.print();
+
         });
 
         // ایونت برای بستن پنجره بعد از اتمام عملیات پرینت

@@ -243,7 +243,7 @@ class ProfessionsImport implements
     // هر بار ۱۰۰۰ ردیف
     public function chunkSize(): int
     {
-        return 100000000;
+        return 6000;
     }
 
     // هر بار ۵۰۰ رکورد insert

@@ -44,7 +44,31 @@
                 /* اطمینان از خوانایی */
             }
         }
+
+        td {
+            padding: 0 !important;
+            text-align: center
+        }
+
+        th {
+            text-align: center !important;
+        }
+
+        .table th {
+            font-size: 13px !important;
+        }
+
+        tbody {
+            font-size: 13px !important;
+        }
+
+        .form-control {
+            font-size: 13px !important;
+        }
     </style>
+    {{-- btn-go-to-top --}}
+    <link rel="stylesheet" href="{{ asset('site/assets/css/btn-go-to-top.css') }}">
+    <script src="{{ asset('site/assets/js/btn-go-to-top.js') }}"></script>
 @endsection
 @section('content')
     {{-- بررسی اینکه آیا field_id از URL آمده یا نه --}}
@@ -54,6 +78,7 @@
 
     <h5 class="breadcrumb-wrapper mb-4">
         <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
+        <span class="text-muted">مدیریت استاندارد ها / </span>
         @if ($fieldId)
             <a href="{{ route('admin.categories.index') }}" class="text-muted">رسته {{ $field?->cluster->category->name }}</a>
             <span class="text-muted">/</span>
@@ -67,7 +92,7 @@
     <!-- DataTable with Buttons -->
     <div class="card">
         <div class="card-datatable table-responsive p-3">
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex justify-content-between align-items-center mb-2 px-3">
                 <div class="head-label d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">لیست حرفه ها</h5>
                     <small class="text-muted ms-2">( {{ $professions_count }} رکورد )</small>
@@ -96,26 +121,13 @@
                     </a>
                 </div>
             </div>
-            <table class="dt-select-table professions table">
-                <thead>
-                    <tr>
-                        {{-- filled with ajax --}}
-                    </tr>
-                </thead>
-            </table>
-            <div id="bulk-actions" class="">
-                <div class="btn-group" id="action_group" style="display: none">
-                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
+            <div class="bulk-actions" id="bulk-actions2">
+                <div class="btn-group action_group" style="display: none">
+                    <button type="button" class="btn border dropdown-toggle" data-bs-toggle="dropdown"
                         aria-expanded="false">
                         انتخاب عملیـات
                     </button>
                     <ul class="dropdown-menu">
-                        <li>
-                            <button class="dropdown-item text-danger" id="bulk-delete" href="#">
-                                <i class=" bx bx-trash"></i>
-                                حذف انتخابی ها
-                            </button>
-                        </li>
                         <li>
                             <button class="dropdown-item bulk-toggle" data-status="1" disabled>
                                 <i class=" bx bx-check"></i>
@@ -130,14 +142,78 @@
                         </li>
                         <li>
                             <button class="dropdown-item bulk-archive" data-status="1" disabled>
-                                {{-- <i class=" bx bx-check"></i> --}}
+                                <i class=" bx bx-check"></i>
                                 آرشیو
                             </button>
                         </li>
                         <li>
                             <button class="dropdown-item bulk-archive" data-status="0" disabled>
-                                {{-- <i class=" bx bx-x"></i> --}}
+                                <i class=" bx bx-x"></i>
                                 عدم آرشیو
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item text-danger bulk-delete" href="#">
+                                <i class=" bx bx-trash"></i>
+                                حذف انتخابی ها
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <table class="dt-select-table professions table table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th>ردیف</th>
+                        <th>رسته</th>
+                        <th>خوشه</th>
+                        <th>رشته</th>
+                        <th>نام حرفه</th>
+                        <th>کد استاندارد</th>
+                        <th>مدت ساعات</th>
+                        <th>انتشار</th>
+                        <th>آرشیو</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+            </table>
+            <div id="bulk-actions" class="bulk-actions">
+                <div class="btn-group action_group" id="" style="display: none">
+                    <button type="button" class="btn border dropdown-toggle" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        انتخاب عملیـات
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <button class="dropdown-item bulk-toggle" data-status="1" disabled>
+                                <i class=" bx bx-check"></i>
+                                انتشار
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item bulk-toggle" data-status="0" disabled>
+                                <i class=" bx bx-x"></i>
+                                عدم انتشار
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item bulk-archive" data-status="1" disabled>
+                                <i class=" bx bx-check"></i>
+                                آرشیو
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item bulk-archive" data-status="0" disabled>
+                                <i class=" bx bx-x"></i>
+                                عدم آرشیو
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item text-danger bulk-delete" href="#">
+                                <i class=" bx bx-trash"></i>
+                                حذف انتخابی ها
                             </button>
                         </li>
                     </ul>
@@ -231,6 +307,11 @@
             </div>
         </div>
     </div>
+
+
+    <a href="#" id="btn-go-to-top" class="shadow">
+        <span class="bx bx-arrow-to-top"></span>
+    </a>
 @endsection
 @section('script')
     <script src="{{ asset('admin/assets/js/validation.js') }}"></script>
@@ -257,16 +338,24 @@
                     visible: false
                 },
                 {
-                    data: "id",
-                    title: "ردیف"
+                    data: null,
+                    title: "ردیف",
+                },
+                {
+                    data: "field.cluster.category.name",
+                    title: "رسته"
+                },
+                {
+                    data: "field.cluster.name",
+                    title: "خوشه"
                 },
                 {
                     data: "field.name",
-                    title: "نام رشته"
+                    title: "رشته"
                 },
                 {
                     data: "name",
-                    title: "نام حرفه"
+                    title: "حرفه"
                 },
                 {
                     data: "new_standard_code",
@@ -274,24 +363,9 @@
                 },
                 {
                     data: "",
-                    title: "جمع ساعات",
+                    title: "مدت ساعت",
                     render: function(data, type, row) {
-                        return row.total_hour + " : " + row.total_minute;
-                    },
-                },
-                {
-                    data: "",
-                    title: "فایل استاندارد",
-                    render: function(data, type, row) {
-                        if (row.standard_file) {
-                            return `
-                            <a href="/${row.standard_file}" target="_blank" class="btn btn-sm btn-outline-danger">
-                                دانلود
-                                </a>
-                            `;
-                        } else {
-                            return '';
-                        }
+                        return row.total_minute + " : " + row.total_hour;
                     },
                 },
                 {
@@ -317,22 +391,19 @@
                     },
                     checkboxes: {
                         selectRow: true,
-                        selectAllRender: '<input type="checkbox" class="form-check-input mt-0 align-middle">'
+                        selectAllRender: '<input type="checkbox" id="select-all-page" class="form-check-input select-all mt-0 align-middle">'
                     }
                 },
                 {
-                    targets: 2, // ستون شماره ردیف (مطابق ایندکس خودت)
+                    targets: 2,
                     data: null,
                     title: "ردیف",
                     orderable: true,
                     searchable: false,
                     render: function(data, type, full, meta) {
-                        return meta.row + 1; // شماره ردیف
+                        // شماره ردیف سراسری (بدون وابستگی به صفحه و سورت)
+                        return meta.row + meta.settings._iDisplayStart + 1;
                     },
-                },
-                {
-                    responsivePriority: 1,
-                    targets: 3,
                 },
                 {
                     targets: -3,
@@ -358,7 +429,7 @@
                 },
                 {
                     targets: -2,
-                    orderable: false,
+                    orderable: true,
                     searchable: false,
                     render: function(data, type, full, meta) {
                         if (type == 'sort') {
@@ -384,33 +455,49 @@
                     searchable: false,
                     render: function(data, type, full) {
                         return `
-                           <button class="btn btn-sm btn-info item-details" data-item='${JSON.stringify(full)}' >
-                            جزئیات
-                            </button>
-
-                            <a href="/admin2/certificates?field_id=${full.id}" class="btn btn-sm btn-success item-show" data-id="${full.id}">
-                            سند حرفه (0)
-                            </a>
-
-                            <a href="/admin2/professions/${full.id}" class="btn btn-sm btn-icon btn-primary item-edit" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="<small>ویرایش</small>">
-                            <i class="bx bxs-edit"></i>
-                            </a>
-
-                            <button class="btn btn-sm btn-icon btn-danger item-delete" data-id="${full.id}" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="<small>حذف</small>">
-                            <i class="bx bxs-trash"></i>
-                            </button>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-icon dropdown-toggle hide-arrow"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                            <button class="dropdown-item item-details" data-item='${JSON.stringify(full)}' >
+                                                جزئیات
+                                            </button>
+                                    </li>
+                                    <li>
+                                        <a href="/admin2/professions/${full.id}" class="dropdown-item item-edit">
+                                            ویرایش
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="dropdown-item item-show" data-id="${full.id}">
+                                            سند حرفه (0)
+                                        </a>
+                                    </li>
+                                    ${
+                                    full.standard_file?`<li><a href="/${full.standard_file}" target="_blank" class="dropdown-item">دانلود فایل استاندارد</a></li>`:''
+                                    }
+                                    <li>
+                                        <button class="dropdown-item item-delete text-danger" data-id="${full.id}">
+                                            حذف
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
                             `;
                     },
                 },
             ],
             order: [
-                [2, "desc"]
+                [2, "asc"]
             ],
             dom: '<"card-header flex-column flex-md-row"<"dt-action-buttons text-end primary-font pt-3 pt-md-0"B>>' +
-                '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t' +
+                '<"d-flex justify-content-between align-items-center"<"d-flex justify-content-start align-items-center gap-3"l <\'bulk-holder2\'>><"d-flex justify-content-center justify-content-md-end"f>><"table-responsive"t>' +
                 "<'row d-flex align-items-center justify-content-between'<'col-md-4'<'bulk-holder'>><'col-md-8 d-flex justify-content-between'i p>>",
-            displayLength: 10,
-            lengthMenu: [10, 25, 50, 75, 100],
+            displayLength: 50,
+            lengthMenu: [10, 25, 50, 75, 100, 500],
             buttons: [],
             responsive: {
                 details: {
@@ -445,8 +532,32 @@
                 },
             },
             select: {
-                style: "multi"
+                style: "multi",
             },
+        });
+        let thead = $('.professions thead');
+        let searchRow = thead.find('tr').clone().appendTo(thead);
+        let noSearchColumns = [0, 8, 9, 10];
+        $('.professions thead tr:eq(1) th').each(function(i) {
+            $(this).removeClass('sorting');
+            $(this).removeClass('sorting_asc');
+            $(this).removeClass('sorting_desc');
+            $(this).addClass('px-2');
+
+            if (noSearchColumns.includes(i)) {
+                $(this).html(''); // خالی بزار
+                return;
+            }
+
+            var title = $(this).text();
+
+            $(this).html('<input type="text" class="form-control" />');
+
+            $('input', this).on('keyup change', function() {
+                if (dt_basic.column(i).search() !== this.value) {
+                    dt_basic.column(i + 1).search(this.value).draw();
+                }
+            });
         });
         if (window.Helpers.isNavbarFixed()) {
             var navHeight = $('#layout-navbar').outerHeight();
@@ -457,15 +568,7 @@
 
         // انتقال اکشن‌ها
         $("#bulk-actions").appendTo(".bulk-holder");
-
-        dt_basic.on('draw', function() {
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function(tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-        });
-
-
+        $("#bulk-actions2").appendTo(".bulk-holder2");
         dt_basic.on('click', '.dt-checkboxes', function() {
             const row = dt_basic.row($(this).closest('tr'));
 
@@ -480,6 +583,7 @@
                 e.preventDefault();
             }
         });
+
 
 
 
@@ -503,6 +607,7 @@
                 cancelButtonColor: "#3085d6",
                 confirmButtonText: "بله، حذف کن!",
                 cancelButtonText: "انصراف",
+                reverseButtons: true,
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -534,7 +639,7 @@
         });
 
         // delete selected items----------------------------------------------------------------------------------------------------------
-        const btnBulk = $("#bulk-delete");
+        const btnBulk = $(".bulk-delete");
         if (btnBulk) {
             // وقتی رکورد انتخاب شد
             dt_basic.on("select", function(e, dt, type, indexes) {
@@ -553,15 +658,15 @@
                 }).count();
                 if (selected > 0) {
                     // $("#bulk-actions").removeClass("d-none");
-                    $("#bulk-actions #action_group").show();
-                    $("#bulk-actions #bulk-delete").prop("disabled", false);
-                    $("#bulk-actions .bulk-toggle").prop("disabled", false);
-                    $("#bulk-actions .bulk-archive").prop("disabled", false);
+                    $(".bulk-actions .action_group").show();
+                    $(".bulk-actions .bulk-delete").prop("disabled", false);
+                    $(".bulk-actions .bulk-toggle").prop("disabled", false);
+                    $(".bulk-actions .bulk-archive").prop("disabled", false);
                 } else {
-                    $("#bulk-actions #action_group").hide();
-                    $("#bulk-actions #bulk-delete").prop("disabled", true);
-                    $("#bulk-actions .bulk-toggle").prop("disabled", true);
-                    $("#bulk-actions .bulk-archive").prop("disabled", true);
+                    $(".bulk-actions .action_group").hide();
+                    $(".bulk-actions .bulk-delete").prop("disabled", true);
+                    $(".bulk-actions .bulk-toggle").prop("disabled", true);
+                    $(".bulk-actions .bulk-archive").prop("disabled", true);
                 }
             }
 
@@ -595,8 +700,10 @@
                     showCancelButton: true,
                     confirmButtonColor: "#d33",
                     cancelButtonColor: "#3085d6",
-                    confirmButtonText: "بله، حذف کن!",
+                    confirmButtonText: "تایید",
                     cancelButtonText: "انصراف",
+                    focusConfirm: false,
+                    reverseButtons: true,
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
@@ -630,8 +737,8 @@
 
             // toggle selected
             $(".bulk-toggle").on("click", function() {
-                const ids = getSelectedIds();
-                const status = $(this).data("status");
+                const ids = getSelectedIds(); // فرض می‌کنیم این تابع id ردیف‌های انتخاب شده را برمی‌گرداند
+                const status = $(this).data("status"); // true برای انتشار، false برای عدم انتشار
 
                 if (ids.length === 0) {
                     Swal.fire({
@@ -642,26 +749,65 @@
                     return;
                 }
 
-                $.ajax({
-                    url: "/admin2/professions/bulk-toggle",
-                    type: "POST",
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr(
-                            "content"
-                        ),
-                        ids: ids,
-                        status: status,
-                    },
-                    success: function(res) {
-                        toastr.success(res.message);
-                        dt_basic.ajax.reload(null, false);
-                        $("#bulk-actions .bulk-toggle").prop("disabled", true);
-                    },
-                    error: function(err) {
-                        toastr.error("خطا در ارتباط با سرور.");
+                Swal.fire({
+                    title: `آیا از ${status ? 'انتشار' : 'عدم انتشار'} ${ids.length} رکورد مطمئن هستید؟`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "تایید",
+                    cancelButtonText: "انصراف",
+                    focusConfirm: false,
+                    reverseButtons: true,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/admin2/professions/bulk-toggle",
+                            type: "POST",
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr("content"),
+                                ids: ids,
+                                status: status,
+                            },
+                            success: function(res) {
+                                toastr.success(res.message);
 
-                        console.error(err);
-                    },
+                                // --- شروع بخش به‌روزرسانی آیکون‌ها در جدول ---
+                                // حلقه زدن روی ID های ارسال شده
+                                ids.forEach(function(id) {
+                                    var $button = dt_basic.rows().nodes().to$().find(
+                                        `button.item-toggle[data-id="${id}"]`);
+
+                                    if ($button.length) {
+                                        var $icon = $button.find('i');
+
+                                        if (status) { // اگر وضعیت به 'منتشر شده' تغییر کرد
+                                            $icon.removeClass('bx-x').addClass(
+                                                'bx-check');
+                                            $button.removeClass('text-danger').addClass(
+                                                'text-success');
+                                        } else { // اگر وضعیت به 'منتشر نشده' تغییر کرد
+                                            $icon.removeClass('bx-check').addClass(
+                                                'bx-x');
+                                            $button.removeClass('text-success')
+                                                .addClass('text-danger');
+                                        }
+                                    }
+                                });
+                                // --- پایان بخش به‌روزرسانی آیکون‌ها در جدول ---
+
+                                // مخفی کردن منوی bulk actions
+                                $(".bulk-actions .action_group").hide();
+                                $(".bulk-actions .bulk-delete").prop("disabled", true);
+                                $(".bulk-actions .bulk-toggle").prop("disabled", true);
+                                $(".bulk-actions .bulk-archive").prop("disabled", true);
+                            },
+                            error: function(err) {
+                                toastr.error("خطا در ارتباط با سرور.");
+                                console.error(err);
+                            },
+                        });
+                    }
                 });
             });
             // archive
@@ -678,32 +824,75 @@
                     return;
                 }
 
-                $.ajax({
-                    url: "/admin2/professions/bulk-archive",
-                    type: "POST",
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr(
-                            "content"
-                        ),
-                        ids: ids,
-                        status: status,
-                    },
-                    success: function(res) {
-                        toastr.success(res.message);
-                        dt_basic.ajax.reload(null, false);
-                        $("#bulk-actions .bulk-archive").prop("disabled", true);
-                    },
-                    error: function(err) {
-                        toastr.error("خطا در ارتباط با سرور.");
+                Swal.fire({
+                    title: `آیا از ${status ? 'آرشیو' : 'عدم آرشیو'} ${ids.length} رکورد مطمئن هستید؟`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "تایید",
+                    cancelButtonText: "انصراف",
+                    focusConfirm: false,
+                    reverseButtons: true,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/admin2/professions/bulk-archive",
+                            type: "POST",
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr(
+                                    "content"
+                                ),
+                                ids: ids,
+                                status: status,
+                            },
+                            success: function(res) {
+                                toastr.success(res.message);
+                                // حلقه زدن روی ID های ارسال شده
+                                ids.forEach(function(id) {
+                                    var $button = dt_basic.rows().nodes().to$().find(
+                                        `button.item-archive[data-id="${id}"]`);
 
-                        console.error(err);
-                    },
+                                    if ($button.length) {
+                                        var $icon = $button.find('i');
+
+                                        if (status) { // اگر وضعیت به 'منتشر شده' تغییر کرد
+                                            $icon.removeClass('bx-x').addClass(
+                                                'bx-check');
+                                            $button.removeClass('text-danger').addClass(
+                                                'text-success');
+                                        } else { // اگر وضعیت به 'منتشر نشده' تغییر کرد
+                                            $icon.removeClass('bx-check').addClass(
+                                                'bx-x');
+                                            $button.removeClass('text-success')
+                                                .addClass('text-danger');
+                                        }
+                                    }
+                                });
+                                // --- پایان بخش به‌روزرسانی آیکون‌ها در جدول ---
+
+                                // مخفی کردن منوی bulk actions
+                                $(".bulk-actions .action_group").hide();
+                                $(".bulk-actions .bulk-delete").prop("disabled", true);
+                                $(".bulk-actions .bulk-toggle").prop("disabled", true);
+                                $(".bulk-actions .bulk-archive").prop("disabled", true);
+                            },
+                            error: function(err) {
+                                toastr.error("خطا در ارتباط با سرور.");
+
+                                console.error(err);
+                            },
+                        });
+                    }
                 });
             });
         }
         // toggle one item----------------------------------------------------------------------------------------------------------------
         dt_basic.on("click", ".item-toggle", function() {
             const id = $(this).data("id");
+
+            var button = $(this);
+            var icon = button.find('i');
 
             if (!id) return;
             $.ajax({
@@ -715,8 +904,16 @@
                     ),
                 },
                 success: function(res) {
-                    dt_basic.ajax.reload(null, false);
                     toastr.success(res.message);
+                    if (icon.hasClass('bx-check')) {
+                        icon.removeClass('bx-check').addClass('bx-x');
+                        button.removeClass('text-success').addClass(
+                            'text-danger'); // مثال: تغییر رنگ دکمه
+                    } else {
+                        icon.removeClass('bx-x').addClass('bx-check');
+                        button.removeClass('text-danger').addClass(
+                            'text-success'); // مثال: بازگرداندن رنگ دکمه
+                    }
                 },
                 error: function(err) {
                     toastr.error("خطا در ارتباط با سرور.");
@@ -727,6 +924,8 @@
         // archive one item----------------------------------------------------------------------------------------------------------------
         dt_basic.on("click", ".item-archive", function() {
             const id = $(this).data("id");
+            var button = $(this);
+            var icon = button.find('i');
 
             if (!id) return;
             $.ajax({
@@ -738,7 +937,15 @@
                     ),
                 },
                 success: function(res) {
-                    dt_basic.ajax.reload(null, false);
+                    if (icon.hasClass('bx-check')) {
+                        icon.removeClass('bx-check').addClass('bx-x');
+                        button.removeClass('text-success').addClass(
+                            'text-danger'); // مثال: تغییر رنگ دکمه
+                    } else {
+                        icon.removeClass('bx-x').addClass('bx-check');
+                        button.removeClass('text-danger').addClass(
+                            'text-success'); // مثال: بازگرداندن رنگ دکمه
+                    }
                     toastr.success(res.message);
                 },
                 error: function(err) {
@@ -867,9 +1074,9 @@
                     }
                     <hr class="mt-3">
                     <div class="col-md-12"><strong>جزئیات ثبت رکورد:</strong><br>
-                        <span>تاریخ و ساعت ایجاد رکورد : ${data.created_at}</span><br>
+                        <span>تاریخ و ساعت ایجاد رکورد : ${new Date(data.created_at).toLocaleString('fa-IR')}</span><br>
                         <span>تعداد دفعات ویرایش رکورد : 0</span><br>
-                        <span>تاریخ و ساعت آخرین ویرایش رکورد : ${data.updated_at}</span><br>
+                        <span>تاریخ و ساعت آخرین ویرایش رکورد : ${new Date(data.updated_at).toLocaleString('fa-IR')}</span><br>
                     </div>
                 `;
 
@@ -956,6 +1163,7 @@
                     if (response.logs && response.logs.length > 0) {
                         displayUploadLogs(response.logs);
                     }
+                    dt_basic.ajax.reload(null, false);
 
                     console.log(response);
                 },
@@ -1009,8 +1217,6 @@
             $("#file").siblings('.file-count').text('فایلی انتخاب نشده');
 
             $("#uploadLogsContainer").addClass('d-none');
-            dt_basic.ajax.reload(null, false);
-
         });
     </script>
     {{-- report --}}
@@ -1053,7 +1259,8 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <strong>نام فایل : ${imp.file_name}</strong>
-                                    <strong class="text-muted d-block">تاریخ آپلود : ${new Date(imp.created_at).toLocaleString('fa-IR')}</strong>
+                                    <strong class="text-muted d-block">تاریخ آپلود : ${new Date(imp.created_at).toLocaleDateString('fa-IR')}</strong>
+                                    <strong class="text-muted d-block">ساعت آپلود : ${new Date(imp.created_at).toLocaleTimeString('fa-IR')}</strong>
                                 </div>
                                 <button class="btn btn-sm btn-outline-success view-logs-btn"
                                         data-import-id="${imp.id}" data-status="1">
@@ -1066,9 +1273,6 @@
                                 <button class="btn btn-sm btn-outline-secondary view-logs-btn"
                                         data-import-id="${imp.id}" data-status="all">
                                     مشاهده همه ( ${imp.logs.length} )
-                                </button>
-                                <button class="btn btn-sm btn-outline-primary printBtn" id="printBtn" data-target="logs-${imp.id}" disabled>
-                                    پرینت نتایج
                                 </button>
                             </div>
                             <div id="logs-${imp.id}" class="mt-2 logs-container" style="display:none;"></div>
@@ -1091,7 +1295,7 @@
                         const status = this.dataset.status;
                         const container = document.getElementById('logs-' + importId);
 
-                        $("#printBtn").prop("disabled", false);
+                        // $("#printBtn").prop("disabled", false);
 
                         // if (container.style.display === 'block') {
                         //     container.style.display = 'none';
@@ -1146,14 +1350,20 @@
                                 const groupedError = groupByReshte(errorLogs);
 
                                 // ساخت HTML خروجی
-                                let logsHtml = '';
+                                let logsHtml = `
+                                `;
                                 // بخش خطادارها
                                 if (errorLogs.length > 0) {
                                     logsHtml += `
                                         <div class="border rounded p-3 bg-white ${status == 1 ? 'd-none' : ''}">
-                                            <h6 class="text-danger mb-3">
-                                                ثبت های ناموفق — ${errorLogs.length} مورد
-                                            </h6>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h6 class="text-danger mb-3">
+                                                    ثبت های ناموفق — ${errorLogs.length} مورد
+                                                </h6>
+                                                <button class="btn btn-sm btn-outline-primary printBtn" data-target="${importId}" data-status="${status}">
+                                                پرینت نتایج
+                                                </button>
+                                            </div>
                                     `;
 
                                     Object.keys(groupedError).forEach(reshte => {
@@ -1183,9 +1393,14 @@
                                 if (successLogs.length > 0) {
                                     logsHtml += `
                                         <div class="border rounded p-3 mb-3 bg-white ${status == 0 ? 'd-none' : ''}">
-                                            <h6 class="text-success mb-3">
-                                                ثبت های موفق — ${successLogs.length} مورد
-                                            </h6>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h6 class="text-success mb-3">
+                                                    ثبت های موفق — ${successLogs.length} مورد
+                                                </h6>
+                                                <button class="btn btn-sm btn-outline-primary printBtn" data-target="${importId}" data-status="${status}">
+                                                پرینت نتایج
+                                                </button>
+                                            </div>
                                     `;
 
                                     Object.keys(groupedSuccess).forEach(reshte => {
@@ -1226,13 +1441,10 @@
 
             $(document).on('click', '.printBtn', function() {
                 const divId = this.dataset.target;
-                const contentToPrint = document.getElementById(divId).innerHTML;
+                const status = this.dataset.status;
 
-                // محتوا را URL-encode کن تا در پارامتر URL مشکلی نداشته باشد
-                const encodedContent = encodeURIComponent(contentToPrint);
-
-                // آدرس صفحه پرینت + پارامتر محتوا
-                const printUrl = `/admin2/professions/print?data=${encodedContent}`; // اگر فایل در root است
+                const printUrl =
+                    `/admin2/professions/print/${divId}?status=${status}`; // اگر فایل در root است
                 // اگر در فولدر است: `/your-folder/print-content.html?data=${encodedContent}`
 
                 // باز کردن صفحه پرینت در یک پنجره جدید یا tab جدید

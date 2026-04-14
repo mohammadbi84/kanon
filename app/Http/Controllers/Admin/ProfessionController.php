@@ -30,13 +30,25 @@ class ProfessionController extends Controller
         if (request()->ajax()) {
             $fields = null;
             if ($fieldId) {
-                $professions = Profession::with('field', 'kardanesh', 'jobtype')
+                $professions = Profession::with(
+                    'field',
+                    'field.cluster',
+                    'field.cluster.category',
+                    'kardanesh',
+                    'jobtype'
+                )
                     ->when($fieldId, fn($q) => $q->where('field_id', $fieldId))
-                    ->latest()
+                    ->orderBy('name', 'asc')
                     ->get();
             } else {
                 $fields = Field::all();
-                $professions = Profession::with('field', 'kardanesh', 'jobtype')->latest()->get();
+                $professions = Profession::with(
+                    'field',
+                    'field.cluster',
+                    'field.cluster.category',
+                    'kardanesh',
+                    'jobtype'
+                )->orderBy('name', 'asc')->get();
             }
             return response()->json(['data' => $professions, 'fields' => $fields]);
         }
@@ -438,7 +450,10 @@ class ProfessionController extends Controller
         $profession->update([
             'active' => !$profession->active
         ]);
-        return response()->json(['success' => true, 'message' => 'وضعیت با موفقیت تغییر کرد.']);
+        if ($profession->active) {
+            return response()->json(['success' => true, 'message' => 'حرفه با موفقیت منتشر شد.']);
+        }
+        return response()->json(['success' => true, 'message' => 'حرفه با موفقیت از حالت انتشار خارج شد.']);
     }
     public function bulkToggle(Request $request)
     {
@@ -460,7 +475,7 @@ class ProfessionController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'وضعیت ها با موفقیت تغییر کرد.'
+            'message' => 'وضعیت انتشار حرفه ها با موفقیت تغییر کرد.'
         ]);
     }
 
@@ -494,7 +509,7 @@ class ProfessionController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'آرشیو حرفه ها با موفقیت تغییر کرد.'
+            'message' => 'وضعیت آرشیو حرفه ها با موفقیت تغییر کرد.'
         ]);
     }
 
@@ -547,8 +562,17 @@ class ProfessionController extends Controller
     }
 
     // لیست همه آپلودها (برا نمایش در مدال)
-    public function print()
+    public function print($id, Request $request)
     {
-        return view('admin.professions.printLogs');
+        $import = ProfessionImport::findOrFail($id);
+        if ($request->status == 'all') {
+            $logs = $import->logs;
+        } elseif ($request->status == 1) {
+            $logs = $import->logs()->where('success', true);
+        } else {
+            $logs = $import->logs()->where('success', false);
+        }
+        return $logs;
+        return view('admin.professions.printLogs', compact('logs'));
     }
 }
