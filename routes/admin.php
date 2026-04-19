@@ -158,6 +158,7 @@ Route::name('admin.')->group(function () {
         Route::post('/bulk-archive', [ProfessionController::class, 'bulkArchive'])->name('professions.bulkArchive');
         Route::get('/create', [ProfessionController::class, 'create'])->name('professions.create');
         Route::post('/store', [ProfessionController::class, 'store'])->name('professions.store');
+        Route::post('/upload', [ProfessionController::class, 'upload'])->name('professions.upload');
         Route::post('/uploadExcel', [ProfessionController::class, 'uploadExcel'])->name('professions.uploadExcel');
         // پرینت لاگ ها
         Route::get('/print/{id}', [ProfessionController::class, 'print'])->name('professions.print');

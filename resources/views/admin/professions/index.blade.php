@@ -65,10 +65,74 @@
         .form-control {
             font-size: 13px !important;
         }
+
+        #custom-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(2px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            border-radius: 8px;
+        }
+
+        .loader-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .custom-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e8e8e8;
+            border-top: 5px solid #5a8dee;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .loader-container span {
+            color: #5a8dee;
+            font-size: 16px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #btn-go-to-top .outer_circle {
+            stroke: #5a8dee !important;
+        }
+
+        #btn-go-to-top span {
+            position: absolute !important;
+            top: 50% !important;
+            left: 46% !important;
+            transform: translate(-50%, -50%) rotate(90deg) !important;
+        }
+
+        #btn-go-to-top:hover .outer_circle {
+            stroke: #5a8dee !important;
+        }
     </style>
     {{-- btn-go-to-top --}}
     <link rel="stylesheet" href="{{ asset('site/assets/css/btn-go-to-top.css') }}">
     <script src="{{ asset('site/assets/js/btn-go-to-top.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/nouislider/nouislider.css') }}">
+    {{-- bootstrap icons --}}
+    <link rel="stylesheet" href="https://lib.arvancloud.ir/bootstrap-icons/1.9.1/font/bootstrap-icons.css">
 @endsection
 @section('content')
     {{-- بررسی اینکه آیا field_id از URL آمده یا نه --}}
@@ -80,7 +144,8 @@
         <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
         <span class="text-muted">مدیریت استاندارد ها / </span>
         @if ($fieldId)
-            <a href="{{ route('admin.categories.index') }}" class="text-muted">رسته {{ $field?->cluster->category->name }}</a>
+            <a href="{{ route('admin.categories.index') }}" class="text-muted">رسته
+                {{ $field?->cluster->category->name }}</a>
             <span class="text-muted">/</span>
             <a href="{{ route('admin.clusters.index') }}" class="text-muted">خوشه {{ $field?->cluster?->name }}</a> <span
                 class="text-muted">/</span>
@@ -92,10 +157,12 @@
     <!-- DataTable with Buttons -->
     <div class="card">
         <div class="card-datatable table-responsive p-3">
-            <div class="d-flex justify-content-between align-items-center mb-2 px-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
                 <div class="head-label d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">لیست حرفه ها</h5>
-                    <small class="text-muted ms-2">( {{ $professions_count }} رکورد )</small>
+                    <small class="text-muted ms-2">( تعداد کل : <span id="totalRecord">0</span> رکورد /
+                        فلیتر شده : <span id="filteredrecord">0</span> ردیف /
+                        انتخاب شده : <span id="selectedRecord">0</span> ردیف )</small>
                 </div>
                 <div class="d-flex justify-content-end align-items-center gap-3">
                     <div class="btn-group">
@@ -173,6 +240,7 @@
                         <th>نام حرفه</th>
                         <th>کد استاندارد</th>
                         <th>مدت ساعات</th>
+                        <th></th>
                         <th>انتشار</th>
                         <th>آرشیو</th>
                         <th>عملیات</th>
@@ -307,20 +375,64 @@
             </div>
         </div>
     </div>
+    {{-- modal upload-file --}}
+    <div class="modal fade" id="modalUpload" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title secondary-font" id="modalUploadTitle">ویرایش رسته</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('admin.professions.upload') }}" method="post"
+                        class="add-new-record pt-0 row g-2 px-3" id="form-upload-record" enctype="multipart/form-data">
+                        @csrf
+                        <div class="col-sm-12">
+                            <input type="hidden" id="id" class="form-control" name="id">
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="custom-file-upload">
+                                <label for="fileUpload" class="upload-button">آپلود فایل استاندارد</label>
+                                <input type="file" id="fileUpload" name="fileUpload" class="custom-file-input"
+                                    style="display: none;" accept=".pdf,.doc,.docx">
+                                <span class="file-count">فایلی انتخاب نشده</span>
+                            </div>
+                            <div class="w-100 rounded" id="file-preview-2"></div>
+                        </div>
+                        <div class="col-sm-12 mt-3">
+                            <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1">ذخیره</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <a href="#" id="btn-go-to-top" class="shadow">
-        <span class="bx bx-arrow-to-top"></span>
+        <svg width="40" height="40" viewBox="0 0 131 131" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle class="outer_circle" cx="65.5" cy="65.5" r="64" stroke="red"></circle>
+        </svg>
+        <span class="bi bi-arrow-up"></span>
     </a>
 @endsection
 @section('script')
     <script src="{{ asset('admin/assets/js/validation.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/nouislider/nouislider.js') }}"></script>
     <script>
         professions = $(".professions");
         const urlParams = new URLSearchParams(window.location.search);
         const fieldId = urlParams.get("field_id");
         const fieldName = urlParams.get("field_name");
 
+        var minTime = 0;
+        var maxTime = {{ $lastTime }};
+
+        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+            var hourValue = parseFloat(data[9]) || 0;
+            if (minTime === null || maxTime === null) return true;
+            return hourValue >= minTime && hourValue <= maxTime;
+        });
         dt_basic = professions.DataTable({
             ajax: {
                 url: "/admin2/professions",
@@ -329,6 +441,23 @@
                         d.field_id = fieldId; // ارسال فیلد رشته به سرور
                     }
                 },
+                // این تابع قبل از شروع لود اجرا میشه
+                beforeSend: function() {
+                    $("#DataTables_Table_0_wrapper .dataTables_empty").hide();
+                    $(".professions").closest(".card").append(`
+                    <div id="custom-overlay">
+                        <div class="loader-container">
+                            <div class="custom-spinner"></div>
+                            <span>در حال بارگزاری {{ $professions_count }} رکورد</span>
+                            <span>لطفا شکیبا باشید.</span>
+                        </div>
+                    </div>
+                `);
+                },
+                // این تابع بعد از اتمام لود اجرا میشه
+                complete: function() {
+                    $("#custom-overlay").remove();
+                }
             },
             columns: [{
                     data: "id"
@@ -362,12 +491,20 @@
                     title: "کد استاندارد",
                 },
                 {
-                    data: "",
+                    data: "total_hour", // 8: استفاده از داده عددی
                     title: "مدت ساعت",
                     render: function(data, type, row) {
-                        return row.total_minute + " : " + row.total_hour;
-                    },
+                        if (type === 'display') {
+                            return row.total_minute + " : " + row.total_hour;
+                        }
+                        // برای sort و filter مقدار عددی
+                        return parseInt(data) || 0;
+                    }
                 },
+                {
+                    data: "total_hour",
+                    visible: false
+                }, // 2: مخفی ساعت عددی
                 {
                     data: "",
                     title: "انتشار"
@@ -382,16 +519,11 @@
                 },
             ],
             columnDefs: [{
-                    // For Checkboxes
                     targets: 0,
                     searchable: false,
                     orderable: false,
                     render: function() {
                         return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle">';
-                    },
-                    checkboxes: {
-                        selectRow: true,
-                        selectAllRender: '<input type="checkbox" id="select-all-page" class="form-check-input select-all mt-0 align-middle">'
                     }
                 },
                 {
@@ -399,7 +531,7 @@
                     data: null,
                     title: "ردیف",
                     orderable: true,
-                    searchable: false,
+                    searchable: true,
                     render: function(data, type, full, meta) {
                         // شماره ردیف سراسری (بدون وابستگی به صفحه و سورت)
                         return meta.row + meta.settings._iDisplayStart + 1;
@@ -476,14 +608,19 @@
                                             سند حرفه (0)
                                         </a>
                                     </li>
-                                    ${
-                                    full.standard_file?`<li><a href="/${full.standard_file}" target="_blank" class="dropdown-item">دانلود فایل استاندارد</a></li>`:''
-                                    }
                                     <li>
-                                        <button class="dropdown-item item-delete text-danger" data-id="${full.id}">
+                                        <button class="dropdown-item item-delete" data-id="${full.id}">
                                             حذف
                                         </button>
                                     </li>
+                                    <li>
+                                        <button class="dropdown-item item-upload-file" data-id="${full.id}">
+                                            آپلود فایل استاندارد
+                                        </button>
+                                    </li>
+                                    ${
+                                    full.standard_file?`<li><a href="/${full.standard_file}" target="_blank" class="dropdown-item">دانلود فایل استاندارد</a></li>`:'<li><button type="button" disabled class="dropdown-item">دانلود فایل استاندارد</button></li>'
+                                    }
                                 </ul>
                             </div>
                             `;
@@ -533,32 +670,192 @@
             },
             select: {
                 style: "multi",
+                selector: 'td:first-child', // انتخاب با کلیک روی چک‌باکس
+                items: 'row' // انتخاب ردیف‌ها
             },
+            processing: true,
+            initComplete: function(settings, json) {
+                // وقتی جدول کامل بارگذاری شد، این کد اجرا میشه
+                var api = this.api();
+
+                // **اضافه کردن اسلایدر و تنظیم رویداد آن**
+                var priceColumnHeader = $('.professions thead tr:eq(1) th').eq(7); // ستون قیمت
+                priceColumnHeader.html(`<div class="noUi-primary mb-2 d-none" id="slider-primary"></div>
+                    <div class="row">
+                            <div class="slider-select d-flex justify-content-between gap-2">
+                                <div class="custom-input-group only-number">
+                                <input type="text" id="slider-input-min" name="slider-input-min" class="form-control px-1"
+                                    min="0" max="${maxTime}">
+                                <label for="">از</label>
+                                <span class="clear-btn" onclick="clearInput(this)" style="font-size: 1rem;left: -1px;">×</span>
+                            </div>
+                            <div class="custom-input-group only-number">
+                                <input type="text" id="slider-input-max" name="slider-input-max" class="form-control px-1"
+                                    min="0" max="${maxTime}">
+                                <label for="">تا</label>
+                                <span class="clear-btn" onclick="clearInput(this)" style="font-size: 1rem;left: -1px;">×</span>
+                            </div>
+                        </div>
+                      </div>
+                `);
+                var slider = document.getElementById('slider-primary');
+                var sliderInputMin = document.getElementById('slider-input-min');
+                var sliderInputMax = document.getElementById('slider-input-max');
+
+                if (!slider.noUiSlider) {
+                    noUiSlider.create(slider, {
+                        start: [0, maxTime],
+                        connect: true,
+                        behaviour: 'tap-drag',
+                        step: 1,
+                        tooltips: true,
+                        range: {
+                            min: 0,
+                            max: maxTime
+                        },
+                        direction: 'ltr'
+                    });
+
+                    slider.noUiSlider.on('update', function(values) {
+                        minTime = parseFloat(values[0]);
+                        maxTime = parseFloat(values[1]);
+                        dt_basic.draw();
+                    });
+
+                    sliderInputMin.addEventListener('input', function() {
+                        max = sliderInputMax.value;
+                        min = this.value;
+                        if (!max) {
+                            max = {{ $lastTime }};
+                        }
+                        if (!min) {
+                            min = 0
+                        }
+                        slider.noUiSlider.set([min, max]);
+                    });
+                    sliderInputMax.addEventListener('input', function() {
+                        min = sliderInputMin.value;
+                        max = this.value;
+                        if (!min) {
+                            min = 0
+                        }
+                        if (!max) {
+                            max = {{ $lastTime }};
+                        }
+                        slider.noUiSlider.set([min, max]);
+                    });
+                }
+
+                let noSearchColumns = [0, 8, 9, 10];
+                // **تنظیم رویداد برای اینپوت های معمولی**
+                $('.professions thead tr:eq(1) th').each(function(i) {
+                    $(this).removeClass('sorting');
+                    $(this).removeClass('sorting_asc');
+                    $(this).removeClass('sorting_desc');
+                    $(this).addClass('px-2');
+
+                    if (i == 7) return; // اسلایدر رو اینجا دیگه پردازش نکنیم
+
+                    if (noSearchColumns.includes(i)) {
+                        $(this).html('');
+                        return;
+                    }
+
+                    var title = $(this).text();
+                    $(this).html(`
+                    <div class="slider-select d-flex justify-content-between gap-2">
+                        <div class="custom-input-group">
+                        <input type="text" class="form-control px-1">
+                        <label for=""></label>
+                        <span class="clear-btn" onclick="clearInput(this,${i})" style="font-size: 1rem;left: -1px;">×</span>
+                    </div>
+                    `);
+                    $('input', this).on('keyup change', function() {
+                        if (i == 1) {
+                            if (this.value.length > 0) {
+                                dt_basic.column(i + 1).search('^' + this.value + '$', true, false).draw();
+                            }else{
+                                dt_basic.column(i + 1).search('').draw();
+                            }
+                        } else {
+                            dt_basic.column(i + 1).search(this.value).draw();
+                        }
+                    });
+                });
+
+
+
+                // چک باکس ها
+                var $headerCheckbox = $(
+                    '<input type="checkbox" id="select-all-page" class="form-check-input mt-0 align-middle">'
+                );
+                $('.professions thead tr:eq(0) th:eq(0)').html($headerCheckbox);
+
+                // مدیریت انتخاب ردیف‌ها
+                $(document).on('click', '.dt-checkboxes', function(e) {
+                    e.stopPropagation();
+
+                    var $checkbox = $(this);
+                    var row = dt_basic.row($checkbox.closest('tr'));
+
+                    if ($checkbox.prop('checked')) {
+                        row.select();
+                        dt_basic.column(i + 1).search(this.value).draw();
+                    } else {
+                        row.deselect();
+                        dt_basic.column(i + 1).search(this.value).draw();
+                    }
+                });
+
+                // مدیریت چک‌باکس انتخاب همه
+                $(document).on('click', '#select-all-page', function(e) {
+                    e.stopPropagation();
+
+                    var isChecked = $(this).prop('checked');
+                    var currentPageRows = dt_basic.rows({
+                        page: 'current'
+                    });
+
+                    if (isChecked) {
+                        currentPageRows.select();
+                    } else {
+                        currentPageRows.deselect();
+                    }
+
+                    currentPageRows.nodes().to$().find('.dt-checkboxes').prop('checked', isChecked);
+                });
+
+                // به‌روزرسانی وضعیت چک‌باکس انتخاب همه
+                dt_basic.on('draw select deselect', function() {
+                    var api = dt_basic;
+                    var currentPageCount = api.rows({
+                        page: 'current'
+                    }).count();
+                    var selectedCount = api.rows({
+                        page: 'current',
+                        selected: true
+                    }).count();
+
+                    var $selectAll = $('#select-all-page');
+
+                    if (selectedCount === 0) {
+                        $selectAll.prop('checked', false);
+                        $selectAll.prop('indeterminate', false);
+                    } else if (selectedCount === currentPageCount) {
+                        $selectAll.prop('checked', true);
+                        $selectAll.prop('indeterminate', false);
+                    } else {
+                        $selectAll.prop('checked', false);
+                        $selectAll.prop('indeterminate', true);
+                    }
+                });
+            }
+
         });
         let thead = $('.professions thead');
         let searchRow = thead.find('tr').clone().appendTo(thead);
         let noSearchColumns = [0, 8, 9, 10];
-        $('.professions thead tr:eq(1) th').each(function(i) {
-            $(this).removeClass('sorting');
-            $(this).removeClass('sorting_asc');
-            $(this).removeClass('sorting_desc');
-            $(this).addClass('px-2');
 
-            if (noSearchColumns.includes(i)) {
-                $(this).html(''); // خالی بزار
-                return;
-            }
-
-            var title = $(this).text();
-
-            $(this).html('<input type="text" class="form-control" />');
-
-            $('input', this).on('keyup change', function() {
-                if (dt_basic.column(i).search() !== this.value) {
-                    dt_basic.column(i + 1).search(this.value).draw();
-                }
-            });
-        });
         if (window.Helpers.isNavbarFixed()) {
             var navHeight = $('#layout-navbar').outerHeight();
             new $.fn.dataTable.FixedHeader(dt_basic).headerOffset(navHeight);
@@ -583,9 +880,73 @@
                 e.preventDefault();
             }
         });
+        dt_basic.on('init', function(e) {
+            document.querySelectorAll("input, textarea").forEach(function(element) {
+                // اگر مقدار اولیه داشت، کلاس filled اضافه کن
+                if (element.value.trim() !== "") {
+                    element.parentElement.classList.add("filled");
+                }
 
+                // گوش دادن به رویداد input (بدون jQuery)
+                element.addEventListener("input", function(e) {
+                    const parent = e.target.parentElement;
 
+                    if (e.target.value.trim() !== "") {
+                        parent.classList.add("filled");
+                    } else {
+                        parent.classList.remove("filled");
+                    }
 
+                    if (parent.classList.contains("only-number")) {
+                        e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                    }
+                });
+            });
+        });
+
+        // بعد از تعریف dt_basic
+        dt_basic.on('draw', function() {
+            var api = $(this).DataTable(); // یا استفاده از dt_basic مستقیم
+
+            // تعداد رکوردهای فیلتر شده و کل
+            var filteredRecords = api.rows({
+                filter: 'applied'
+            }).count();
+
+            var totalRecords = api.rows().count();
+
+            if (filteredRecords == totalRecords) {
+                filteredRecords = 0
+            }
+
+            // تعداد رکوردهای انتخاب شده
+            var selectedCount = api.rows({
+                selected: true
+            }).count();
+
+            $("#totalRecord").html(totalRecords);
+            $("#filteredrecord").html(filteredRecords);
+            $("#selectedRecord").html(selectedCount);
+        });
+
+        // همچنین برای به‌روزرسانی هنگام انتخاب/لغو انتخاب ردیف‌ها
+        dt_basic.on('select deselect', function() {
+            var api = $(this).DataTable(); // یا استفاده از dt_basic مستقیم
+            var selectedCount = api.rows({
+                selected: true
+            }).count();
+            var filteredRecords = api.rows({
+                filter: 'applied'
+            }).count();
+            var totalRecords = api.rows().count();
+
+            if (filteredRecords == totalRecords) {
+                filteredRecords = 0
+            }
+
+            $("#filteredrecord").html(filteredRecords);
+            $("#selectedRecord").html(selectedCount);
+        });
 
         // delete one item----------------------------------------------------------------------------------------------------------------
         dt_basic.on("click", ".item-delete", function() {
@@ -758,7 +1119,6 @@
                     confirmButtonText: "تایید",
                     cancelButtonText: "انصراف",
                     focusConfirm: false,
-                    reverseButtons: true,
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
@@ -794,6 +1154,12 @@
                                         }
                                     }
                                 });
+                                // پاک کردن انتخاب تمام ردیف‌ها
+                                dt_basic.rows().deselect();
+
+                                // یا اگر می‌خواهید چک‌باکس‌ها هم پاک شوند
+                                $('.dt-checkboxes').prop('checked', false);
+                                $('.select-all').prop('checked', false);
                                 // --- پایان بخش به‌روزرسانی آیکون‌ها در جدول ---
 
                                 // مخفی کردن منوی bulk actions
@@ -833,7 +1199,6 @@
                     confirmButtonText: "تایید",
                     cancelButtonText: "انصراف",
                     focusConfirm: false,
-                    reverseButtons: true,
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
@@ -869,6 +1234,12 @@
                                         }
                                     }
                                 });
+                                // پاک کردن انتخاب تمام ردیف‌ها
+                                dt_basic.rows().deselect();
+
+                                // یا اگر می‌خواهید چک‌باکس‌ها هم پاک شوند
+                                $('.dt-checkboxes').prop('checked', false);
+                                $('.select-all').prop('checked', false);
                                 // --- پایان بخش به‌روزرسانی آیکون‌ها در جدول ---
 
                                 // مخفی کردن منوی bulk actions
@@ -1083,6 +1454,105 @@
             $("#profession-details-content").html(html);
             $("#professionDetailsModal").modal("show");
         });
+
+        // uploadfile -----------------------------------------------------------------------------------------------------------
+        $(document).on("click", ".item-upload-file", function() {
+            const id = $(this).data("id");
+            // نمایش مودال
+            $("#modalUpload").modal("show");
+
+            $("#modalUpload #id").val(id);
+        });
+        $('#form-upload-record').on('submit', function(event) {
+            event.preventDefault();
+
+            const form = $(this);
+            const formActionUrl = form.attr('action') || '/admin2/professions/upload';
+
+            $.ajax({
+                url: formActionUrl,
+                type: 'POST',
+                data: new FormData(this),
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    toastr.success(response.message || 'عملیات با موفقیت انجام شد!');
+
+                    // dt_basic.ajax.reload(null, false);
+
+                    // console.log(response);
+                    $("#modalUpload").modal("hide");
+                },
+                error: function(xhr, status, error) {
+                    toastr.error(xhr.responseJSON?.message || 'خطایی رخ داد');
+                }
+            });
+        });
+        // پیش‌نمایش فایل جدید
+        function removeFilePdf(button) {
+            // پیدا کردن div والد که شامل عکس، نام فایل و دکمه است
+            const previewDiv = button.closest('.mb-2.mt-3.border.bg-white.p-2.rounded');
+            if (previewDiv) {
+                previewDiv.remove();
+            }
+
+            // مهم: همچنین باید مقدار فیلد ورودی فایل را ریست کنید تا کاربر بتواند دوباره همان فایل را انتخاب کند
+            const fileInput = document.getElementById('fileUpload');
+            if (fileInput) {
+                fileInput.value = '';
+            }
+            $("#fileUpload").siblings('.file-count').text('فایلی انتخاب نشده');
+        }
+        document.getElementById('fileUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('file-preview-2');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    let sizeInKB = (file.size / 1024).toFixed(1);
+                    preview.innerHTML = `
+                    <div class="d-flex align-items-center justify-content-between mb-2 mt-3 border bg-white p-2 rounded">
+                        <div class="d-flex align-items-center">
+                            <div><i class="bx bxs-file-pdf text-danger" style="font-size: 50px;"></i></div>
+                            <div class="me-3">
+                                <div>${file.name}</div>
+                                <small class="text-muted">${sizeInKB} KB</small>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-label-danger btn-sm rounded-3 p-1" onclick="removeFilePdf(this)">
+                            <i class="bx bx-x"></i>
+                            </button>
+                    </div>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.innerHTML = '';
+            }
+        });
+
+        // تابع پاک کردن محتوا
+        function clearInput(btn, col = 1) {
+            const parent = btn.parentElement;
+            const input = parent.querySelector("input, textarea");
+            input.value = null;
+            input.focus();
+            parent.classList.remove("filled");
+
+            min = document.getElementById('slider-input-min').value;
+            max = document.getElementById('slider-input-max').value;
+            if (!min) {
+                min = 0
+            }
+            if (!max) {
+                max = {{ $lastTime }};
+            }
+            minTime = min;
+            maxTime = max;
+            // پاک کردن جستجوی آن ستون و رسم دوباره جدول
+            dt_basic.column(col + 1).search('').draw();
+        }
     </script>
     <script>
         $(document).on('change', '.custom-file-input', function() {
@@ -1092,7 +1562,7 @@
             $(this).siblings('.file-count').text(fileCountText);
         });
 
-        function removeFilePdf(button) {
+        function removeFile(button) {
             // پیدا کردن div والد که شامل عکس، نام فایل و دکمه است
             const previewDiv = button.closest('.mb-2.mt-3.border.bg-white.p-2.rounded');
             if (previewDiv) {
@@ -1123,7 +1593,7 @@
                                 <small class="text-muted">${sizeInKB} KB</small>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-label-danger btn-sm rounded-3 p-1" onclick="removeFilePdf(this)">
+                        <button type="button" class="btn btn-label-danger btn-sm rounded-3 p-1" onclick="removeFile(this)">
                             <i class="bx bx-x"></i>
                             </button>
                     </div>

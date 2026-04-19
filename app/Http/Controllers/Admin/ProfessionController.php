@@ -62,7 +62,8 @@ class ProfessionController extends Controller
         } else {
             $professions_count = Profession::count();
         }
-        return view('admin.professions.index', compact('fieldId', 'field', 'professions_count'));
+        $lastTime = Profession::orderBy('total_hour', 'desc')->first()->total_hour;
+        return view('admin.professions.index', compact('fieldId', 'field', 'professions_count', 'lastTime'));
     }
 
     public function create(Request $request)
@@ -513,6 +514,29 @@ class ProfessionController extends Controller
         ]);
     }
 
+    public function upload(Request $request)
+    {
+        $request->validate([
+            'fileUpload' => 'required|mimes:pdf,doc,docx',
+        ]);
+
+        $profession = Profession::findOrFail($request->id);
+
+        $filePath = 'uploads/professions/files/';
+        $file = $request->file('fileUpload');
+        $pathName = time() . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
+        $file->move('uploads/professions/files', $pathName);
+
+        if ($profession->standard_file) {
+            unlink(public_path($profession->standard_file));
+        }
+
+
+        $profession->standard_file = $filePath . $pathName;
+        $profession->save();
+
+        return back()->with('success', 'فایل استاندارد برای حرفه ' . $profession->name . ' با موفقیت آپلود شد');
+    }
     public function uploadExcel(Request $request)
     {
         $request->validate([
