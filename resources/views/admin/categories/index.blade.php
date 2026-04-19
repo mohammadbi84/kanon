@@ -14,7 +14,9 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="head-label d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">لیست رسته ها</h5>
-                    <small class="text-muted ms-2">( {{ $categories_count }} رکورد )</small>
+                    <small class="text-muted ms-2">( تعداد کل : <span id="totalRecord">0</span> رکورد /
+                        فلیتر شده : <span id="filteredrecord">0</span> ردیف /
+                        انتخاب شده : <span id="selectedRecord">0</span> ردیف )</small>
                 </div>
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter">
                     رسته جدید
@@ -52,28 +54,68 @@
             <table class="dt-select-table categories table table-hover">
                 <thead>
                     <tr>
-                        {{-- filled with ajax --}}
+                        <th></th>
+                        <th></th>
+                        <th>ردیف</th>
+                        <th>نام رسته</th>
+                        <th>انتشار</th>
+                        <th>جزئیات</th>
+                        <th>عملیات</th>
                     </tr>
                 </thead>
             </table>
-            <div id="bulk-actions" class="">
-                <div class="btn-group" id="action_group" style="display: none">
-                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
+            <div id="bulk-actions" class="bulk-actions">
+                <div class="btn-group action_group" id="action_group" style="display: none">
+                    <button type="button" class="btn border dropdown-toggle" data-bs-toggle="dropdown"
                         aria-expanded="false">
                         انتخاب عملیـات
                     </button>
                     <ul class="dropdown-menu">
                         <li>
-                            <button class="dropdown-item text-danger" id="bulk-delete" href="#">
+                            <button class="dropdown-item bulk-toggle" data-status="1" disabled>
+                                <i class=" bx bx-check"></i>
+                                انتشار
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item bulk-toggle" data-status="0" disabled>
+                                <i class=" bx bx-x"></i>
+                                عدم انتشار
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item text-danger bulk-delete" id="bulk-delete" href="#">
                                 <i class=" bx bx-trash"></i>
                                 حذف انتخابی ها
                             </button>
                         </li>
+                    </ul>
+                </div>
+            </div>
+            <div id="bulk-actions2" class="bulk-actions">
+                <div class="btn-group action_group" id="action_group" style="display: none">
+                    <button type="button" class="btn border dropdown-toggle" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        انتخاب عملیـات
+                    </button>
+                    <ul class="dropdown-menu">
                         <li>
-                            <button class="dropdown-item bulk-toggle" data-status="1" disabled>انتشار همه</button>
+                            <button class="dropdown-item bulk-toggle" data-status="1" disabled>
+                                <i class=" bx bx-check"></i>
+                                انتشار
+                            </button>
                         </li>
                         <li>
-                            <button class="dropdown-item bulk-toggle" data-status="0" disabled>عدم انتشار همه</button>
+                            <button class="dropdown-item bulk-toggle" data-status="0" disabled>
+                                <i class=" bx bx-x"></i>
+                                عدم انتشار
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item text-danger bulk-delete" id="bulk-delete" href="#">
+                                <i class=" bx bx-trash"></i>
+                                حذف انتخابی ها
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -117,42 +159,48 @@
         categories = $(".categories");
         dt_basic = categories.DataTable({
             ajax: "/admin2/categories",
+            autoWidth: false, // جلوگیری از محاسبه خودکار عرض
             columns: [{
                     data: "id",
-                    title: ""
-                }, // ستونی که برای responsive استفاده میشه
+                    title: "",
+                    width: "30px"
+                },
                 {
                     data: "id",
                     visible: false
-                }, // ستون مخفی برای sort
+                },
                 {
                     data: "",
-                    title: "ردیف"
+                    title: "ردیف",
+                    width: "30px"
                 },
                 {
                     data: "name",
-                    title: "نام رسته"
+                    title: "نام رسته",
+                    width: "220px"
                 },
                 {
                     data: "",
-                    title: "انتشار"
+                    title: "انتشار",
+                    width: "80px"
                 },
                 {
                     data: "",
-                    title: "عملیات"
-                }, // ستون آخر برای دکمه‌ها
+                    title: "جزئیات",
+                    width: "350px"
+                },
+                {
+                    data: "",
+                    title: "عملیات",
+                    width: "100px"
+                },
             ],
             columnDefs: [{
-                    // For Checkboxes
                     targets: 0,
                     searchable: false,
                     orderable: false,
                     render: function() {
                         return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle">';
-                    },
-                    checkboxes: {
-                        selectRow: true,
-                        selectAllRender: '<input type="checkbox" class="form-check-input mt-0 align-middle">'
                     }
                 },
                 {
@@ -160,7 +208,7 @@
                     data: null,
                     title: "ردیف",
                     orderable: true,
-                    searchable: false,
+                    searchable: true,
                     render: function(data, type, full, meta) {
                         return meta.row + 1; // شماره ردیف
                     },
@@ -182,7 +230,7 @@
                     targets: 4,
                 },
                 {
-                    targets: -2,
+                    targets: -3,
                     title: "وضعیت",
                     orderable: true,
                     searchable: false,
@@ -204,16 +252,31 @@
                     },
                 },
                 {
+                    targets: -2,
+                    title: "جزئیات",
+                    orderable: false,
+                    searchable: false,
+                    render: function(data, type, full, meta) {
+                        return `
+                                <a href="/admin2/clusters?category_id=${full.id}" class="btn btn-sm btn-success item-show" data-id="${full.id}">
+                                خوشه ها <span class="ms-2">( ${full.clusters.length} )</span>
+                                </a>
+                                <a href="/admin2/fields?category_id=${full.id}" class="btn btn-sm btn-success item-show" data-id="${full.id}">
+                                رشته ها <span class="ms-2">( ${full.fieldsCount} )</span>
+                                </a>
+                                <a href="/admin2/professions?category_id=${full.id}" class="btn btn-sm btn-success item-show" data-id="${full.id}">
+                                حرفه ها <span class="ms-2">( ${full.professionsCount} )</span>
+                                </a>
+                                `;
+                    },
+                },
+                {
                     targets: -1,
                     title: "عملیات",
                     orderable: false,
                     searchable: false,
                     render: function(data, type, full, meta) {
                         return `
-                                <a href="/admin2/clusters?category_id=${full.id}" class="btn btn-sm btn-success item-show" data-id="${full.id}">
-                                خوشه ها  <span class="ms-2">( ${full.clusters.length} )</span>
-                                </a>
-
                                 <button data-id="${full.id}" class="btn btn-sm btn-icon btn-primary item-edit" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="<small>ویرایش</small>">
                                 <i class="bx bxs-edit"></i>
                                 </button>
@@ -226,9 +289,11 @@
                 },
             ],
             order: [
-                [2, "desc"]
+                [2, "asc"]
             ],
-            dom: '<"card-header flex-column flex-md-row"<"dt-action-buttons text-end primary-font pt-3 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t' +
+            dom: '<"card-header flex-column flex-md-row"<"dt-action-buttons text-end primary-font pt-3 pt-md-0"B>>' +
+                '<"d-flex justify-content-between align-items-center"<"d-flex justify-content-start align-items-center gap-3"l <\'bulk-holder2\'>><"d-flex justify-content-center justify-content-md-end"f>><t>' +
+                +
                 "<'row d-flex align-items-center justify-content-between'<'col-md-4'<'bulk-holder'>><'col-md-8 d-flex justify-content-between'i p>>",
             displayLength: 10,
             lengthMenu: [10, 25, 50, 75, 100],
@@ -272,9 +337,115 @@
                 },
             },
             select: {
-                // Select style
                 style: "multi",
+                selector: 'td:first-child', // انتخاب با کلیک روی چک‌باکس
+                items: 'row' // انتخاب ردیف‌ها
             },
+            initComplete: function(settings, json) {
+                let noSearchColumns = [0, 3, 4, 5];
+                // **تنظیم رویداد برای اینپوت های معمولی**
+                $('.categories thead tr:eq(1) th').each(function(i) {
+                    $(this).removeClass('sorting');
+                    $(this).removeClass('sorting_asc');
+                    $(this).removeClass('sorting_desc');
+                    $(this).addClass('px-2');
+
+                    if (i == 7) return; // اسلایدر رو اینجا دیگه پردازش نکنیم
+
+                    if (noSearchColumns.includes(i)) {
+                        $(this).html('');
+                        return;
+                    }
+
+                    var title = $(this).text();
+                    $(this).html(`
+                    <div class="custom-input-group">
+                        <input type="text" class="form-control px-1">
+                        <label for=""></label>
+                        <span class="clear-btn" onclick="clearInput(this,${i})" style="font-size: 1rem;left: -1px;">×</span>
+                    </div>
+                    `);
+                    $('input', this).on('keyup change', function() {
+                        if (i == 1) {
+                            if (this.value.length > 0) {
+                                dt_basic.column(i + 1).search('^' + this.value + '$', true,
+                                    false).draw();
+                            } else {
+                                dt_basic.column(i + 1).search('').draw();
+                            }
+                        } else {
+                            dt_basic.column(i + 1).search(this.value).draw();
+                        }
+                    });
+                });
+
+
+
+                // چک باکس ها
+                var $headerCheckbox = $(
+                    '<input type="checkbox" id="select-all-page" class="form-check-input mt-0 align-middle">'
+                );
+                $('.categories thead tr:eq(0) th:eq(0)').html($headerCheckbox);
+
+                // مدیریت انتخاب ردیف‌ها
+                $(document).on('click', '.dt-checkboxes', function(e) {
+                    e.stopPropagation();
+
+                    var $checkbox = $(this);
+                    var row = dt_basic.row($checkbox.closest('tr'));
+
+                    if ($checkbox.prop('checked')) {
+                        row.select();
+                        dt_basic.column(i + 1).search(this.value).draw();
+                    } else {
+                        row.deselect();
+                        dt_basic.column(i + 1).search(this.value).draw();
+                    }
+                });
+
+                // مدیریت چک‌باکس انتخاب همه
+                $(document).on('click', '#select-all-page', function(e) {
+                    e.stopPropagation();
+
+                    var isChecked = $(this).prop('checked');
+                    var currentPageRows = dt_basic.rows({
+                        page: 'current'
+                    });
+
+                    if (isChecked) {
+                        currentPageRows.select();
+                    } else {
+                        currentPageRows.deselect();
+                    }
+
+                    currentPageRows.nodes().to$().find('.dt-checkboxes').prop('checked', isChecked);
+                });
+
+                // به‌روزرسانی وضعیت چک‌باکس انتخاب همه
+                dt_basic.on('draw select deselect', function() {
+                    var api = dt_basic;
+                    var currentPageCount = api.rows({
+                        page: 'current'
+                    }).count();
+                    var selectedCount = api.rows({
+                        page: 'current',
+                        selected: true
+                    }).count();
+
+                    var $selectAll = $('#select-all-page');
+
+                    if (selectedCount === 0) {
+                        $selectAll.prop('checked', false);
+                        $selectAll.prop('indeterminate', false);
+                    } else if (selectedCount === currentPageCount) {
+                        $selectAll.prop('checked', true);
+                        $selectAll.prop('indeterminate', false);
+                    } else {
+                        $selectAll.prop('checked', false);
+                        $selectAll.prop('indeterminate', true);
+                    }
+                });
+            }
         });
         if (window.Helpers.isNavbarFixed()) {
             var navHeight = $('#layout-navbar').outerHeight();
@@ -282,7 +453,11 @@
         } else {
             new $.fn.dataTable.FixedHeader(dt_basic);
         }
+        let thead = $('.categories thead');
+        let searchRow = thead.find('tr').clone().appendTo(thead);
+
         $("#bulk-actions").appendTo(".bulk-holder");
+        $("#bulk-actions2").appendTo(".bulk-holder2");
         dt_basic.on('draw', function() {
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function(tooltipTriggerEl) {
@@ -304,6 +479,83 @@
                 e.preventDefault();
             }
         });
+        dt_basic.on('init', function(e) {
+            document.querySelectorAll("input, textarea").forEach(function(element) {
+                // اگر مقدار اولیه داشت، کلاس filled اضافه کن
+                if (element.value.trim() !== "") {
+                    element.parentElement.classList.add("filled");
+                }
+
+                // گوش دادن به رویداد input (بدون jQuery)
+                element.addEventListener("input", function(e) {
+                    const parent = e.target.parentElement;
+
+                    if (e.target.value.trim() !== "") {
+                        parent.classList.add("filled");
+                    } else {
+                        parent.classList.remove("filled");
+                    }
+
+                    if (parent.classList.contains("only-number")) {
+                        e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                    }
+                });
+            });
+        });
+        // بعد از تعریف dt_basic
+        dt_basic.on('draw', function() {
+            var api = $(this).DataTable(); // یا استفاده از dt_basic مستقیم
+
+            // تعداد رکوردهای فیلتر شده و کل
+            var filteredRecords = api.rows({
+                filter: 'applied'
+            }).count();
+
+            var totalRecords = api.rows().count();
+
+            if (filteredRecords == totalRecords) {
+                filteredRecords = 0
+            }
+
+            // تعداد رکوردهای انتخاب شده
+            var selectedCount = api.rows({
+                selected: true
+            }).count();
+
+            $("#totalRecord").html(totalRecords);
+            $("#filteredrecord").html(filteredRecords);
+            $("#selectedRecord").html(selectedCount);
+        });
+        // همچنین برای به‌روزرسانی هنگام انتخاب/لغو انتخاب ردیف‌ها
+        dt_basic.on('select deselect', function() {
+            var api = $(this).DataTable(); // یا استفاده از dt_basic مستقیم
+            var selectedCount = api.rows({
+                selected: true
+            }).count();
+            var filteredRecords = api.rows({
+                filter: 'applied'
+            }).count();
+            var totalRecords = api.rows().count();
+
+            if (filteredRecords == totalRecords) {
+                filteredRecords = 0
+            }
+
+            $("#filteredrecord").html(filteredRecords);
+            $("#selectedRecord").html(selectedCount);
+        });
+
+        // تابع پاک کردن محتوا
+        function clearInput(btn, col = 1) {
+            const parent = btn.parentElement;
+            const input = parent.querySelector("input, textarea");
+            input.value = null;
+            input.focus();
+            parent.classList.remove("filled");
+
+            // پاک کردن جستجوی آن ستون و رسم دوباره جدول
+            dt_basic.column(col + 1).search('').draw();
+        }
         // delete one item----------------------------------------------------------------------------------------------------------------
         dt_basic.on("click", ".item-delete", function() {
             const id = $(this).data("id");
@@ -324,6 +576,8 @@
                 cancelButtonColor: "#3085d6",
                 confirmButtonText: "بله، حذف کن!",
                 cancelButtonText: "انصراف",
+                focusConfirm: false,
+                    reverseButtons: true,
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -353,7 +607,7 @@
             });
         });
         // delete selected items----------------------------------------------------------------------------------------------------------
-        const btnBulk = $("#bulk-delete");
+        const btnBulk = $(".bulk-delete");
         if (btnBulk) {
             // وقتی رکورد انتخاب شد
             dt_basic.on("select", function(e, dt, type, indexes) {
@@ -372,13 +626,13 @@
                 }).count();
                 if (selected > 0) {
                     // $("#bulk-actions").removeClass("d-none");
-                    $("#bulk-actions #action_group").show();
-                    $("#bulk-actions #bulk-delete").prop("disabled", false);
-                    $("#bulk-actions .bulk-toggle").prop("disabled", false);
+                    $(".bulk-actions .action_group").show();
+                    $(".bulk-actions .bulk-delete").prop("disabled", false);
+                    $(".bulk-actions .bulk-toggle").prop("disabled", false);
                 } else {
-                    $("#bulk-actions #action_group").hide();
-                    $("#bulk-actions #bulk-delete").prop("disabled", true);
-                    $("#bulk-actions .bulk-toggle").prop("disabled", true);
+                    $(".bulk-actions .action_group").hide();
+                    $(".bulk-actions .bulk-delete").prop("disabled", true);
+                    $(".bulk-actions .bulk-toggle").prop("disabled", true);
                 }
             }
 
@@ -415,6 +669,8 @@
                     cancelButtonColor: "#3085d6",
                     confirmButtonText: "بله، حذف کن!",
                     cancelButtonText: "انصراف",
+                    focusConfirm: false,
+                    reverseButtons: true,
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({

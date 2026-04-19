@@ -160,12 +160,16 @@
         fields = $(".fields");
         const urlParams = new URLSearchParams(window.location.search);
         const clusterId = urlParams.get("cluster_id");
+        const categoryId = urlParams.get("category_id");
         dt_basic = fields.DataTable({
             ajax: {
                 url: "/admin2/fields",
                 data: function(d) {
                     if (clusterId) {
                         d.cluster_id = clusterId; // ارسال cluster_id به سرور
+                    }
+                    if (categoryId) {
+                        d.category_id = categoryId; // ارسال cluster_id به سرور
                     }
                 },
             },

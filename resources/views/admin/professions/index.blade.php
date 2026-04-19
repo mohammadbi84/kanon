@@ -126,6 +126,9 @@
         #btn-go-to-top:hover .outer_circle {
             stroke: #5a8dee !important;
         }
+        .table-responsive{
+            overflow: unset !important;
+        }
     </style>
     {{-- btn-go-to-top --}}
     <link rel="stylesheet" href="{{ asset('site/assets/css/btn-go-to-top.css') }}">
@@ -156,7 +159,7 @@
     </h5>
     <!-- DataTable with Buttons -->
     <div class="card">
-        <div class="card-datatable table-responsive p-3">
+        <div class="card-datatable p-3">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <div class="head-label d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">لیست حرفه ها</h5>
@@ -423,6 +426,7 @@
         professions = $(".professions");
         const urlParams = new URLSearchParams(window.location.search);
         const fieldId = urlParams.get("field_id");
+        const categoryId = urlParams.get("category_id");
         const fieldName = urlParams.get("field_name");
 
         var minTime = 0;
@@ -439,6 +443,9 @@
                 data: function(d) {
                     if (fieldId) {
                         d.field_id = fieldId; // ارسال فیلد رشته به سرور
+                    }
+                    if (categoryId) {
+                        d.category_id = categoryId; // ارسال فیلد رشته به سرور
                     }
                 },
                 // این تابع قبل از شروع لود اجرا میشه

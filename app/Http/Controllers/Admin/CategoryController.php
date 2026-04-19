@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Cluster;
+use App\Models\Field;
+use App\Models\Profession;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -11,11 +14,26 @@ class CategoryController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $categories = Category::with('clusters')->latest()->get();
+            $categories = Category::with(['clusters.fields.professions'])->latest()->get();
+
+            foreach ($categories as $category) {
+                $fieldsCount = 0;
+                $professionsCount = 0;
+
+                foreach ($category->clusters as $cluster) {
+                    $fieldsCount += $cluster->fields->count();
+
+                    foreach ($cluster->fields as $field) {
+                        $professionsCount += $field->professions->count();
+                    }
+                }
+
+                $category['fieldsCount'] = $fieldsCount;
+                $category['professionsCount'] = $professionsCount;
+            }
             return response()->json(['data' => $categories]);
         }
-        $categories_count = Category::count();
-        return view('admin.categories.index', compact('categories_count'));
+        return view('admin.categories.index');
     }
 
     public function store(Request $request)

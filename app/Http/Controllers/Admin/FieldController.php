@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Cluster;
 use App\Models\Field;
 use Illuminate\Http\Request;
@@ -15,6 +16,10 @@ class FieldController extends Controller
         if ($clusterId and !Cluster::find($clusterId)) {
             abort('404');
         }
+        $category_id = $request->query('category_id'); // اگر از صفحه خوشه‌ها اومده
+        if ($category_id and !Category::find($category_id)) {
+            abort('404');
+        }
 
         if (request()->ajax()) {
             $clusters = null;
@@ -23,6 +28,14 @@ class FieldController extends Controller
                     ->when($clusterId, fn($q) => $q->where('cluster_id', $clusterId))
                     ->latest()
                     ->get();
+            } elseif ($category_id) {
+                $clusters = Cluster::active()->get();
+                $fields = Field::with(
+                    'cluster',
+                    'cluster.category',
+                )->whereHas('cluster.category', function ($query) use ($category_id) {
+                    $query->where('id', $category_id);
+                })->orderBy('name', 'asc')->get();
             } else {
                 $clusters = Cluster::active()->get();
                 $fields = Field::with('cluster', 'professions')->latest()->get();

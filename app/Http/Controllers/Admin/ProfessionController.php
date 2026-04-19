@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Imports\ProfessionsImport;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Profession;
 use App\Models\Field;
@@ -23,7 +24,11 @@ class ProfessionController extends Controller
     public function index(Request $request)
     {
         $fieldId = $request->query('field_id'); // اگر از صفحه خوشه‌ها اومده
+        $categoryId = $request->query('category_id'); // اگر از صفحه رسته اومده
         if ($fieldId and !Field::find($fieldId)) {
+            abort('404');
+        }
+        if ($categoryId and !Category::find($categoryId)) {
             abort('404');
         }
 
@@ -40,6 +45,17 @@ class ProfessionController extends Controller
                     ->when($fieldId, fn($q) => $q->where('field_id', $fieldId))
                     ->orderBy('name', 'asc')
                     ->get();
+            } elseif ($categoryId) {
+                $fields = Field::all();
+                $professions = Profession::with(
+                    'field',
+                    'field.cluster',
+                    'field.cluster.category',
+                    'kardanesh',
+                    'jobtype'
+                )->whereHas('field.cluster.category', function ($query) use ($categoryId) {
+                    $query->where('id', $categoryId);
+                })->orderBy('name', 'asc')->get();
             } else {
                 $fields = Field::all();
                 $professions = Profession::with(
