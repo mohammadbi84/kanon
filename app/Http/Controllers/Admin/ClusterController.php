@@ -19,13 +19,30 @@ class ClusterController extends Controller
         if (request()->ajax()) {
             $categories = null;
             if ($categoryId) {
-                $clusters = Cluster::with('category', 'fields')
+                $clusters = Cluster::with('category', 'fields', 'fields.professions')
                     ->when($categoryId, fn($q) => $q->where('category_id', $categoryId))
-                    ->latest()
+                    ->orderBy('name','asc')
                     ->get();
+
+
+                foreach ($clusters as $cluster) {
+                    $professionsCount = 0;
+                    foreach ($cluster->fields as $field) {
+                        $professionsCount += $field->professions->count();
+                    }
+                    $cluster['professionsCount'] = $professionsCount;
+                }
             } else {
                 $categories = Category::active()->get();
-                $clusters = Cluster::with('category', 'fields')->latest()->get();
+                $clusters = Cluster::with('category', 'fields', 'fields.professions')->orderBy('name','asc')->get();
+
+                foreach ($clusters as $cluster) {
+                    $professionsCount = 0;
+                    foreach ($cluster->fields as $field) {
+                        $professionsCount += $field->professions->count();
+                    }
+                    $cluster['professionsCount'] = $professionsCount;
+                }
             }
             return response()->json(['data' => $clusters, 'categories' => $categories]);
         }
@@ -34,12 +51,7 @@ class ClusterController extends Controller
         if ($categoryId) {
             $category = Category::find($categoryId);
         }
-        if ($categoryId) {
-            $cluster_count = Cluster::when($categoryId, fn($q) => $q->where('category_id', $categoryId))->count();
-        } else {
-            $cluster_count = Cluster::count();
-        }
-        return view('admin.clusters.index', compact('categories', 'category', 'cluster_count'));
+        return view('admin.clusters.index', compact('categories', 'category'));
     }
 
     public function store(Request $request)

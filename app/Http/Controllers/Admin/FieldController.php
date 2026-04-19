@@ -24,21 +24,27 @@ class FieldController extends Controller
         if (request()->ajax()) {
             $clusters = null;
             if ($clusterId) {
-                $fields = Field::with('cluster', 'professions')
+                $fields = Field::with('cluster', 'cluster.category', 'professions')
                     ->when($clusterId, fn($q) => $q->where('cluster_id', $clusterId))
-                    ->latest()
+                    ->orderBy('name', 'asc')
                     ->get();
             } elseif ($category_id) {
                 $clusters = Cluster::active()->get();
                 $fields = Field::with(
+                    'professions',
                     'cluster',
                     'cluster.category',
-                )->whereHas('cluster.category', function ($query) use ($category_id) {
-                    $query->where('id', $category_id);
-                })->orderBy('name', 'asc')->get();
+                )
+                    ->join('clusters', 'fields.cluster_id', '=', 'clusters.id')
+                    ->whereHas('cluster.category', function ($query) use ($category_id) {
+                        $query->where('id', $category_id);
+                    })
+                    ->orderBy('clusters.name', 'asc')
+                    ->select('fields.*') // برای جلوگیری از تداخل ستون‌ها
+                    ->get();
             } else {
                 $clusters = Cluster::active()->get();
-                $fields = Field::with('cluster', 'professions')->latest()->get();
+                $fields = Field::with('cluster', 'cluster.category', 'professions')->orderBy('name', 'asc')->get();
             }
             return response()->json(['data' => $fields, 'clusters' => $clusters]);
         }

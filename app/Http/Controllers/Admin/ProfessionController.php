@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Imports\ProfessionsImport;
 use App\Models\Category;
+use App\Models\Cluster;
 use Illuminate\Http\Request;
 use App\Models\Profession;
 use App\Models\Field;
@@ -24,11 +25,15 @@ class ProfessionController extends Controller
     public function index(Request $request)
     {
         $fieldId = $request->query('field_id'); // اگر از صفحه خوشه‌ها اومده
-        $categoryId = $request->query('category_id'); // اگر از صفحه رسته اومده
         if ($fieldId and !Field::find($fieldId)) {
             abort('404');
         }
+        $categoryId = $request->query('category_id'); // اگر از صفحه رسته اومده
         if ($categoryId and !Category::find($categoryId)) {
+            abort('404');
+        }
+        $clusterId = $request->query('cluster_id'); // اگر از صفحه رسته اومده
+        if ($clusterId and !Cluster::find($clusterId)) {
             abort('404');
         }
 
@@ -55,6 +60,17 @@ class ProfessionController extends Controller
                     'jobtype'
                 )->whereHas('field.cluster.category', function ($query) use ($categoryId) {
                     $query->where('id', $categoryId);
+                })->orderBy('name', 'asc')->get();
+            } elseif ($clusterId) {
+                $fields = Field::all();
+                $professions = Profession::with(
+                    'field',
+                    'field.cluster',
+                    'field.cluster.category',
+                    'kardanesh',
+                    'jobtype'
+                )->whereHas('field.cluster', function ($query) use ($clusterId) {
+                    $query->where('id', $clusterId);
                 })->orderBy('name', 'asc')->get();
             } else {
                 $fields = Field::all();

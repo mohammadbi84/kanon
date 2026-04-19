@@ -158,7 +158,26 @@
     <script>
         categories = $(".categories");
         dt_basic = categories.DataTable({
-            ajax: "/admin2/categories",
+            ajax: {
+                url: "/admin2/categories",
+                // این تابع قبل از شروع لود اجرا میشه
+                beforeSend: function() {
+                    $("#DataTables_Table_0_wrapper .dataTables_empty").hide();
+                    $(".categories").closest(".card").append(`
+                    <div id="custom-overlay">
+                        <div class="loader-container">
+                            <div class="custom-spinner"></div>
+                            <span>در حال بارگزاری رکورد ها</span>
+                            <span>لطفا شکیبا باشید.</span>
+                        </div>
+                    </div>
+                `);
+                },
+                // این تابع بعد از اتمام لود اجرا میشه
+                complete: function() {
+                    $("#custom-overlay").remove();
+                }
+            },
             autoWidth: false, // جلوگیری از محاسبه خودکار عرض
             columns: [{
                     data: "id",
@@ -258,13 +277,13 @@
                     searchable: false,
                     render: function(data, type, full, meta) {
                         return `
-                                <a href="/admin2/clusters?category_id=${full.id}" class="btn btn-sm btn-success item-show" data-id="${full.id}">
+                                <a href="/admin2/clusters?category_id=${full.id}" class="btn btn-sm btn-info item-show" data-id="${full.id}">
                                 خوشه ها <span class="ms-2">( ${full.clusters.length} )</span>
                                 </a>
-                                <a href="/admin2/fields?category_id=${full.id}" class="btn btn-sm btn-success item-show" data-id="${full.id}">
+                                <a href="/admin2/fields?category_id=${full.id}" class="btn btn-sm btn-info item-show" data-id="${full.id}">
                                 رشته ها <span class="ms-2">( ${full.fieldsCount} )</span>
                                 </a>
-                                <a href="/admin2/professions?category_id=${full.id}" class="btn btn-sm btn-success item-show" data-id="${full.id}">
+                                <a href="/admin2/professions?category_id=${full.id}" class="btn btn-sm btn-info item-show" data-id="${full.id}">
                                 حرفه ها <span class="ms-2">( ${full.professionsCount} )</span>
                                 </a>
                                 `;
@@ -577,7 +596,7 @@
                 confirmButtonText: "بله، حذف کن!",
                 cancelButtonText: "انصراف",
                 focusConfirm: false,
-                    reverseButtons: true,
+                reverseButtons: true,
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({

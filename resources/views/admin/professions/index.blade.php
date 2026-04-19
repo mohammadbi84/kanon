@@ -427,6 +427,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const fieldId = urlParams.get("field_id");
         const categoryId = urlParams.get("category_id");
+        const clusterId = urlParams.get("cluster_id");
         const fieldName = urlParams.get("field_name");
 
         var minTime = 0;
@@ -446,6 +447,9 @@
                     }
                     if (categoryId) {
                         d.category_id = categoryId; // ارسال فیلد رشته به سرور
+                    }
+                    if (clusterId) {
+                        d.cluster_id = clusterId; // ارسال فیلد رشته به سرور
                     }
                 },
                 // این تابع قبل از شروع لود اجرا میشه

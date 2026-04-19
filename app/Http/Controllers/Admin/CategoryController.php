@@ -14,7 +14,7 @@ class CategoryController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $categories = Category::with(['clusters.fields.professions'])->latest()->get();
+            $categories = Category::with(['clusters.fields.professions'])->orderBy('name','asc')->get();
 
             foreach ($categories as $category) {
                 $fieldsCount = 0;
