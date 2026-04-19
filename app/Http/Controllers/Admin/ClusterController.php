@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Cluster;
+use App\Models\Field;
+use App\Models\Profession;
 use Illuminate\Http\Request;
 
 class ClusterController extends Controller
@@ -51,7 +53,10 @@ class ClusterController extends Controller
         if ($categoryId) {
             $category = Category::find($categoryId);
         }
-        return view('admin.clusters.index', compact('categories', 'category'));
+
+        $fieldCount = Field::count();
+        $professionCount = Profession::count();
+        return view('admin.clusters.index', compact('categories', 'category', 'fieldCount', 'professionCount'));
     }
 
     public function store(Request $request)

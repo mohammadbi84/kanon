@@ -14,7 +14,7 @@ class CategoryController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $categories = Category::with(['clusters.fields.professions'])->orderBy('name','asc')->get();
+            $categories = Category::with(['clusters.fields.professions'])->orderBy('name', 'asc')->get();
 
             foreach ($categories as $category) {
                 $fieldsCount = 0;
@@ -33,7 +33,11 @@ class CategoryController extends Controller
             }
             return response()->json(['data' => $categories]);
         }
-        return view('admin.categories.index');
+        $categoryCount = Category::count();
+        $clusterCount = Cluster::count();
+        $fieldCount = Field::count();
+        $professionCount = Profession::count();
+        return view('admin.categories.index', compact('categoryCount', 'clusterCount', 'fieldCount', 'professionCount'));
     }
 
     public function store(Request $request)

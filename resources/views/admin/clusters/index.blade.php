@@ -1,10 +1,10 @@
 @extends('admin.layout.master')
 @section('head')
-<style>
-    .table > :not(caption) > * > *{
-        padding: 0.5rem
-    }
-</style>
+    <style>
+        .table> :not(caption)>*>* {
+            padding: 0.5rem
+        }
+    </style>
 @endsection
 @section('content')
     {{-- فیلد انتخاب رسته (دینامیک بر اساس پارامتر URL) --}}
@@ -86,6 +86,11 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
+                <small class="text-muted">تعداد کل رشته : <span>{{ number_format($fieldCount) }}</span></small>/
+                <small class="text-muted">تعداد کل حرفه : <span>{{ number_format($professionCount) }}</span></small>/
+                <small class="text-muted">تعداد کل سند حرفه : <span>0</span></small>
             </div>
             <table class="dt-select-table clusters table table-hover">
                 <thead>
@@ -403,7 +408,7 @@
                 items: 'row' // انتخاب ردیف‌ها
             },
             initComplete: function(settings, json) {
-                let noSearchColumns = [0, 3, 4, 5,6];
+                let noSearchColumns = [0, 3, 4, 5, 6];
                 // **تنظیم رویداد برای اینپوت های معمولی**
                 $('.clusters thead tr:eq(1) th').each(function(i) {
                     $(this).removeClass('sorting');

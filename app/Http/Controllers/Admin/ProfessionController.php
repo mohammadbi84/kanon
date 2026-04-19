@@ -24,65 +24,61 @@ class ProfessionController extends Controller
     // 📄 لیست حرفه‌ها (با DataTables)
     public function index(Request $request)
     {
-        $fieldId = $request->query('field_id'); // اگر از صفحه خوشه‌ها اومده
-        if ($fieldId and !Field::find($fieldId)) {
-            abort('404');
-        }
-        $categoryId = $request->query('category_id'); // اگر از صفحه رسته اومده
-        if ($categoryId and !Category::find($categoryId)) {
-            abort('404');
-        }
-        $clusterId = $request->query('cluster_id'); // اگر از صفحه رسته اومده
-        if ($clusterId and !Cluster::find($clusterId)) {
-            abort('404');
+        $fieldId = $request->query('field_id');
+        $categoryId = $request->query('category_id');
+        $clusterId = $request->query('cluster_id');
+
+        // اعتبارسنجی یکپارچه
+        if (($fieldId && !Field::exists($fieldId)) ||
+            ($categoryId && !Category::exists($categoryId)) ||
+            ($clusterId && !Cluster::exists($clusterId))
+        ) {
+            abort(404);
         }
 
         if (request()->ajax()) {
-            $fields = null;
+            // پایه کوئری با eager loading بهینه
+            $query = Profession::with([
+                'field' => function ($q) {
+                    $q->orderBy('name'); // پیش‌سورت رشته‌ها
+                },
+                'field.cluster' => function ($q) {
+                    $q->orderBy('name'); // پیش‌سورت خوشه‌ها
+                },
+                'field.cluster.category',
+                'kardanesh',
+                'jobtype'
+            ]);
+
+            // اعمال فیلترها
             if ($fieldId) {
-                $professions = Profession::with(
-                    'field',
-                    'field.cluster',
-                    'field.cluster.category',
-                    'kardanesh',
-                    'jobtype'
-                )
-                    ->when($fieldId, fn($q) => $q->where('field_id', $fieldId))
-                    ->orderBy('name', 'asc')
-                    ->get();
+                $query->where('field_id', $fieldId);
             } elseif ($categoryId) {
-                $fields = Field::all();
-                $professions = Profession::with(
-                    'field',
-                    'field.cluster',
-                    'field.cluster.category',
-                    'kardanesh',
-                    'jobtype'
-                )->whereHas('field.cluster.category', function ($query) use ($categoryId) {
-                    $query->where('id', $categoryId);
-                })->orderBy('name', 'asc')->get();
+                $query->whereHas('field.cluster', function ($q) use ($categoryId) {
+                    $q->where('category_id', $categoryId);
+                });
             } elseif ($clusterId) {
-                $fields = Field::all();
-                $professions = Profession::with(
-                    'field',
-                    'field.cluster',
-                    'field.cluster.category',
-                    'kardanesh',
-                    'jobtype'
-                )->whereHas('field.cluster', function ($query) use ($clusterId) {
-                    $query->where('id', $clusterId);
-                })->orderBy('name', 'asc')->get();
-            } else {
-                $fields = Field::all();
-                $professions = Profession::with(
-                    'field',
-                    'field.cluster',
-                    'field.cluster.category',
-                    'kardanesh',
-                    'jobtype'
-                )->orderBy('name', 'asc')->get();
+                $query->whereHas('field', function ($q) use ($clusterId) {
+                    $q->where('cluster_id', $clusterId);
+                });
             }
-            return response()->json(['data' => $professions, 'fields' => $fields]);
+
+            // سورت پیچیده با JOIN
+            $professions = $query->join('fields', 'professions.field_id', '=', 'fields.id')
+                ->join('clusters', 'fields.cluster_id', '=', 'clusters.id')
+                ->orderBy('clusters.name')      // اول بر اساس خوشه
+                ->orderBy('fields.name')        // دوم بر اساس رشته
+                ->orderBy('professions.name')   // سوم بر اساس حرفه
+                ->select('professions.*')       // فقط ستون‌های professions
+                ->get();
+
+            // فقط اگه واقعاً نیاز داری fields رو برگردونی
+            $fields = ($categoryId || $clusterId || !$fieldId) ? Field::all() : null;
+
+            return response()->json([
+                'data' => $professions,
+                'fields' => $fields
+            ]);
         }
 
         $field = [];

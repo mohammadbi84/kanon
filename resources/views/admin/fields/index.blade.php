@@ -86,6 +86,10 @@
                     </div>
                 </div>
             </div>
+            <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
+                <small class="text-muted">تعداد کل حرفه : <span>{{number_format($professionCount)}}</span></small>/
+                <small class="text-muted">تعداد کل سند حرفه : <span>0</span></small>
+            </div>
             <table class="dt-select-table fields table table-hover">
                 <thead>
                     <tr>

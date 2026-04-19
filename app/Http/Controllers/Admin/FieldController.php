@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Cluster;
 use App\Models\Field;
+use App\Models\Profession;
 use Illuminate\Http\Request;
 
 class FieldController extends Controller
@@ -59,7 +60,9 @@ class FieldController extends Controller
         } else {
             $fields_count = Field::count();
         }
-        return view('admin.fields.index', compact('clusters', 'cluster', 'fields_count'));
+
+        $professionCount = Profession::count();
+        return view('admin.fields.index', compact('clusters', 'cluster', 'fields_count', 'professionCount'));
     }
 
     public function store(Request $request)
