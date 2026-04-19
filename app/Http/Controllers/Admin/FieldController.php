@@ -22,47 +22,72 @@ class FieldController extends Controller
             abort('404');
         }
 
+        $clusters = null;
+        $fields = null;
+
+        if ($clusterId) {
+            // حالت فیلتر بر اساس خوشه
+            $fields = Field::with('cluster', 'cluster.category', 'professions')
+                ->where('cluster_id', $clusterId)
+                ->join('clusters', 'fields.cluster_id', '=', 'clusters.id')
+                ->join('categories', 'clusters.category_id', '=', 'categories.id')
+                ->orderBy('categories.name')  // اول: رسته
+                ->orderBy('clusters.name')    // دوم: خوشه
+                ->orderBy('fields.name')      // سوم: نام رشته
+                ->select('fields.*')
+                ->get();
+        } elseif ($category_id) {
+            // حالت فیلتر بر اساس رسته
+            $clusters = Cluster::active()->get();
+
+            $fields = Field::with('professions', 'cluster', 'cluster.category')
+                ->join('clusters', 'fields.cluster_id', '=', 'clusters.id')
+                ->join('categories', 'clusters.category_id', '=', 'categories.id')
+                ->where('categories.id', $category_id)
+                ->orderBy('categories.name')  // اول: رسته
+                ->orderBy('clusters.name')    // دوم: خوشه
+                ->orderBy('fields.name')      // سوم: نام رشته
+                ->select('fields.*')
+                ->get();
+        } else {
+            // حالت بدون فیلتر (همه موارد)
+            $clusters = Cluster::active()->get();
+
+            $fields = Field::with('cluster', 'cluster.category', 'professions')
+                ->join('clusters', 'fields.cluster_id', '=', 'clusters.id')
+                ->join('categories', 'clusters.category_id', '=', 'categories.id')
+                ->orderBy('categories.name')  // اول: رسته
+                ->orderBy('clusters.name')    // دوم: خوشه
+                ->orderBy('fields.name')      // سوم: نام رشته
+                ->select('fields.*')
+                ->get();
+        }
         if (request()->ajax()) {
-            $clusters = null;
-            if ($clusterId) {
-                $fields = Field::with('cluster', 'cluster.category', 'professions')
-                    ->when($clusterId, fn($q) => $q->where('cluster_id', $clusterId))
-                    ->orderBy('name', 'asc')
-                    ->get();
-            } elseif ($category_id) {
-                $clusters = Cluster::active()->get();
-                $fields = Field::with(
-                    'professions',
-                    'cluster',
-                    'cluster.category',
-                )
-                    ->join('clusters', 'fields.cluster_id', '=', 'clusters.id')
-                    ->whereHas('cluster.category', function ($query) use ($category_id) {
-                        $query->where('id', $category_id);
-                    })
-                    ->orderBy('clusters.name', 'asc')
-                    ->select('fields.*') // برای جلوگیری از تداخل ستون‌ها
-                    ->get();
-            } else {
-                $clusters = Cluster::active()->get();
-                $fields = Field::with('cluster', 'cluster.category', 'professions')->orderBy('name', 'asc')->get();
-            }
             return response()->json(['data' => $fields, 'clusters' => $clusters]);
         }
         $clusters = Cluster::with('category')->active()->get();
 
         $cluster = [];
+        $categoryCount = 1;
         if ($clusterId) {
             $cluster = Cluster::find($clusterId);
+            $categoryCount = Category::whereHas('clusters')->count();
         }
-        if ($clusterId) {
-            $fields_count = Field::when($clusterId, fn($q) => $q->where('cluster_id', $clusterId))->count();
+        $clusterCount = 1;
+        if ($category_id) {
+            $clusterCount = Cluster::where('category_id', $category_id)
+                ->whereHas('fields')  // فقط خوشه‌هایی که رشته دارند
+                ->count();
         } else {
-            $fields_count = Field::count();
+            $clusterCount = Cluster::whereHas('fields')->count();
         }
 
-        $professionCount = Profession::count();
-        return view('admin.fields.index', compact('clusters', 'cluster', 'fields_count', 'professionCount'));
+        $professionCount = 0;
+        foreach ($fields as $key => $field) {
+            $professionCount += $field->professions()->count();
+        }
+
+        return view('admin.fields.index', compact('clusters', 'cluster', 'professionCount', 'clusterCount', 'categoryCount'));
     }
 
     public function store(Request $request)

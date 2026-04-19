@@ -81,17 +81,54 @@ class ProfessionController extends Controller
             ]);
         }
 
+        $categoryCount = Category::whereHas('clusters')->count();
+        $clusterCount = Cluster::whereHas('fields.professions')->count();
+        $fieldCount = Field::whereHas('professions')->count();
+        $category = [];
+        $cluster = [];
         $field = [];
+
         if ($fieldId) {
-            $field = Field::find($fieldId);
+            // وقتی رشته رو داریم: تعداد = 1 برای همه سطوح
+            $field = Field::with('cluster.category')->find($fieldId);
+            if ($field) {
+                $categoryCount = 1;
+                $clusterCount = 1;
+                $fieldCount = 1;
+            }
+        } elseif ($categoryId) {
+            // وقتی رسته رو داریم: باید تعداد خوشه‌ها و رشته‌هایی که حرفه دارند رو بگیریم
+            $category = Category::find($categoryId);
+            if ($category) {
+                $categoryCount = 1;
+
+                // تعداد خوشه‌هایی که حداقل یک رشته با حرفه دارند
+                $clusterCount = Cluster::where('category_id', $categoryId)
+                    ->whereHas('fields.professions')  // خوشه‌هایی که رشته‌شون حرفه داره
+                    ->count();
+
+                // تعداد رشته‌هایی که حرفه دارند
+                $fieldCount = Field::whereHas('cluster', function ($q) use ($categoryId) {
+                    $q->where('category_id', $categoryId);
+                })->whereHas('professions')  // فقط رشته‌هایی که حرفه دارند
+                    ->count();
+            }
+        } elseif ($clusterId) {
+            // وقتی خوشه رو داریم: رسته یکه، باید تعداد رشته‌هایی که حرفه دارن رو بگیریم
+            $cluster = Cluster::with('category')->find($clusterId);
+            if ($cluster) {
+                $categoryCount = 1;  // رسته یکه (همون رسته خوشه)
+                $clusterCount = 1;   // خود خوشه یک دونه
+
+                // تعداد رشته‌هایی که داخل این خوشه هستن و حرفه هم دارن
+                $fieldCount = Field::where('cluster_id', $clusterId)
+                    ->whereHas('professions')  // فقط رشته‌هایی که حرفه دارند
+                    ->count();
+            }
         }
-        if ($fieldId) {
-            $professions_count = Profession::when($fieldId, fn($q) => $q->where('field_id', $fieldId))->count();
-        } else {
-            $professions_count = Profession::count();
-        }
+
         $lastTime = Profession::orderBy('total_hour', 'desc')->first()->total_hour;
-        return view('admin.professions.index', compact('fieldId', 'field', 'professions_count', 'lastTime'));
+        return view('admin.professions.index', compact('fieldId', 'field', 'lastTime', 'category', 'cluster','categoryCount','clusterCount','fieldCount'));
     }
 
     public function create(Request $request)

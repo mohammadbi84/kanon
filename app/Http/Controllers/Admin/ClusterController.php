@@ -23,7 +23,7 @@ class ClusterController extends Controller
             if ($categoryId) {
                 $clusters = Cluster::with('category', 'fields', 'fields.professions')
                     ->when($categoryId, fn($q) => $q->where('category_id', $categoryId))
-                    ->orderBy('name','asc')
+                    ->orderBy('name', 'asc')
                     ->get();
 
 
@@ -36,7 +36,9 @@ class ClusterController extends Controller
                 }
             } else {
                 $categories = Category::active()->get();
-                $clusters = Cluster::with('category', 'fields', 'fields.professions')->orderBy('name','asc')->get();
+                $clusters = Cluster::with('category', 'fields', 'fields.professions')
+                    ->orderBy('name', 'asc')
+                    ->get();
 
                 foreach ($clusters as $cluster) {
                     $professionsCount = 0;
@@ -54,9 +56,10 @@ class ClusterController extends Controller
             $category = Category::find($categoryId);
         }
 
+        $categoryCount = Category::whereHas('clusters')->count();
         $fieldCount = Field::count();
         $professionCount = Profession::count();
-        return view('admin.clusters.index', compact('categories', 'category', 'fieldCount', 'professionCount'));
+        return view('admin.clusters.index', compact('categories', 'category', 'fieldCount', 'professionCount', 'categoryCount'));
     }
 
     public function store(Request $request)

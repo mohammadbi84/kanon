@@ -28,7 +28,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="head-label d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">لیست خوشه ها</h5>
-                    <small class="text-muted ms-2">( تعداد کل : <span id="totalRecord">0</span> رکورد /
+                    <small class="text-muted ms-2">(
                         فلیتر شده : <span id="filteredrecord">0</span> ردیف /
                         انتخاب شده : <span id="selectedRecord">0</span> ردیف )</small>
                 </div>
@@ -88,9 +88,11 @@
                 </div>
             </div>
             <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
-                <small class="text-muted">تعداد کل رشته : <span>{{ number_format($fieldCount) }}</span></small>/
-                <small class="text-muted">تعداد کل حرفه : <span>{{ number_format($professionCount) }}</span></small>/
-                <small class="text-muted">تعداد کل سند حرفه : <span>0</span></small>
+                <small class="text-muted">تعداد رسته : <span>{{ $categoryId ? 1 : $categoryCount }}</span></small>/
+                <small class="text-muted">تعداد خوشه : <span id="totalRecord">0</span> </small>/
+                <small class="text-muted">تعداد رشته : <span>{{ number_format($fieldCount) }}</span></small>/
+                <small class="text-muted">تعداد حرفه : <span>{{ number_format($professionCount) }}</span></small>/
+                <small class="text-muted">تعداد سند حرفه : <span>0</span></small>
             </div>
             <table class="dt-select-table clusters table table-hover">
                 <thead>
@@ -362,7 +364,7 @@
                 '<"d-flex justify-content-between align-items-center"<"d-flex justify-content-start align-items-center gap-3"l <\'bulk-holder2\'>><"d-flex justify-content-center justify-content-md-end"f>><t>' +
                 "<'row d-flex align-items-center justify-content-between'<'col-md-4'<'bulk-holder'>><'col-md-8 d-flex justify-content-between'i p>>",
             displayLength: 10,
-            lengthMenu: [10, 25, 50, 75, 100],
+            lengthMenu: [10, 25, 50, 75, 100, 500],
             buttons: [],
             responsive: {
                 details: {
@@ -408,7 +410,7 @@
                 items: 'row' // انتخاب ردیف‌ها
             },
             initComplete: function(settings, json) {
-                let noSearchColumns = [0, 3, 4, 5, 6];
+                let noSearchColumns = [0, 4, 5, 6];
                 // **تنظیم رویداد برای اینپوت های معمولی**
                 $('.clusters thead tr:eq(1) th').each(function(i) {
                     $(this).removeClass('sorting');
@@ -739,6 +741,8 @@
                     cancelButtonColor: "#3085d6",
                     confirmButtonText: "بله، حذف کن!",
                     cancelButtonText: "انصراف",
+                    focusConfirm: false,
+                    reverseButtons: true,
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
@@ -783,27 +787,40 @@
                     return;
                 }
 
-                $.ajax({
-                    url: "/admin2/clusters/bulk-toggle",
-                    type: "POST",
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr(
-                            "content"
-                        ),
-                        ids: ids,
-                        status: status,
-                    },
-                    success: function(res) {
-                        toastr.success(res.message);
-                        dt_basic.ajax.reload(null, false);
-                        $(".bulk-actions .bulk-toggle").prop("disabled", true);
-                    },
-                    error: function(err) {
-                        toastr.error("خطا در ارتباط با سرور.");
+                Swal.fire({
+                    title: `آیا از تغییر وضعیت ${ids.length} رکورد مطمئن هستید؟`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "تایید",
+                    cancelButtonText: "انصراف",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/admin2/clusters/bulk-toggle",
+                            type: "POST",
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr(
+                                    "content"
+                                ),
+                                ids: ids,
+                                status: status,
+                            },
+                            success: function(res) {
+                                toastr.success(res.message);
+                                dt_basic.ajax.reload(null, false);
+                                $(".bulk-actions .bulk-toggle").prop("disabled", true);
+                            },
+                            error: function(err) {
+                                toastr.error("خطا در ارتباط با سرور.");
 
-                        console.error(err);
-                    },
+                                console.error(err);
+                            },
+                        });
+                    }
                 });
+
             });
         }
 

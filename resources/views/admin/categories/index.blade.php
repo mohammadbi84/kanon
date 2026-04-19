@@ -14,7 +14,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="head-label d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">لیست رسته ها</h5>
-                    <small class="text-muted ms-2">( تعداد کل : <span id="totalRecord">0</span> رکورد /
+                    <small class="text-muted ms-2">(
                         فلیتر شده : <span id="filteredrecord">0</span> ردیف /
                         انتخاب شده : <span id="selectedRecord">0</span> ردیف )</small>
                 </div>
@@ -52,10 +52,10 @@
                 </div>
             </div>
             <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
-                <small class="text-muted">تعداد کل رسته : <span>{{number_format($categoryCount)}}</span></small>/
-                <small class="text-muted">تعداد کل خوشه : <span>{{number_format($clusterCount)}}</span></small>/
-                <small class="text-muted">تعداد کل رشته : <span>{{number_format($fieldCount)}}</span></small>/
-                <small class="text-muted">تعداد کل حرفه : <span>{{number_format($professionCount)}}</span></small>/
+                <small class="text-muted">تعداد کل رسته : <span>{{ number_format($categoryCount) }}</span></small>/
+                <small class="text-muted">تعداد کل خوشه : <span>{{ number_format($clusterCount) }}</span></small>/
+                <small class="text-muted">تعداد کل رشته : <span>{{ number_format($fieldCount) }}</span></small>/
+                <small class="text-muted">تعداد کل حرفه : <span>{{ number_format($professionCount) }}</span></small>/
                 <small class="text-muted">تعداد کل سند حرفه : <span>0</span></small>
             </div>
             <table class="dt-select-table categories table table-hover">
@@ -322,7 +322,7 @@
                 +
                 "<'row d-flex align-items-center justify-content-between'<'col-md-4'<'bulk-holder'>><'col-md-8 d-flex justify-content-between'i p>>",
             displayLength: 10,
-            lengthMenu: [10, 25, 50, 75, 100],
+            lengthMenu: [10, 25, 50, 75, 100, 500],
             buttons: [],
             responsive: {
                 details: {
@@ -742,26 +742,38 @@
                     return;
                 }
 
-                $.ajax({
-                    url: "/admin2/categories/bulk-toggle",
-                    type: "POST",
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr(
-                            "content"
-                        ),
-                        ids: ids,
-                        status: status,
-                    },
-                    success: function(res) {
-                        toastr.success(res.message);
-                        dt_basic.ajax.reload(null, false);
-                        $("#bulk-actions .bulk-toggle").prop("disabled", true);
-                    },
-                    error: function(err) {
-                        toastr.error("خطا در ارتباط با سرور.");
+                Swal.fire({
+                    title: `آیا از تغییر وضعیت ${ids.length} رکورد مطمئن هستید؟`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "تایید",
+                    cancelButtonText: "انصراف",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/admin2/categories/bulk-toggle",
+                            type: "POST",
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr(
+                                    "content"
+                                ),
+                                ids: ids,
+                                status: status,
+                            },
+                            success: function(res) {
+                                toastr.success(res.message);
+                                dt_basic.ajax.reload(null, false);
+                                $("#bulk-actions .bulk-toggle").prop("disabled", true);
+                            },
+                            error: function(err) {
+                                toastr.error("خطا در ارتباط با سرور.");
 
-                        console.error(err);
-                    },
+                                console.error(err);
+                            },
+                        });
+                    }
                 });
             });
         }

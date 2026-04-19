@@ -4,13 +4,14 @@
 @section('content')
     {{-- فیلد انتخاب خوشه (دینامیک بر اساس پارامتر URL) --}}
     @php
-        $categoryId = request()->get('cluster_id');
+        $clusterId = request()->get('cluster_id');
+        $categoryId = request()->get('category_id');
     @endphp
 
     <h5 class="breadcrumb-wrapper mb-4">
         <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
         <span class="text-muted">مدیریت استاندارد ها / </span>
-        @if ($categoryId)
+        @if ($clusterId)
             <a href="{{ route('admin.categories.index') }}" class="text-muted">رسته {{ $cluster?->category?->name }}</a> <span
                 class="text-muted">/</span>
             <a href="{{ route('admin.clusters.index') }}" class="text-muted">خوشه {{ $cluster?->name }}</a> <span
@@ -25,7 +26,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="head-label d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">لیست رشته ها</h5>
-                    <small class="text-muted ms-2">( تعداد کل : <span id="totalRecord">0</span> رکورد /
+                    <small class="text-muted ms-2">(
                         فلیتر شده : <span id="filteredrecord">0</span> ردیف /
                         انتخاب شده : <span id="selectedRecord">0</span> ردیف )</small>
                 </div>
@@ -57,7 +58,7 @@
 
 
 
-                                    @if (!$categoryId)
+                                    @if (!$clusterId)
                                         {{-- اگر cluster_id در URL نبود --}}
                                         <div class="col-sm-12 mt-3">
                                             <select id="cluster_id" name="cluster_id" class="form-select select2" required>
@@ -70,7 +71,7 @@
                                     @else
                                         <div class="col-sm-12">
                                             <div class="input-group input-group-merge">
-                                                <input type="hidden" name="cluster_id" value="{{ $categoryId }}">
+                                                <input type="hidden" name="cluster_id" value="{{ $clusterId }}">
                                             </div>
                                         </div>
                                     @endif
@@ -87,8 +88,13 @@
                 </div>
             </div>
             <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
-                <small class="text-muted">تعداد کل حرفه : <span>{{number_format($professionCount)}}</span></small>/
-                <small class="text-muted">تعداد کل سند حرفه : <span>0</span></small>
+                <small class="text-muted">تعداد رسته :
+                    <span>{{ $categoryId ? 1 : number_format($categoryCount) }}</span></small>/
+                <small class="text-muted">تعداد خوشه :
+                    <span>{{ $clusterId ? 1 : number_format($clusterCount) }}</span></small>/
+                <small class="text-muted">تعداد رشته : <span id="totalRecord">0</span></small>/
+                <small class="text-muted">تعداد حرفه : <span>{{ number_format($professionCount) }}</span></small>/
+                <small class="text-muted">تعداد سند حرفه : <span>0</span></small>
             </div>
             <table class="dt-select-table fields table table-hover">
                 <thead>
@@ -365,7 +371,7 @@
                 '<"d-flex justify-content-between align-items-center"<"d-flex justify-content-start align-items-center gap-3"l <\'bulk-holder2\'>><"d-flex justify-content-center justify-content-md-end"f>><t>' +
                 "<'row d-flex align-items-center justify-content-between'<'col-md-4'<'bulk-holder'>><'col-md-8 d-flex justify-content-between'i p>>",
             displayLength: 10,
-            lengthMenu: [10, 25, 50, 75, 100],
+            lengthMenu: [10, 25, 50, 75, 100, 500],
             buttons: [],
             responsive: {
                 details: {
@@ -779,27 +785,41 @@
                     return;
                 }
 
-                $.ajax({
-                    url: "/admin2/fields/bulk-toggle",
-                    type: "POST",
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr(
-                            "content"
-                        ),
-                        ids: ids,
-                        status: status,
-                    },
-                    success: function(res) {
-                        toastr.success(res.message);
-                        dt_basic.ajax.reload(null, false);
-                        $(".bulk-actions .bulk-toggle").prop("disabled", true);
-                    },
-                    error: function(err) {
-                        toastr.error("خطا در ارتباط با سرور.");
+                Swal.fire({
+                    title: `آیا از تغییر وضعیت ${ids.length} رکورد مطمئن هستید؟`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "تایید",
+                    cancelButtonText: "انصراف",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/admin2/fields/bulk-toggle",
+                            type: "POST",
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr(
+                                    "content"
+                                ),
+                                ids: ids,
+                                status: status,
+                            },
+                            success: function(res) {
+                                toastr.success(res.message);
+                                dt_basic.ajax.reload(null, false);
+                                $(".bulk-actions .bulk-toggle").prop("disabled", true);
+                            },
+                            error: function(err) {
+                                toastr.error("خطا در ارتباط با سرور.");
 
-                        console.error(err);
-                    },
+                                console.error(err);
+                            },
+                        });
+                    }
                 });
+
+
             });
         }
 

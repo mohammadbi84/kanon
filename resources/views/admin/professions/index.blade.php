@@ -126,7 +126,8 @@
         #btn-go-to-top:hover .outer_circle {
             stroke: #5a8dee !important;
         }
-        .table-responsive{
+
+        .table-responsive {
             overflow: unset !important;
         }
     </style>
@@ -141,11 +142,25 @@
     {{-- بررسی اینکه آیا field_id از URL آمده یا نه --}}
     @php
         $fieldId = request()->get('field_id');
+        $categoryId = request()->get('category_id');
+        $clusterId = request()->get('cluster_id');
     @endphp
 
     <h5 class="breadcrumb-wrapper mb-4">
         <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
         <span class="text-muted">مدیریت استاندارد ها / </span>
+        @if ($categoryId)
+            <a href="{{ route('admin.categories.index') }}" class="text-muted">رسته
+                {{ $category?->name }}</a>
+            <span class="text-muted">/</span>
+        @endif
+        @if ($clusterId)
+            <a href="{{ route('admin.categories.index') }}" class="text-muted">رسته
+                {{ $cluster?->category?->name }}</a>
+            <span class="text-muted">/</span>
+            <a href="{{ route('admin.clusters.index') }}" class="text-muted">خوشه {{ $cluster?->name }}</a> <span
+                class="text-muted">/</span>
+        @endif
         @if ($fieldId)
             <a href="{{ route('admin.categories.index') }}" class="text-muted">رسته
                 {{ $field?->cluster->category->name }}</a>
@@ -163,7 +178,7 @@
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <div class="head-label d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">لیست حرفه ها</h5>
-                    <small class="text-muted ms-2">( تعداد کل : <span id="totalRecord">0</span> رکورد /
+                    <small class="text-muted ms-2">( 
                         فلیتر شده : <span id="filteredrecord">0</span> ردیف /
                         انتخاب شده : <span id="selectedRecord">0</span> ردیف )</small>
                 </div>
@@ -191,6 +206,17 @@
                     </a>
                 </div>
             </div>
+            <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
+                <small class="text-muted">تعداد رسته :
+                    <span>{{ $categoryId ? 1 : number_format($categoryCount) }}</span></small>/
+                <small class="text-muted">تعداد خوشه :
+                    <span>{{ $clusterId ? 1 : number_format($clusterCount) }}</span></small>/
+                <small class="text-muted">تعداد رشته :
+                    <span>{{ $fieldId ? 1 : number_format($fieldCount) }}</span></small>/
+                <small class="text-muted">تعداد حرفه : <span id="totalRecord">0</span></small>/
+                <small class="text-muted">تعداد سند حرفه : <span>0</span></small>
+            </div>
+
             <div class="bulk-actions" id="bulk-actions2">
                 <div class="btn-group action_group" style="display: none">
                     <button type="button" class="btn border dropdown-toggle" data-bs-toggle="dropdown"
@@ -459,7 +485,7 @@
                     <div id="custom-overlay">
                         <div class="loader-container">
                             <div class="custom-spinner"></div>
-                            <span>در حال بارگزاری {{ $professions_count }} رکورد</span>
+                            <span>در حال بارگزاری رکورد ها</span>
                             <span>لطفا شکیبا باشید.</span>
                         </div>
                     </div>
@@ -784,8 +810,9 @@
                     $('input', this).on('keyup change', function() {
                         if (i == 1) {
                             if (this.value.length > 0) {
-                                dt_basic.column(i + 1).search('^' + this.value + '$', true, false).draw();
-                            }else{
+                                dt_basic.column(i + 1).search('^' + this.value + '$', true,
+                                    false).draw();
+                            } else {
                                 dt_basic.column(i + 1).search('').draw();
                             }
                         } else {
