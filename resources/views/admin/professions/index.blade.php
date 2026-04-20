@@ -1,50 +1,6 @@
 @extends('admin.layout.master')
 @section('head')
     <style>
-        @media print {
-
-            /* همه چیز را به جز بخش پرینتی پنهان کن */
-            @page {
-                margin: 0 !important;
-                /* حذف کامل margin چاپ */
-            }
-
-            body {
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-
-            body * {
-                visibility: hidden;
-                /* اول همه چیز را پنهان کن */
-            }
-
-            .logs-container,
-            .logs-container * {
-                visibility: visible;
-                /* بعد فقط بخش پرینتی و محتویاتش را آشکار کن */
-            }
-
-            .logs-container {
-                position: absolute;
-                /* موقعیت دهی مطلق برای اطمینان بیشتر */
-                left: 0;
-                top: 0;
-                width: 100%;
-                padding: 20px;
-                margin: 0 !important;
-                /* عرض کامل */
-            }
-
-            /* اگر لازم بود، استایل‌های دیگری هم اینجا اضافه کن */
-            h1,
-            p,
-            ul {
-                color: black !important;
-                /* اطمینان از خوانایی */
-            }
-        }
-
         td {
             padding: 0 !important;
             text-align: center
@@ -137,6 +93,90 @@
     <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/nouislider/nouislider.css') }}">
     {{-- bootstrap icons --}}
     <link rel="stylesheet" href="https://lib.arvancloud.ir/bootstrap-icons/1.9.1/font/bootstrap-icons.css">
+
+    <style>
+        .fixed-header {
+            position: sticky;
+            top: 94px;
+            background: #ffffff;
+            z-index: 1;
+            padding: 10px 0px;
+            /* box-shadow: 0px 5px 8px 0px #dcdcdc; */
+        }
+
+        .table-search-fixed {
+            position: sticky;
+            top: 180px;
+            background: #fff;
+            z-index: 1;
+        }
+
+        .table>thead {
+            position: sticky;
+            top: 233px;
+            background: #fff;
+            z-index: 1;
+        }
+
+        thead tr:not(:first-child) {
+            position: relative;
+            top: -1px;
+            box-shadow: 0px 1px 0px #ccc;
+        }
+
+        html[dir=rtl] table.dataTable>thead>tr>th:not(.sorting_disabled),
+        table.dataTable>thead>tr>td:not(.sorting_disabled) {
+            padding-right: 40px;
+            /* padding-left: 1.5rem; */
+            padding: 0 !important;
+            padding-right: 10px !important;
+            padding-bottom: 8px !important;
+        }
+
+        html[dir=rtl] table.dataTable thead .sorting::before,
+        html[dir=rtl] table.dataTable thead .sorting_asc::before,
+        html[dir=rtl] table.dataTable thead .sorting_desc::before,
+        html[dir=rtl] table.dataTable thead .sorting_asc_disabled::before,
+        html[dir=rtl] table.dataTable thead .sorting_desc_disabled::before,
+        html[dir=rtl] table.dataTable thead .sorting::after,
+        html[dir=rtl] table.dataTable thead .sorting_asc::after,
+        html[dir=rtl] table.dataTable thead .sorting_desc::after,
+        html[dir=rtl] table.dataTable thead .sorting_asc_disabled::after,
+        html[dir=rtl] table.dataTable thead .sorting_desc_disabled::after {
+            right: 4px !important;
+        }
+
+        .breadcrumb-wrapper {
+            position: sticky;
+            top: 61px;
+            z-index: 1;
+            background-color: #f3f4f4 !important;
+        }
+
+        .breadcrumb-wrapper.is-stuck {
+            font-size: 14px !important;
+            background: #ffffff !important;
+            padding-bottom: 10px;
+            padding-right: 10px;
+        }
+
+
+        .professions {
+            table-layout: fixed !important;
+            width: 100% !important;
+        }
+
+        /* .professions th,
+        .professions td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        } */
+
+        .custom-input-group {
+            width: 100%;
+        }
+    </style>
 @endsection
 @section('content')
     {{-- بررسی اینکه آیا field_id از URL آمده یا نه --}}
@@ -146,7 +186,7 @@
         $clusterId = request()->get('cluster_id');
     @endphp
 
-    <h5 class="breadcrumb-wrapper mb-4">
+    <h5 class="breadcrumb-wrapper mb-4 pt-4" style="padding: 10px !important;" id="breadcrumb-wrapper">
         <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
         <span class="text-muted">مدیریت استاندارد ها / </span>
         @if ($categoryId)
@@ -175,48 +215,71 @@
     <!-- DataTable with Buttons -->
     <div class="card">
         <div class="card-datatable p-3">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <div class="head-label d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">لیست حرفه ها</h5>
-                    <small class="text-muted ms-2">( 
-                        فلیتر شده : <span id="filteredrecord">0</span> ردیف /
-                        انتخاب شده : <span id="selectedRecord">0</span> ردیف )</small>
-                </div>
-                <div class="d-flex justify-content-end align-items-center gap-3">
-                    <div class="btn-group">
-                        <button type="button" class="btn border btn-icon dropdown-toggle hide-arrow"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bx bx-menu"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modalReport">گزارش
-                                    گیری</button></li>
-                            <li><a href="#" class="dropdown-item">دانلود فایل خام نمونه</a>
-                            </li>
-                            <li><button class="dropdown-item" data-bs-toggle="modal"
-                                    data-bs-target="#modalImportExcel">آپلود اطلاعات از فایل اکسل</button></li>
-                            <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="">دانلود اطلاعات در
-                                    فایل اکسل</button>
-                            </li>
-                        </ul>
+            <div class="fixed-header">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="head-label d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">لیست حرفه ها</h5>
+                        <small class="text-muted ms-2">(
+                            تعداد : <span id="totalRecord2">0</span> ردیف /
+                            فلیتر شده : <span id="filteredrecord">0</span> ردیف /
+                            انتخاب شده : <span id="selectedRecord">0</span> ردیف )</small>
                     </div>
-                    <a href="{{ route('admin.professions.create', ['fieldId' => $fieldId]) }}" class="btn btn-primary">
-                        حرفه جدید
-                        <i class="bx bx-plus ms-2"></i>
-                    </a>
+                    <div class="d-flex justify-content-end align-items-center gap-3">
+                        <div class="btn-group">
+                            <button type="button" class="btn border btn-icon dropdown-toggle hide-arrow"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bx bx-menu"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modalReport">گزارش
+                                        گیری</button></li>
+                                <li><a href="#" class="dropdown-item">دانلود فایل خام نمونه</a>
+                                </li>
+                                <li><button class="dropdown-item" data-bs-toggle="modal"
+                                        data-bs-target="#modalImportExcel">آپلود اطلاعات از فایل اکسل</button></li>
+                                <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="">دانلود اطلاعات در
+                                        فایل اکسل</button>
+                                </li>
+                            </ul>
+                        </div>
+                        <a href="{{ route('admin.professions.create', ['fieldId' => $fieldId]) }}" class="btn btn-primary">
+                            حرفه جدید
+                            <i class="bx bx-plus ms-2"></i>
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
-                <small class="text-muted">تعداد رسته :
-                    <span>{{ $categoryId ? 1 : number_format($categoryCount) }}</span></small>/
-                <small class="text-muted">تعداد خوشه :
-                    <span>{{ $clusterId ? 1 : number_format($clusterCount) }}</span></small>/
-                <small class="text-muted">تعداد رشته :
-                    <span>{{ $fieldId ? 1 : number_format($fieldCount) }}</span></small>/
-                <small class="text-muted">تعداد حرفه : <span id="totalRecord">0</span></small>/
-                <small class="text-muted">تعداد سند حرفه : <span>0</span></small>
+                <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
+                    <small class="text-muted">تعداد رسته :
+                        <span>{{ $categoryId ? 1 : number_format($categoryCount) }}</span></small>/
+                    <small class="text-muted">تعداد خوشه :
+                        <span>{{ $clusterId ? 1 : number_format($clusterCount) }}</span></small>/
+                    <small class="text-muted">تعداد رشته :
+                        <span>{{ $fieldId ? 1 : number_format($fieldCount) }}</span></small>/
+                    <small class="text-muted">تعداد حرفه : <span id="totalRecord">0</span></small>/
+                    <small class="text-muted">تعداد سند حرفه : <span>0</span></small>
+                </div>
             </div>
 
+            <table class="dt-select-table professions table table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th>ردیف</th>
+                        <th>رسته</th>
+                        <th>خوشه</th>
+                        <th>رشته</th>
+                        <th>نام حرفه</th>
+                        <th>کد استاندارد</th>
+                        <th>مدت ساعات</th>
+                        <th></th>
+                        <th>انتشار</th>
+                        <th>آرشیو</th>
+                        <th>جزئیات</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+            </table>
             <div class="bulk-actions" id="bulk-actions2">
                 <div class="btn-group action_group" style="display: none">
                     <button type="button" class="btn border dropdown-toggle" data-bs-toggle="dropdown"
@@ -257,25 +320,6 @@
                     </ul>
                 </div>
             </div>
-            <table class="dt-select-table professions table table-hover">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th></th>
-                        <th>ردیف</th>
-                        <th>رسته</th>
-                        <th>خوشه</th>
-                        <th>رشته</th>
-                        <th>نام حرفه</th>
-                        <th>کد استاندارد</th>
-                        <th>مدت ساعات</th>
-                        <th></th>
-                        <th>انتشار</th>
-                        <th>آرشیو</th>
-                        <th>عملیات</th>
-                    </tr>
-                </thead>
-            </table>
             <div id="bulk-actions" class="bulk-actions">
                 <div class="btn-group action_group" id="" style="display: none">
                     <button type="button" class="btn border dropdown-toggle" data-bs-toggle="dropdown"
@@ -496,8 +540,11 @@
                     $("#custom-overlay").remove();
                 }
             },
+            autoWidth: false, // جلوگیری از محاسبه خودکار عرض
+            // bAutoWidth: false,
             columns: [{
-                    data: "id"
+                    data: "id",
+                    width: "1%"
                 }, // Responsive
                 {
                     data: "id",
@@ -506,26 +553,32 @@
                 {
                     data: null,
                     title: "ردیف",
+                    width: "5%"
                 },
                 {
                     data: "field.cluster.category.name",
-                    title: "رسته"
+                    title: "رسته",
+                    width: "10%"
                 },
                 {
                     data: "field.cluster.name",
-                    title: "خوشه"
+                    title: "خوشه",
+                    width: "7%"
                 },
                 {
                     data: "field.name",
-                    title: "رشته"
+                    title: "رشته",
+                    width: "8%"
                 },
                 {
                     data: "name",
-                    title: "حرفه"
+                    title: "حرفه",
+                    width: "16%"
                 },
                 {
                     data: "new_standard_code",
                     title: "کد استاندارد",
+                    width: "9%"
                 },
                 {
                     data: "total_hour", // 8: استفاده از داده عددی
@@ -536,7 +589,8 @@
                         }
                         // برای sort و filter مقدار عددی
                         return parseInt(data) || 0;
-                    }
+                    },
+                    width: "12%"
                 },
                 {
                     data: "total_hour",
@@ -544,15 +598,23 @@
                 }, // 2: مخفی ساعت عددی
                 {
                     data: "",
-                    title: "انتشار"
+                    title: "انتشار",
+                    width: "6%"
                 },
                 {
                     data: "",
-                    title: "آرشیو"
+                    title: "آرشیو",
+                    width: "6%"
                 },
                 {
                     data: "",
-                    title: "عملیات"
+                    title: "جزئیات",
+                    width: "5%"
+                },
+                {
+                    data: "",
+                    title: "عملیات",
+                    width: "5%"
                 },
             ],
             columnDefs: [{
@@ -561,7 +623,7 @@
                     orderable: false,
                     render: function() {
                         return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle">';
-                    }
+                    },
                 },
                 {
                     targets: 2,
@@ -575,7 +637,7 @@
                     },
                 },
                 {
-                    targets: -3,
+                    targets: -4,
                     title: "وضعیت",
                     orderable: true,
                     searchable: false,
@@ -597,7 +659,7 @@
                     },
                 },
                 {
-                    targets: -2,
+                    targets: -3,
                     orderable: true,
                     searchable: false,
                     render: function(data, type, full, meta) {
@@ -615,6 +677,17 @@
                                 <i class="bx bx-x"></i>
                             </button>
                         `;
+                    },
+                },
+                {
+                    targets: -2,
+                    title: "جزئیات",
+                    orderable: false,
+                    searchable: false,
+                    render: function(data, type, full) {
+                        return `
+                            <a href="#" class="btn btn-info btn-xs item-show" data-id="${full.id}">سند حرفه ( 0 )</a>
+                            `;
                     },
                 },
                 {
@@ -641,23 +714,20 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#" class="dropdown-item item-show" data-id="${full.id}">
-                                            سند حرفه (0)
-                                        </a>
-                                    </li>
-                                    <li>
                                         <button class="dropdown-item item-delete" data-id="${full.id}">
                                             حذف
                                         </button>
+                                    </li>
+                                    <li>
+                                        ${
+                                    full.standard_file?`<a href="/${full.standard_file}" target="_blank" class="dropdown-item">دانلود فایل استاندارد</a>`:'<button type="button" disabled class="dropdown-item">دانلود فایل استاندارد</button>'
+                                    }
                                     </li>
                                     <li>
                                         <button class="dropdown-item item-upload-file" data-id="${full.id}">
                                             آپلود فایل استاندارد
                                         </button>
                                     </li>
-                                    ${
-                                    full.standard_file?`<li><a href="/${full.standard_file}" target="_blank" class="dropdown-item">دانلود فایل استاندارد</a></li>`:'<li><button type="button" disabled class="dropdown-item">دانلود فایل استاندارد</button></li>'
-                                    }
                                 </ul>
                             </div>
                             `;
@@ -668,7 +738,7 @@
                 [2, "asc"]
             ],
             dom: '<"card-header flex-column flex-md-row"<"dt-action-buttons text-end primary-font pt-3 pt-md-0"B>>' +
-                '<"d-flex justify-content-between align-items-center"<"d-flex justify-content-start align-items-center gap-3"l <\'bulk-holder2\'>><"d-flex justify-content-center justify-content-md-end"f>><"table-responsive"t>' +
+                '<"d-flex justify-content-between align-items-center table-search-fixed"<"d-flex justify-content-start align-items-center gap-3"l <\'bulk-holder2\'>><"d-flex justify-content-center justify-content-md-end"f>><"table-responsive"t>' +
                 "<'row d-flex align-items-center justify-content-between'<'col-md-4'<'bulk-holder'>><'col-md-8 d-flex justify-content-between'i p>>",
             displayLength: 50,
             lengthMenu: [10, 25, 50, 75, 100, 500],
@@ -783,7 +853,7 @@
                     });
                 }
 
-                let noSearchColumns = [0, 8, 9, 10];
+                let noSearchColumns = [0, 8, 9, 10, 11];
                 // **تنظیم رویداد برای اینپوت های معمولی**
                 $('.professions thead tr:eq(1) th').each(function(i) {
                     $(this).removeClass('sorting');
@@ -894,13 +964,6 @@
         let searchRow = thead.find('tr').clone().appendTo(thead);
         let noSearchColumns = [0, 8, 9, 10];
 
-        if (window.Helpers.isNavbarFixed()) {
-            var navHeight = $('#layout-navbar').outerHeight();
-            new $.fn.dataTable.FixedHeader(dt_basic).headerOffset(navHeight);
-        } else {
-            new $.fn.dataTable.FixedHeader(dt_basic);
-        }
-
         // انتقال اکشن‌ها
         $("#bulk-actions").appendTo(".bulk-holder");
         $("#bulk-actions2").appendTo(".bulk-holder2");
@@ -963,6 +1026,7 @@
             }).count();
 
             $("#totalRecord").html(totalRecords);
+            $("#totalRecord2").html(totalRecords);
             $("#filteredrecord").html(filteredRecords);
             $("#selectedRecord").html(selectedCount);
         });
@@ -1959,6 +2023,20 @@
                 window.open(printUrl, '_blank');
             });
 
+        });
+    </script>
+    {{-- some shit --}}
+    <script>
+        window.addEventListener('scroll', function() {
+            const element = document.querySelector('#breadcrumb-wrapper');
+            const rect = element.getBoundingClientRect();
+
+            // اگر فاصله از بالای viewport صفر باشد یعنی چسبیده
+            if (rect.top <= 62) {
+                element.classList.add('is-stuck');
+            } else {
+                element.classList.remove('is-stuck');
+            }
         });
     </script>
 @endsection
