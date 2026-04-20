@@ -36,60 +36,6 @@
                         رشته جدید
                         <i class="bx bx-plus ms-2"></i>
                     </button>
-                    <!-- Modal -->
-                    <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title secondary-font" id="modalCenterTitle">ایجاد رشته جدید</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form action="{{ route('admin.fields.store') }}" method="post"
-                                        class="add-new-record pt-0 row g-2 mt-3 px-3" id="form-add-new-record">
-                                        @csrf
-
-                                        {{-- فیلد نام رشته --}}
-                                        <div class="col-sm-12">
-                                            <div class="custom-input-group">
-                                                <input type="text" id="name" class="form-control" name="name">
-                                                <label class="form-label" for="name">نام رشته</label>
-                                            </div>
-                                        </div>
-
-
-
-                                        @if (!$clusterId)
-                                            {{-- اگر cluster_id در URL نبود --}}
-                                            <div class="col-sm-12 mt-3">
-                                                <select id="cluster_id" name="cluster_id" class="form-select select2"
-                                                    required>
-                                                    <option value="" selected disabled>انتخاب خوشه . . .</option>
-                                                    @foreach ($clusters as $cluster)
-                                                        <option value="{{ $cluster->id }}">{{ $cluster->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        @else
-                                            <div class="col-sm-12">
-                                                <div class="input-group input-group-merge">
-                                                    <input type="hidden" name="cluster_id" value="{{ $clusterId }}">
-                                                </div>
-                                            </div>
-                                        @endif
-
-                                        <div class="col-sm-12 mt-3">
-                                            <button type="submit"
-                                                class="btn btn-primary data-submit me-sm-3 me-1">ثبت</button>
-                                            <button type="submit" class="btn btn-outline-primary data-submit me-sm-3 me-1"
-                                                data-bs-dismiss="modal">ثبت و خروج</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
                     <small class="text-muted">تعداد رسته :
@@ -207,6 +153,57 @@
 
                         <div class="col-sm-12 mt-3">
                             <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1">ذخیره</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title secondary-font" id="modalCenterTitle">ایجاد رشته جدید</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('admin.fields.store') }}" method="post"
+                        class="add-new-record pt-0 row g-2 mt-3 px-3" id="form-add-new-record">
+                        @csrf
+
+                        {{-- فیلد نام رشته --}}
+                        <div class="col-sm-12">
+                            <div class="custom-input-group">
+                                <input type="text" id="name" class="form-control" name="name">
+                                <label class="form-label" for="name">نام رشته</label>
+                            </div>
+                        </div>
+
+
+
+                        @if (!$clusterId)
+                            {{-- اگر cluster_id در URL نبود --}}
+                            <div class="col-sm-12 mt-3">
+                                <select id="cluster_id" name="cluster_id" class="form-select select2" required>
+                                    <option value="" selected disabled>انتخاب خوشه . . .</option>
+                                    @foreach ($clusters as $cluster)
+                                        <option value="{{ $cluster->id }}">{{ $cluster->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @else
+                            <div class="col-sm-12">
+                                <div class="input-group input-group-merge">
+                                    <input type="hidden" name="cluster_id" value="{{ $clusterId }}">
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="col-sm-12 mt-3">
+                            <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1">ثبت</button>
+                            <button type="submit" class="btn btn-outline-primary data-submit me-sm-3 me-1"
+                                data-bs-dismiss="modal">ثبت و خروج</button>
                         </div>
                     </form>
                 </div>

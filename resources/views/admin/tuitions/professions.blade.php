@@ -1,111 +1,717 @@
 @extends('admin.layout.master')
-
+@section('head')
+    {{-- btn-go-to-top --}}
+    <link rel="stylesheet" href="{{ asset('site/assets/css/btn-go-to-top.css') }}">
+    <script src="{{ asset('site/assets/js/btn-go-to-top.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/nouislider/nouislider.css') }}">
+    {{-- bootstrap icons --}}
+    <link rel="stylesheet" href="https://lib.arvancloud.ir/bootstrap-icons/1.9.1/font/bootstrap-icons.css">
+@endsection
 @section('content')
-    <h5 class="breadcrumb-wrapper mb-4">
+    <h5 class="breadcrumb-wrapper mb-4 pt-4" style="padding: 15px 10px !important;" id="breadcrumb-wrapper">
         <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
-        <a href="{{ route('admin.tuitions.index') }}" class="text-muted">نرخ شهریه</a> <span class="text-muted">/</span>
+        <a href="{{ route('admin.tuitions.index') }}" class="text-muted">مدیریت نرخ شهریه</a> <span
+            class="text-muted">/</span>
         <span class="">{{ $tuition->title }}</span>
         <span class="text-muted">/ حرفه ها</span>
     </h5>
-    <div class="card p-3">
-        <h4 class="mb-3">مدیریت مبالغ حرفه‌ها برای شهریه: {{ $tuition->title }}</h4>
+    <!-- DataTable with Buttons -->
+    <div class="card">
+        <div class="card-datatable p-3">
+            <div class="fixed-header">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="head-label d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">مدیریت مبالغ حرفه‌ها برای شهریه : {{ $tuition->title }}</h5>
+                        <small class="text-muted ms-2">(
+                            تعداد : <span id="totalRecord2">0</span> ردیف /
+                            فلیتر شده : <span id="filteredrecord">0</span> ردیف /
+                            انتخاب شده : <span id="selectedRecord">0</span> ردیف )</small>
+                    </div>
+                    <div class="d-flex justify-content-end align-items-center gap-3">
+                        <a href="#" class="btn btn-primary">
+                            ذخیره تغییرات
+                        </a>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
+                    <small class="text-muted">تعداد رسته :
+                        <span>{{ 0 }}</span></small>/
+                    <small class="text-muted">تعداد خوشه :
+                        <span>{{ 0 }}</span></small>/
+                    <small class="text-muted">تعداد رشته :
+                        <span>{{ 0 }}</span></small>/
+                    <small class="text-muted">تعداد حرفه : <span id="totalRecord">0</span></small>/
+                    <small class="text-muted">تعداد سند حرفه : <span>0</span></small>
+                </div>
+            </div>
 
-        <div class="table-responsive">
-            <table class="table align-middle table-striped text-center" id="professions-table">
+            <table class="dt-select-table professions table table-hover">
                 <thead>
                     <tr>
-                        <th>شناسه</th>
+                        <th></th>
+                        <th></th>
+                        <th>ردیف</th>
+                        <th>رسته</th>
+                        <th>خوشه</th>
+                        <th>رشته</th>
                         <th>نام حرفه</th>
-                        <th>مبلغ حضوری</th>
-                        <th>مبلغ مجازی</th>
-                        <th>مبلغ الکترونیکی</th>
+                        <th>کد استاندارد</th>
+                        <th>آرشیو</th>
+                        <th>هزینه حضوری</th>
+                        <th>هزینه مجازی</th>
+                        <th>هزینه الکترونیکی</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach ($professions as $profession)
-                        @php
-                            $pivot = $profession->tuitions()->where('tuition_id', $tuition->id)->first()->pivot ?? null;
-                        @endphp
-                        <tr data-id="{{ $profession->id }}">
-                            <td>{{ $profession->id }}</td>
-                            <td>{{ $profession->name }}</td>
-                            <td><input type="text" class="form-control amount-input amount_in_person"
-                                    value="{{ number_format($pivot->price_in_person ?? 0) }}"></td>
-                            <td><input type="text" class="form-control amount-input amount_online"
-                                    value="{{ number_format($pivot->price_online ?? 0) }}"></td>
-                            <td><input type="text" class="form-control amount-input amount_virtual"
-                                    value="{{ number_format($pivot->price_virtual ?? 0) }}"></td>
-                        </tr>
-                    @endforeach
-                </tbody>
             </table>
-        </div>
-
-        <div class="text-end mt-3">
-            <button id="save-all" class="btn btn-primary px-4">ذخیره همه</button>
+            <div class="bulk-actions" id="bulk-actions2">
+                <div class="btn-group action_group" style="display: none">
+                    <button type="button" class="btn border dropdown-toggle" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        انتخاب عملیـات
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <button class="dropdown-item bulk-toggle" data-status="1" disabled>
+                                <i class=" bx bx-check"></i>
+                                انتشار
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item bulk-toggle" data-status="0" disabled>
+                                <i class=" bx bx-x"></i>
+                                عدم انتشار
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div id="bulk-actions" class="bulk-actions">
+                <div class="btn-group action_group" id="" style="display: none">
+                    <button type="button" class="btn border dropdown-toggle" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        انتخاب عملیـات
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <button class="dropdown-item bulk-toggle" data-status="1" disabled>
+                                <i class=" bx bx-check"></i>
+                                انتشار
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item bulk-toggle" data-status="0" disabled>
+                                <i class=" bx bx-x"></i>
+                                عدم انتشار
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
-@endsection
 
+    <a href="#" id="btn-go-to-top" class="shadow">
+        <svg width="40" height="40" viewBox="0 0 131 131" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle class="outer_circle" cx="65.5" cy="65.5" r="64" stroke="red"></circle>
+        </svg>
+        <span class="bi bi-arrow-up"></span>
+    </a>
+@endsection
 @section('script')
+    <script src="{{ asset('admin/assets/js/validation.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/nouislider/nouislider.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/js/dropdown-hover.js') }}"></script>
     <script>
-        // --- فرمت سه‌رقمی برای اعداد ---
-        $(document).on('input', '.amount-input', function() {
-            let value = $(this).val().replace(/,/g, '');
-            if (!isNaN(value) && value !== '') {
-                $(this).val(Number(value).toLocaleString('en-US'));
+        professions = $(".professions");
+
+        dt_basic = professions.DataTable({
+            ajax: {
+                url: "/admin2/professions",
+                // این تابع قبل از شروع لود اجرا میشه
+                beforeSend: function() {
+                    $("#DataTables_Table_0_wrapper .dataTables_empty").hide();
+                    $(".professions").closest(".card").append(`
+                    <div id="custom-overlay">
+                        <div class="loader-container">
+                            <div class="custom-spinner"></div>
+                            <span>در حال بارگزاری رکورد ها</span>
+                            <span>لطفا شکیبا باشید.</span>
+                        </div>
+                    </div>
+                `);
+                },
+                // این تابع بعد از اتمام لود اجرا میشه
+                complete: function() {
+                    $("#custom-overlay").remove();
+                }
+            },
+            autoWidth: false, // جلوگیری از محاسبه خودکار عرض
+            // bAutoWidth: false,
+            columns: [{
+                    data: "id",
+                    width: "1%"
+                }, // Responsive
+                {
+                    data: "id",
+                    visible: false
+                },
+                {
+                    data: null,
+                    title: "ردیف",
+                    width: "5%"
+                },
+                {
+                    data: "field.cluster.category.name",
+                    title: "رسته",
+                    width: "10%"
+                },
+                {
+                    data: "field.cluster.name",
+                    title: "خوشه",
+                    width: "7%"
+                },
+                {
+                    data: "field.name",
+                    title: "رشته",
+                    width: "8%"
+                },
+                {
+                    data: "name",
+                    title: "حرفه",
+                    width: "16%"
+                },
+                {
+                    data: "new_standard_code",
+                    title: "کد استاندارد",
+                    width: "9%"
+                },
+                {
+                    data: "",
+                    title: "آرشیو",
+                    width: "6%"
+                },
+                {
+                    data: "",
+                    title: "هزینه حضوری",
+                    width: "6%"
+                },
+                {
+                    data: "",
+                    title: "هرینه مجازی",
+                    width: "6%"
+                },
+                {
+                    data: "",
+                    title: "هزینه الکترونیکی",
+                    width: "6%"
+                },
+            ],
+            columnDefs: [{
+                    targets: 0,
+                    searchable: false,
+                    orderable: false,
+                    render: function() {
+                        return '<input type="checkbox" class="dt-checkboxes form-check-input mt-0 align-middle">';
+                    },
+                },
+                {
+                    targets: 2,
+                    data: null,
+                    title: "ردیف",
+                    orderable: true,
+                    searchable: true,
+                    render: function(data, type, full, meta) {
+                        // شماره ردیف سراسری (بدون وابستگی به صفحه و سورت)
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    },
+                },
+                {
+                    targets: -4,
+                    orderable: true,
+                    searchable: false,
+                    render: function(data, type, full, meta) {
+                        if (type == 'sort') {
+                            return full.archive ? '1' : '0';
+                        }
+                        return full.archive ?
+                            `
+                            <button data-id="${full.id}" class="btn text-success btn-icon item-archive">
+                                <i class="bx bx-check"></i>
+                            </button>
+                        ` :
+                            `
+                            <button data-id="${full.id}" class="btn text-danger btn-icon item-archive">
+                                <i class="bx bx-x"></i>
+                            </button>
+                        `;
+                    },
+                },
+                {
+                    targets: -3,
+                    orderable: true,
+                    searchable: false,
+                    render: function(data, type, full, meta) {
+                        return `
+                        <div class="custom-input-group">
+                            <input type="text" class="form-control px-1">
+                            <label for="">تومان</label>
+                            <span class="clear-btn" onclick="clearInput(this)" style="font-size: 1rem;left: -1px;">×</span>
+                        </div>
+                        `;
+                    },
+                },
+                {
+                    targets: -2,
+                    orderable: true,
+                    searchable: false,
+                    render: function(data, type, full, meta) {
+                        return `
+                        <div class="custom-input-group">
+                            <input type="text" class="form-control px-1">
+                            <label for="">تومان</label>
+                            <span class="clear-btn" onclick="clearInput(this)" style="font-size: 1rem;left: -1px;">×</span>
+                        </div>
+                        `;
+                    },
+                },
+                {
+                    targets: -1,
+                    orderable: true,
+                    searchable: false,
+                    render: function(data, type, full, meta) {
+                        return `
+                        <div class="custom-input-group">
+                            <input type="text" class="form-control px-1">
+                            <label for="">تومان</label>
+                            <span class="clear-btn" onclick="clearInput(this)" style="font-size: 1rem;left: -1px;">×</span>
+                        </div>
+                        `;
+                    },
+                },
+            ],
+            order: [
+                [2, "asc"]
+            ],
+            dom: '<"card-header flex-column flex-md-row"<"dt-action-buttons text-end primary-font pt-3 pt-md-0"B>>' +
+                '<"d-flex justify-content-between align-items-center table-search-fixed"<"d-flex justify-content-start align-items-center gap-3"l <\'bulk-holder2\'>><"d-flex justify-content-center justify-content-md-end"f>><"table-responsive"t>' +
+                "<'row d-flex align-items-center justify-content-between'<'col-md-4'<'bulk-holder'>><'col-md-8 d-flex justify-content-between'i p>>",
+            displayLength: 50,
+            lengthMenu: [10, 25, 50, 75, 100, 500],
+            buttons: [],
+            responsive: {
+                details: {
+                    display: $.fn.dataTable.Responsive.display.modal({
+                        header: function(row) {
+                            var data = row.data();
+                            return "جزئیات " + data["name"];
+                        },
+                    }),
+                    type: "column",
+                    renderer: function(api, rowIdx, columns) {
+                        var data = $.map(columns, function(col) {
+                            return col.title ?
+                                '<tr data-dt-row="' +
+                                col.rowIndex +
+                                '" data-dt-column="' +
+                                col.columnIndex +
+                                '">' +
+                                "<td>" +
+                                col.title +
+                                ":</td><td>" +
+                                col.data +
+                                "</td></tr>" :
+                                "";
+                        }).join("");
+                        return data ?
+                            $('<table class="table"/><tbody />').append(
+                                data,
+                            ) :
+                            false;
+                    },
+                },
+            },
+            select: {
+                style: "multi",
+                selector: 'td:first-child', // انتخاب با کلیک روی چک‌باکس
+                items: 'row' // انتخاب ردیف‌ها
+            },
+            processing: true,
+            initComplete: function(settings, json) {
+                let noSearchColumns = [0, 8, 9, 10, 11];
+                // **تنظیم رویداد برای اینپوت های معمولی**
+                $('.professions thead tr:eq(1) th').each(function(i) {
+                    $(this).removeClass('sorting');
+                    $(this).removeClass('sorting_asc');
+                    $(this).removeClass('sorting_desc');
+                    $(this).addClass('px-2');
+
+                    if (noSearchColumns.includes(i)) {
+                        $(this).html('');
+                        return;
+                    }
+
+                    var title = $(this).text();
+                    $(this).html(`
+                    <div class="slider-select d-flex justify-content-between gap-2">
+                        <div class="custom-input-group">
+                        <input type="text" class="form-control px-1">
+                        <label for=""></label>
+                        <span class="clear-btn" onclick="clearInput(this,${i})" style="font-size: 1rem;left: -1px;">×</span>
+                    </div>
+                    `);
+                    $('input', this).on('keyup change', function() {
+                        if (i == 1) {
+                            if (this.value.length > 0) {
+                                dt_basic.column(i + 1).search('^' + this.value + '$', true,
+                                    false).draw();
+                            } else {
+                                dt_basic.column(i + 1).search('').draw();
+                            }
+                        } else {
+                            dt_basic.column(i + 1).search(this.value).draw();
+                        }
+                    });
+                });
+
+
+
+                // چک باکس ها
+                var $headerCheckbox = $(
+                    '<input type="checkbox" id="select-all-page" class="form-check-input mt-0 align-middle">'
+                );
+                $('.professions thead tr:eq(0) th:eq(0)').html($headerCheckbox);
+
+                // مدیریت انتخاب ردیف‌ها
+                $(document).on('click', '.dt-checkboxes', function(e) {
+                    e.stopPropagation();
+
+                    var $checkbox = $(this);
+                    var row = dt_basic.row($checkbox.closest('tr'));
+
+                    if ($checkbox.prop('checked')) {
+                        row.select();
+                        dt_basic.column(i + 1).search(this.value).draw();
+                    } else {
+                        row.deselect();
+                        dt_basic.column(i + 1).search(this.value).draw();
+                    }
+                });
+
+                // مدیریت چک‌باکس انتخاب همه
+                $(document).on('click', '#select-all-page', function(e) {
+                    e.stopPropagation();
+
+                    var isChecked = $(this).prop('checked');
+                    var currentPageRows = dt_basic.rows({
+                        page: 'current'
+                    });
+
+                    if (isChecked) {
+                        currentPageRows.select();
+                    } else {
+                        currentPageRows.deselect();
+                    }
+
+                    currentPageRows.nodes().to$().find('.dt-checkboxes').prop('checked', isChecked);
+                });
+
+                // به‌روزرسانی وضعیت چک‌باکس انتخاب همه
+                dt_basic.on('draw select deselect', function() {
+                    var api = dt_basic;
+                    var currentPageCount = api.rows({
+                        page: 'current'
+                    }).count();
+                    var selectedCount = api.rows({
+                        page: 'current',
+                        selected: true
+                    }).count();
+
+                    var $selectAll = $('#select-all-page');
+
+                    if (selectedCount === 0) {
+                        $selectAll.prop('checked', false);
+                        $selectAll.prop('indeterminate', false);
+                    } else if (selectedCount === currentPageCount) {
+                        $selectAll.prop('checked', true);
+                        $selectAll.prop('indeterminate', false);
+                    } else {
+                        $selectAll.prop('checked', false);
+                        $selectAll.prop('indeterminate', true);
+                    }
+                });
+            }
+
+        });
+        let thead = $('.professions thead');
+        let searchRow = thead.find('tr').clone().appendTo(thead);
+        let noSearchColumns = [0, 8, 9, 10];
+
+        // انتقال اکشن‌ها
+        $("#bulk-actions").appendTo(".bulk-holder");
+        $("#bulk-actions2").appendTo(".bulk-holder2");
+        dt_basic.on('click', '.dt-checkboxes', function() {
+            const row = dt_basic.row($(this).closest('tr'));
+
+            if (this.checked) {
+                row.select();
             } else {
-                $(this).val('');
+                row.deselect();
             }
         });
+        dt_basic.on('user-select', function(e, dt, type, cell, originalEvent) {
+            if (!$(originalEvent.target).hasClass('row-check')) {
+                e.preventDefault();
+            }
+        });
+        dt_basic.on('init', function(e) {
+            document.querySelectorAll("input, textarea").forEach(function(element) {
+                // اگر مقدار اولیه داشت، کلاس filled اضافه کن
+                if (element.value.trim() !== "") {
+                    element.parentElement.classList.add("filled");
+                }
 
-        // --- دکمه ذخیره کلی ---
-        $('#save-all').on('click', function() {
-            let data = [];
+                // گوش دادن به رویداد input (بدون jQuery)
+                element.addEventListener("input", function(e) {
+                    const parent = e.target.parentElement;
 
-            $('#professions-table tbody tr').each(function() {
-                let row = $(this);
-                data.push({
-                    profession_id: row.data('id'),
-                    amount_in_person: row.find('.amount_in_person').val().replace(/,/g, ''),
-                    amount_online: row.find('.amount_online').val().replace(/,/g, ''),
-                    amount_virtual: row.find('.amount_virtual').val().replace(/,/g, '')
+                    if (e.target.value.trim() !== "") {
+                        parent.classList.add("filled");
+                    } else {
+                        parent.classList.remove("filled");
+                    }
+
+                    if (parent.classList.contains("only-number")) {
+                        e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                    }
                 });
             });
+        });
 
-            $.ajax({
-                url: "{{ route('admin.tuitions.professions.update', $tuition->id) }}",
-                method: "POST",
-                data: {
-                    _token: $('meta[name="csrf-token"]').attr('content'),
-                    data: data
-                },
-                success: function(res) {
-                    if (res.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'ذخیره شد!',
-                            text: res.message,
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'خطا!',
-                            text: 'مشکلی در ذخیره اطلاعات پیش آمد.',
-                        });
-                    }
-                },
-                error: function(xhr) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'خطای سرور!',
-                        text: 'در ذخیره اطلاعات خطایی رخ داد.',
+        // بعد از تعریف dt_basic
+        dt_basic.on('draw', function() {
+            var api = $(this).DataTable(); // یا استفاده از dt_basic مستقیم
+
+            // تعداد رکوردهای فیلتر شده و کل
+            var filteredRecords = api.rows({
+                filter: 'applied'
+            }).count();
+
+            var totalRecords = api.rows().count();
+
+            if (filteredRecords == totalRecords) {
+                filteredRecords = 0
+            }
+
+            // تعداد رکوردهای انتخاب شده
+            var selectedCount = api.rows({
+                selected: true
+            }).count();
+
+            $("#totalRecord").html(totalRecords);
+            $("#totalRecord2").html(totalRecords);
+            $("#filteredrecord").html(filteredRecords);
+            $("#selectedRecord").html(selectedCount);
+        });
+
+        // همچنین برای به‌روزرسانی هنگام انتخاب/لغو انتخاب ردیف‌ها
+        dt_basic.on('select deselect', function() {
+            var api = $(this).DataTable(); // یا استفاده از dt_basic مستقیم
+            var selectedCount = api.rows({
+                selected: true
+            }).count();
+            var filteredRecords = api.rows({
+                filter: 'applied'
+            }).count();
+            var totalRecords = api.rows().count();
+
+            if (filteredRecords == totalRecords) {
+                filteredRecords = 0
+            }
+
+            $("#filteredrecord").html(filteredRecords);
+            $("#selectedRecord").html(selectedCount);
+        });
+
+        // delete selected items----------------------------------------------------------------------------------------------------------
+        // وقتی رکورد انتخاب شد
+        dt_basic.on("select", function(e, dt, type, indexes) {
+            toggleBulkActions();
+        });
+
+        // وقتی رکورد از انتخاب خارج شد
+        dt_basic.on("deselect", function(e, dt, type, indexes) {
+            toggleBulkActions();
+        });
+
+        // تابع برای نمایش / مخفی کردن باکس عملیات
+        function toggleBulkActions() {
+            const selected = dt_basic.rows({
+                selected: true
+            }).count();
+            if (selected > 0) {
+                // $("#bulk-actions").removeClass("d-none");
+                $(".bulk-actions .action_group").show();
+                $(".bulk-actions .bulk-delete").prop("disabled", false);
+                $(".bulk-actions .bulk-toggle").prop("disabled", false);
+                $(".bulk-actions .bulk-archive").prop("disabled", false);
+            } else {
+                $(".bulk-actions .action_group").hide();
+                $(".bulk-actions .bulk-delete").prop("disabled", true);
+                $(".bulk-actions .bulk-toggle").prop("disabled", true);
+                $(".bulk-actions .bulk-archive").prop("disabled", true);
+            }
+        }
+
+        // گرفتن ID ها
+        function getSelectedIds() {
+            return dt_basic
+                .rows({
+                    selected: true
+                })
+                .data()
+                .pluck("id")
+                .toArray();
+        }
+
+        // toggle selected
+        $(".bulk-toggle").on("click", function() {
+            const ids = getSelectedIds(); // فرض می‌کنیم این تابع id ردیف‌های انتخاب شده را برمی‌گرداند
+            const status = $(this).data("status"); // true برای انتشار، false برای عدم انتشار
+
+            if (ids.length === 0) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "هیچ رکوردی انتخاب نشده!",
+                    confirmButtonText: "باشه",
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: `آیا از ${status ? 'انتشار' : 'عدم انتشار'} ${ids.length} رکورد مطمئن هستید؟`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "تایید",
+                cancelButtonText: "انصراف",
+                focusConfirm: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/admin2/professions/bulk-toggle",
+                        type: "POST",
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr("content"),
+                            ids: ids,
+                            status: status,
+                        },
+                        success: function(res) {
+                            toastr.success(res.message);
+
+                            // --- شروع بخش به‌روزرسانی آیکون‌ها در جدول ---
+                            // حلقه زدن روی ID های ارسال شده
+                            ids.forEach(function(id) {
+                                var $button = dt_basic.rows().nodes().to$().find(
+                                    `button.item-toggle[data-id="${id}"]`);
+
+                                if ($button.length) {
+                                    var $icon = $button.find('i');
+
+                                    if (status) { // اگر وضعیت به 'منتشر شده' تغییر کرد
+                                        $icon.removeClass('bx-x').addClass(
+                                            'bx-check');
+                                        $button.removeClass('text-danger').addClass(
+                                            'text-success');
+                                    } else { // اگر وضعیت به 'منتشر نشده' تغییر کرد
+                                        $icon.removeClass('bx-check').addClass(
+                                            'bx-x');
+                                        $button.removeClass('text-success')
+                                            .addClass('text-danger');
+                                    }
+                                }
+                            });
+                            // پاک کردن انتخاب تمام ردیف‌ها
+                            dt_basic.rows().deselect();
+
+                            // یا اگر می‌خواهید چک‌باکس‌ها هم پاک شوند
+                            $('.dt-checkboxes').prop('checked', false);
+                            $('.select-all').prop('checked', false);
+                            // --- پایان بخش به‌روزرسانی آیکون‌ها در جدول ---
+
+                            // مخفی کردن منوی bulk actions
+                            $(".bulk-actions .action_group").hide();
+                            $(".bulk-actions .bulk-delete").prop("disabled", true);
+                            $(".bulk-actions .bulk-toggle").prop("disabled", true);
+                            $(".bulk-actions .bulk-archive").prop("disabled", true);
+                        },
+                        error: function(err) {
+                            toastr.error("خطا در ارتباط با سرور.");
+                            console.error(err);
+                        },
                     });
-                    console.error(xhr.responseText);
                 }
             });
+        });
+        // toggle one item----------------------------------------------------------------------------------------------------------------
+        dt_basic.on("click", ".item-toggle", function() {
+            const id = $(this).data("id");
+
+            var button = $(this);
+            var icon = button.find('i');
+
+            if (!id) return;
+            $.ajax({
+                url: "/admin2/professions/" + id + "/toggle",
+                type: "patch",
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr(
+                        "content"
+                    ),
+                },
+                success: function(res) {
+                    toastr.success(res.message);
+                    if (icon.hasClass('bx-check')) {
+                        icon.removeClass('bx-check').addClass('bx-x');
+                        button.removeClass('text-success').addClass(
+                            'text-danger'); // مثال: تغییر رنگ دکمه
+                    } else {
+                        icon.removeClass('bx-x').addClass('bx-check');
+                        button.removeClass('text-danger').addClass(
+                            'text-success'); // مثال: بازگرداندن رنگ دکمه
+                    }
+                },
+                error: function(err) {
+                    toastr.error("خطا در ارتباط با سرور.");
+                    console.error(err);
+                },
+            });
+        });
+
+        // تابع پاک کردن محتوا
+        function clearInput(btn, col = 1) {
+            const parent = btn.parentElement;
+            const input = parent.querySelector("input, textarea");
+            input.value = null;
+            input.focus();
+            parent.classList.remove("filled");
+
+            // پاک کردن جستجوی آن ستون و رسم دوباره جدول
+            dt_basic.column(col + 1).search('').draw();
+        }
+    </script>
+    {{-- some shit --}}
+    <script>
+        window.addEventListener('scroll', function() {
+            const element = document.querySelector('#breadcrumb-wrapper');
+            const rect = element.getBoundingClientRect();
+
+            // اگر فاصله از بالای viewport صفر باشد یعنی چسبیده
+            if (rect.top <= 62) {
+                element.classList.add('is-stuck');
+            } else {
+                element.classList.remove('is-stuck');
+            }
         });
     </script>
 @endsection

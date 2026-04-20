@@ -38,56 +38,6 @@
                         خوشه جدید
                         <i class="bx bx-plus ms-2"></i>
                     </button>
-                    <!-- Modal -->
-                    <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title secondary-font" id="modalCenterTitle">ایجاد خوشه جدید</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form action="{{ route('admin.clusters.store') }}" method="post"
-                                        class="add-new-record pt-0 row g-2 mt-3 px-3" id="form-add-new-record">
-                                        @csrf
-
-                                        {{-- فیلد نام خوشه --}}
-                                        <div class="col-sm-12">
-                                            <div class="custom-input-group">
-                                                <input type="text" id="name" class="form-control" name="name">
-                                                <label class="form-label" for="name">نام خوشه</label>
-                                            </div>
-                                        </div>
-
-                                        @if (!$categoryId)
-                                            {{-- اگر category_id در URL نبود --}}
-                                            <div class="col-sm-12 mt-3">
-                                                <select id="category_id" name="category_id" class="form-select" required>
-                                                    <option value="" selected disabled>انتخاب رسته . . .</option>
-                                                    @foreach ($categories as $cat)
-                                                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        @else
-                                            <div class="col-sm-12">
-                                                <div class="input-group input-group-merge">
-                                                    <input type="hidden" name="category_id" value="{{ $categoryId }}">
-                                                </div>
-                                            </div>
-                                        @endif
-
-                                        <div class="col-sm-12 mt-3">
-                                            <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1">ثبت</button>
-                                            <button type="submit" class="btn btn-outline-primary data-submit me-sm-3 me-1"
-                                                data-bs-dismiss="modal">ثبت و خروج</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
                     <small class="text-muted">تعداد رسته : <span>{{ $categoryId ? 1 : $categoryCount }}</span></small>/
@@ -202,6 +152,55 @@
 
                         <div class="col-sm-12 mt-3">
                             <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1">ذخیره</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal create -->
+    <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title secondary-font" id="modalCenterTitle">ایجاد خوشه جدید</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('admin.clusters.store') }}" method="post"
+                        class="add-new-record pt-0 row g-2 mt-3 px-3" id="form-add-new-record">
+                        @csrf
+
+                        {{-- فیلد نام خوشه --}}
+                        <div class="col-sm-12">
+                            <div class="custom-input-group">
+                                <input type="text" id="name" class="form-control" name="name">
+                                <label class="form-label" for="name">نام خوشه</label>
+                            </div>
+                        </div>
+
+                        @if (!$categoryId)
+                            {{-- اگر category_id در URL نبود --}}
+                            <div class="col-sm-12 mt-3">
+                                <select id="category_id" name="category_id" class="form-select" required>
+                                    <option value="" selected disabled>انتخاب رسته . . .</option>
+                                    @foreach ($categories as $cat)
+                                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @else
+                            <div class="col-sm-12">
+                                <div class="input-group input-group-merge">
+                                    <input type="hidden" name="category_id" value="{{ $categoryId }}">
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="col-sm-12 mt-3">
+                            <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1">ثبت</button>
+                            <button type="submit" class="btn btn-outline-primary data-submit me-sm-3 me-1"
+                                data-bs-dismiss="modal">ثبت و خروج</button>
                         </div>
                     </form>
                 </div>
