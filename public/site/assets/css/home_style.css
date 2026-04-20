@@ -659,6 +659,7 @@ select:focus {
     border-top: none;
     max-height: 250px;
     overflow-y: auto;
+    overflow-x: hidden;
     background: white;
     z-index: 2;
 }

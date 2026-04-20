@@ -13,7 +13,7 @@
                     <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown"
                         data-bs-auto-close="outside" aria-expanded="false">
                         <i class="bx bx-bell bx-sm"></i>
-                        <span class="badge bg-danger rounded-pill badge-notifications">5</span>
+                        <span class="badge bg-danger rounded-pill badge-notifications">1</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end py-0">
                         <li class="dropdown-menu-header border-bottom">
@@ -26,91 +26,6 @@
                         </li>
                         <li class="dropdown-notifications-list scrollable-container">
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0 me-3">
-                                            <div class="avatar">
-                                                <img src="{{ asset('admin/assets/img/avatars/1.png') }}" alt
-                                                    class="w-px-40 h-auto rounded-circle">
-                                            </div>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">تبریک می‌گوییم کلارک</h6>
-                                            <p class="mb-1">شما نشان فروشنده برتر ماه را برنده شدید
-                                            </p>
-                                            <small class="text-muted">1 ساعت قبل</small>
-                                        </div>
-                                        <div class="flex-shrink-0 dropdown-notifications-actions">
-                                            <a href="javascript:void(0)" class="dropdown-notifications-read"><span
-                                                    class="badge badge-dot"></span></a>
-                                            <a href="javascript:void(0)" class="dropdown-notifications-archive"><span
-                                                    class="bx bx-x"></span></a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0 me-3">
-                                            <div class="avatar">
-                                                <span class="avatar-initial rounded-circle bg-label-danger">اک</span>
-                                            </div>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">دیوید بکهام</h6>
-                                            <p class="mb-1">درخواست شما را قبول کرد.</p>
-                                            <small class="text-muted">12 ساعت قبل</small>
-                                        </div>
-                                        <div class="flex-shrink-0 dropdown-notifications-actions">
-                                            <a href="javascript:void(0)" class="dropdown-notifications-read"><span
-                                                    class="badge badge-dot"></span></a>
-                                            <a href="javascript:void(0)" class="dropdown-notifications-archive"><span
-                                                    class="bx bx-x"></span></a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li
-                                    class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0 me-3">
-                                            <div class="avatar">
-                                                <img src="{{ asset('admin/assets/img/avatars/2.png') }}" alt
-                                                    class="w-px-40 h-auto rounded-circle">
-                                            </div>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">پیام جدید</h6>
-                                            <p class="mb-1">شما پیام جدید از ناتالی دارید</p>
-                                            <small class="text-muted">1 ساعت قبل</small>
-                                        </div>
-                                        <div class="flex-shrink-0 dropdown-notifications-actions">
-                                            <a href="javascript:void(0)" class="dropdown-notifications-read"><span
-                                                    class="badge badge-dot"></span></a>
-                                            <a href="javascript:void(0)" class="dropdown-notifications-archive"><span
-                                                    class="bx bx-x"></span></a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0 me-3">
-                                            <div class="avatar">
-                                                <span class="avatar-initial rounded-circle bg-label-success"><i
-                                                        class="bx bx-cart"></i></span>
-                                            </div>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">هورا! شما سفارش جدید دارید</h6>
-                                            <p class="mb-1">شرکت گوگل یک سفارش جدید ثبت کرد</p>
-                                            <small class="text-muted">1 روز قبل</small>
-                                        </div>
-                                        <div class="flex-shrink-0 dropdown-notifications-actions">
-                                            <a href="javascript:void(0)" class="dropdown-notifications-read"><span
-                                                    class="badge badge-dot"></span></a>
-                                            <a href="javascript:void(0)" class="dropdown-notifications-archive"><span
-                                                    class="bx bx-x"></span></a>
-                                        </div>
-                                    </div>
-                                </li>
                                 <li
                                     class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
                                     <div class="d-flex">
