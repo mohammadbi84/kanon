@@ -12,7 +12,7 @@
         $categoryId = request()->get('category_id');
     @endphp
 
-    <h5 class="breadcrumb-wrapper mb-4">
+    <h5 class="breadcrumb-wrapper mb-4 pt-4" style="padding: 15px 10px !important;" id="breadcrumb-wrapper">
         <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
         <span class="text-muted">مدیریت استاندارد ها / </span>
         @if ($categoryId)
@@ -25,74 +25,77 @@
     <!-- DataTable with Buttons -->
     <div class="card">
         <div class="card-datatable table-responsive p-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="head-label d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">لیست خوشه ها</h5>
-                    <small class="text-muted ms-2">(
-                        فلیتر شده : <span id="filteredrecord">0</span> ردیف /
-                        انتخاب شده : <span id="selectedRecord">0</span> ردیف )</small>
-                </div>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter">
-                    خوشه جدید
-                    <i class="bx bx-plus ms-2"></i>
-                </button>
-                <!-- Modal -->
-                <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title secondary-font" id="modalCenterTitle">ایجاد خوشه جدید</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form action="{{ route('admin.clusters.store') }}" method="post"
-                                    class="add-new-record pt-0 row g-2 mt-3 px-3" id="form-add-new-record">
-                                    @csrf
+            <div class="fixed-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="head-label d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">لیست خوشه ها</h5>
+                        <small class="text-muted ms-2">(
+                            تعداد : <span id="totalRecord2">0</span> ردیف /
+                            فلیتر شده : <span id="filteredrecord">0</span> ردیف /
+                            انتخاب شده : <span id="selectedRecord">0</span> ردیف )</small>
+                    </div>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter">
+                        خوشه جدید
+                        <i class="bx bx-plus ms-2"></i>
+                    </button>
+                    <!-- Modal -->
+                    <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title secondary-font" id="modalCenterTitle">ایجاد خوشه جدید</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ route('admin.clusters.store') }}" method="post"
+                                        class="add-new-record pt-0 row g-2 mt-3 px-3" id="form-add-new-record">
+                                        @csrf
 
-                                    {{-- فیلد نام خوشه --}}
-                                    <div class="col-sm-12">
-                                        <div class="custom-input-group">
-                                            <input type="text" id="name" class="form-control" name="name">
-                                            <label class="form-label" for="name">نام خوشه</label>
-                                        </div>
-                                    </div>
-
-                                    @if (!$categoryId)
-                                        {{-- اگر category_id در URL نبود --}}
-                                        <div class="col-sm-12 mt-3">
-                                            <select id="category_id" name="category_id" class="form-select" required>
-                                                <option value="" selected disabled>انتخاب رسته . . .</option>
-                                                @foreach ($categories as $cat)
-                                                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    @else
+                                        {{-- فیلد نام خوشه --}}
                                         <div class="col-sm-12">
-                                            <div class="input-group input-group-merge">
-                                                <input type="hidden" name="category_id" value="{{ $categoryId }}">
+                                            <div class="custom-input-group">
+                                                <input type="text" id="name" class="form-control" name="name">
+                                                <label class="form-label" for="name">نام خوشه</label>
                                             </div>
                                         </div>
-                                    @endif
 
-                                    <div class="col-sm-12 mt-3">
-                                        <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1">ثبت</button>
-                                        <button type="submit" class="btn btn-outline-primary data-submit me-sm-3 me-1"
-                                            data-bs-dismiss="modal">ثبت و خروج</button>
-                                    </div>
-                                </form>
+                                        @if (!$categoryId)
+                                            {{-- اگر category_id در URL نبود --}}
+                                            <div class="col-sm-12 mt-3">
+                                                <select id="category_id" name="category_id" class="form-select" required>
+                                                    <option value="" selected disabled>انتخاب رسته . . .</option>
+                                                    @foreach ($categories as $cat)
+                                                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @else
+                                            <div class="col-sm-12">
+                                                <div class="input-group input-group-merge">
+                                                    <input type="hidden" name="category_id" value="{{ $categoryId }}">
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        <div class="col-sm-12 mt-3">
+                                            <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1">ثبت</button>
+                                            <button type="submit" class="btn btn-outline-primary data-submit me-sm-3 me-1"
+                                                data-bs-dismiss="modal">ثبت و خروج</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
-                <small class="text-muted">تعداد رسته : <span>{{ $categoryId ? 1 : $categoryCount }}</span></small>/
-                <small class="text-muted">تعداد خوشه : <span id="totalRecord">0</span> </small>/
-                <small class="text-muted">تعداد رشته : <span>{{ number_format($fieldCount) }}</span></small>/
-                <small class="text-muted">تعداد حرفه : <span>{{ number_format($professionCount) }}</span></small>/
-                <small class="text-muted">تعداد سند حرفه : <span>0</span></small>
+                <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
+                    <small class="text-muted">تعداد رسته : <span>{{ $categoryId ? 1 : $categoryCount }}</span></small>/
+                    <small class="text-muted">تعداد خوشه : <span id="totalRecord">0</span> </small>/
+                    <small class="text-muted">تعداد رشته : <span>{{ number_format($fieldCount) }}</span></small>/
+                    <small class="text-muted">تعداد حرفه : <span>{{ number_format($professionCount) }}</span></small>/
+                    <small class="text-muted">تعداد سند حرفه : <span>0</span></small>
+                </div>
             </div>
             <table class="dt-select-table clusters table table-hover">
                 <thead>
@@ -243,7 +246,7 @@
             columns: [{
                     data: "id",
                     title: "",
-                    width: "2%"
+                    width: "4%"
                 }, // ستونی که برای responsive استفاده میشه
                 {
                     data: "id",
@@ -252,32 +255,32 @@
                 {
                     data: "id",
                     title: "ردیف",
-                    width: "2%"
+                    width: "8%"
                 },
                 {
                     data: "category.name",
                     title: "رسته",
-                    width: "30%"
+                    width: "25%"
                 },
                 {
                     data: "name",
                     title: "خوشه",
-                    width: "27%"
+                    width: "24%"
                 },
                 {
                     data: "",
                     title: "انتشار",
-                    width: "2%"
+                    width: "7%"
                 },
                 {
                     data: "",
                     title: "جزئیات",
-                    width: "35%"
+                    width: "25%"
                 },
                 {
                     data: "",
                     title: "عملیات",
-                    width: "2%"
+                    width: "7%"
                 }, // ستون آخر برای دکمه‌ها
             ],
             columnDefs: [{
@@ -327,6 +330,7 @@
                 {
                     targets: -2,
                     title: "جزئیات",
+                    className: "td-start",
                     orderable: false,
                     searchable: false,
                     render: function(data, type, full, meta) {
@@ -361,7 +365,7 @@
                 [2, "asc"]
             ],
             dom: '<"card-header flex-column flex-md-row"<"dt-action-buttons text-end primary-font pt-3 pt-md-0"B>>' +
-                '<"d-flex justify-content-between align-items-center"<"d-flex justify-content-start align-items-center gap-3"l <\'bulk-holder2\'>><"d-flex justify-content-center justify-content-md-end"f>><t>' +
+                '<"d-flex justify-content-between align-items-center table-search-fixed"<"d-flex justify-content-start align-items-center gap-3"l <\'bulk-holder2\'>><"d-flex justify-content-center justify-content-md-end"f>><t>' +
                 "<'row d-flex align-items-center justify-content-between'<'col-md-4'<'bulk-holder'>><'col-md-8 d-flex justify-content-between'i p>>",
             displayLength: 10,
             lengthMenu: [10, 25, 50, 75, 100, 500],
@@ -515,12 +519,6 @@
                 });
             }
         });
-        if (window.Helpers.isNavbarFixed()) {
-            var navHeight = $('#layout-navbar').outerHeight();
-            new $.fn.dataTable.FixedHeader(dt_basic).headerOffset(navHeight);
-        } else {
-            new $.fn.dataTable.FixedHeader(dt_basic);
-        }
         let thead = $('.clusters thead');
         let searchRow = thead.find('tr').clone().appendTo(thead);
         $("#bulk-actions").appendTo(".bulk-holder");
@@ -591,6 +589,7 @@
             }).count();
 
             $("#totalRecord").html(totalRecords);
+            $("#totalRecord2").html(totalRecords);
             $("#filteredrecord").html(filteredRecords);
             $("#selectedRecord").html(selectedCount);
         });
@@ -970,6 +969,20 @@
                     });
                 },
             });
+        });
+    </script>
+    {{-- some shit --}}
+    <script>
+        window.addEventListener('scroll', function() {
+            const element = document.querySelector('#breadcrumb-wrapper');
+            const rect = element.getBoundingClientRect();
+
+            // اگر فاصله از بالای viewport صفر باشد یعنی چسبیده
+            if (rect.top <= 62) {
+                element.classList.add('is-stuck');
+            } else {
+                element.classList.remove('is-stuck');
+            }
         });
     </script>
 @endsection

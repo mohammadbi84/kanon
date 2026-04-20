@@ -1,182 +1,11 @@
 @extends('admin.layout.master')
 @section('head')
-    <style>
-        td {
-            padding: 0 !important;
-            text-align: center
-        }
-
-        th {
-            text-align: center !important;
-        }
-
-        .table th {
-            font-size: 13px !important;
-        }
-
-        tbody {
-            font-size: 13px !important;
-        }
-
-        .form-control {
-            font-size: 13px !important;
-        }
-
-        #custom-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(2px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            border-radius: 8px;
-        }
-
-        .loader-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .custom-spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #e8e8e8;
-            border-top: 5px solid #5a8dee;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        .loader-container span {
-            color: #5a8dee;
-            font-size: 16px;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        #btn-go-to-top .outer_circle {
-            stroke: #5a8dee !important;
-        }
-
-        #btn-go-to-top span {
-            position: absolute !important;
-            top: 50% !important;
-            left: 46% !important;
-            transform: translate(-50%, -50%) rotate(90deg) !important;
-        }
-
-        #btn-go-to-top:hover .outer_circle {
-            stroke: #5a8dee !important;
-        }
-
-        .table-responsive {
-            overflow: unset !important;
-        }
-    </style>
     {{-- btn-go-to-top --}}
     <link rel="stylesheet" href="{{ asset('site/assets/css/btn-go-to-top.css') }}">
     <script src="{{ asset('site/assets/js/btn-go-to-top.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/nouislider/nouislider.css') }}">
     {{-- bootstrap icons --}}
     <link rel="stylesheet" href="https://lib.arvancloud.ir/bootstrap-icons/1.9.1/font/bootstrap-icons.css">
-
-    <style>
-        .fixed-header {
-            position: sticky;
-            top: 94px;
-            background: #ffffff;
-            z-index: 1;
-            padding: 10px 0px;
-            /* box-shadow: 0px 5px 8px 0px #dcdcdc; */
-        }
-
-        .table-search-fixed {
-            position: sticky;
-            top: 180px;
-            background: #fff;
-            z-index: 1;
-        }
-
-        .table>thead {
-            position: sticky;
-            top: 233px;
-            background: #fff;
-            z-index: 1;
-        }
-
-        thead tr:not(:first-child) {
-            position: relative;
-            top: -1px;
-            box-shadow: 0px 1px 0px #ccc;
-        }
-
-        html[dir=rtl] table.dataTable>thead>tr>th:not(.sorting_disabled),
-        table.dataTable>thead>tr>td:not(.sorting_disabled) {
-            padding-right: 40px;
-            /* padding-left: 1.5rem; */
-            padding: 0 !important;
-            padding-right: 10px !important;
-            padding-bottom: 8px !important;
-        }
-
-        html[dir=rtl] table.dataTable thead .sorting::before,
-        html[dir=rtl] table.dataTable thead .sorting_asc::before,
-        html[dir=rtl] table.dataTable thead .sorting_desc::before,
-        html[dir=rtl] table.dataTable thead .sorting_asc_disabled::before,
-        html[dir=rtl] table.dataTable thead .sorting_desc_disabled::before,
-        html[dir=rtl] table.dataTable thead .sorting::after,
-        html[dir=rtl] table.dataTable thead .sorting_asc::after,
-        html[dir=rtl] table.dataTable thead .sorting_desc::after,
-        html[dir=rtl] table.dataTable thead .sorting_asc_disabled::after,
-        html[dir=rtl] table.dataTable thead .sorting_desc_disabled::after {
-            right: 4px !important;
-        }
-
-        .breadcrumb-wrapper {
-            position: sticky;
-            top: 61px;
-            z-index: 1;
-            background-color: #f3f4f4 !important;
-        }
-
-        .breadcrumb-wrapper.is-stuck {
-            font-size: 14px !important;
-            background: #ffffff !important;
-            padding-bottom: 10px;
-            padding-right: 10px;
-        }
-
-
-        .professions {
-            table-layout: fixed !important;
-            width: 100% !important;
-        }
-
-        /* .professions th,
-        .professions td {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        } */
-
-        .custom-input-group {
-            width: 100%;
-        }
-    </style>
 @endsection
 @section('content')
     {{-- بررسی اینکه آیا field_id از URL آمده یا نه --}}
@@ -186,7 +15,7 @@
         $clusterId = request()->get('cluster_id');
     @endphp
 
-    <h5 class="breadcrumb-wrapper mb-4 pt-4" style="padding: 10px !important;" id="breadcrumb-wrapper">
+    <h5 class="breadcrumb-wrapper mb-4 pt-4" style="padding: 15px 10px !important;" id="breadcrumb-wrapper">
         <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
         <span class="text-muted">مدیریت استاندارد ها / </span>
         @if ($categoryId)
@@ -492,6 +321,7 @@
 @section('script')
     <script src="{{ asset('admin/assets/js/validation.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/libs/nouislider/nouislider.js') }}"></script>
+    <script src="{{asset('admin/assets/vendor/js/dropdown-hover.js')}}"></script>
     <script>
         professions = $(".professions");
         const urlParams = new URLSearchParams(window.location.search);
@@ -699,7 +529,7 @@
                         return `
                             <div class="btn-group">
                                 <button type="button" class="btn btn-icon dropdown-toggle hide-arrow"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    data-bs-toggle="dropdown" data-trigger="hover">
                                     <i class="bx bx-dots-vertical-rounded"></i>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">

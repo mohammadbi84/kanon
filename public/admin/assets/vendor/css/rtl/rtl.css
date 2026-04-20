@@ -1321,3 +1321,182 @@ html .sticky-wrapper.is-sticky .card-header.sticky-element {
         transform: rotate(360deg);
     }
 }
+
+
+
+.fixed-header {
+    position: sticky;
+    top: 100px;
+    background: #ffffff;
+    z-index: 1;
+    padding: 10px 0px;
+}
+
+.table-search-fixed {
+    position: sticky;
+    top: 180px;
+    background: #fff;
+    z-index: 1;
+}
+
+.table>thead {
+    position: sticky;
+    top: 233px;
+    background: #fff;
+    z-index: 1;
+}
+
+thead tr:not(:first-child) {
+    position: relative;
+    top: -1px;
+    box-shadow: 0px 1px 0px #ccc;
+}
+
+html[dir=rtl] table.dataTable>thead>tr>th:not(.sorting_disabled),
+table.dataTable>thead>tr>td:not(.sorting_disabled) {
+    padding-right: 40px;
+    /* padding-left: 1.5rem; */
+    padding: 0 !important;
+    padding-right: 10px !important;
+    padding-bottom: 8px !important;
+}
+
+html[dir=rtl] table.dataTable thead .sorting::before,
+html[dir=rtl] table.dataTable thead .sorting_asc::before,
+html[dir=rtl] table.dataTable thead .sorting_desc::before,
+html[dir=rtl] table.dataTable thead .sorting_asc_disabled::before,
+html[dir=rtl] table.dataTable thead .sorting_desc_disabled::before,
+html[dir=rtl] table.dataTable thead .sorting::after,
+html[dir=rtl] table.dataTable thead .sorting_asc::after,
+html[dir=rtl] table.dataTable thead .sorting_desc::after,
+html[dir=rtl] table.dataTable thead .sorting_asc_disabled::after,
+html[dir=rtl] table.dataTable thead .sorting_desc_disabled::after {
+    right: 4px !important;
+    bottom: 2px;
+}
+
+.breadcrumb-wrapper {
+    position: sticky;
+    top: 61px;
+    z-index: 1;
+    background-color: #f3f4f4 !important;
+}
+
+.breadcrumb-wrapper.is-stuck {
+    font-size: 14px !important;
+    background: #ffffff !important;
+    padding-bottom: 10px;
+    padding-right: 10px;
+    color: #5a8dee !important;
+}
+
+.breadcrumb-wrapper.is-stuck .text-muted {
+    color: #5a8dee !important;
+}
+
+
+.table {
+    table-layout: fixed !important;
+    width: 100% !important;
+}
+
+/* .professions th,
+        .professions td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        } */
+
+.custom-input-group {
+    width: 100%;
+}
+
+td {
+    padding: 0 !important;
+    text-align: center
+}
+td.td-start {
+    padding: 0 !important;
+    text-align: right !important;
+}
+
+th {
+    text-align: center !important;
+}
+
+.table th {
+    font-size: 13px !important;
+}
+
+tbody {
+    font-size: 13px !important;
+}
+
+.form-control {
+    font-size: 13px !important;
+}
+
+#custom-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    border-radius: 8px;
+}
+
+.loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.custom-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #e8e8e8;
+    border-top: 5px solid #5a8dee;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.loader-container span {
+    color: #5a8dee;
+    font-size: 16px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#btn-go-to-top .outer_circle {
+    stroke: #5a8dee !important;
+}
+
+#btn-go-to-top span {
+    position: absolute !important;
+    top: 50% !important;
+    left: 46% !important;
+    transform: translate(-50%, -50%) rotate(90deg) !important;
+}
+
+#btn-go-to-top:hover .outer_circle {
+    stroke: #5a8dee !important;
+}
+
+.table-responsive {
+    overflow: unset !important;
+}
