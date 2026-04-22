@@ -1328,7 +1328,7 @@ html .sticky-wrapper.is-sticky .card-header.sticky-element {
     position: sticky;
     top: 100px;
     background: #ffffff;
-    z-index: 1;
+    z-index: 2;
     padding: 10px 0px;
 }
 
@@ -1336,7 +1336,7 @@ html .sticky-wrapper.is-sticky .card-header.sticky-element {
     position: sticky;
     top: 180px;
     background: #fff;
-    z-index: 1;
+    z-index: 2;
 }
 
 .table>thead {
@@ -1378,7 +1378,7 @@ html[dir=rtl] table.dataTable thead .sorting_desc_disabled::after {
 .breadcrumb-wrapper {
     position: sticky;
     top: 61px;
-    z-index: 1;
+    z-index: 2;
     background-color: #f3f4f4 !important;
 }
 

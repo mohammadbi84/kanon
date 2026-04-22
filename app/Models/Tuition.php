@@ -9,27 +9,26 @@ class Tuition extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'title', 'city_id', 'start_date', 'end_date'
+        'title',
+        'state_id',
+        'start_date',
+        'end_date'
     ];
 
     // شهر مربوطه
-    public function city()
+    public function state()
     {
-        return $this->belongsTo(City::class);
+        return $this->belongsTo(City::class,'state_id');
+    }
+    public function cities()
+    {
+        return $this->belongsToMany(City::class, 'tuition_cities');
     }
 
     // حرفه‌ها
     public function professions()
     {
         return $this->belongsToMany(Profession::class, 'profession_tuitions')
-            ->withPivot(['price_in_person', 'price_virtual', 'price_online'])
-            ->withTimestamps();
-    }
-
-    // گواهی‌نامه‌ها
-    public function certificates()
-    {
-        return $this->belongsToMany(Certificate::class, 'certificate_tuitions')
             ->withPivot(['price_in_person', 'price_virtual', 'price_online'])
             ->withTimestamps();
     }

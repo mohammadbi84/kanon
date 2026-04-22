@@ -28,20 +28,13 @@
                             انتخاب شده : <span id="selectedRecord">0</span> ردیف )</small>
                     </div>
                     <div class="d-flex justify-content-end align-items-center gap-3">
-                        <a href="#" class="btn btn-primary">
+                        <button type="button" id="save-prices" class="btn btn-primary">
                             ذخیره تغییرات
-                        </a>
+                        </button>
                     </div>
                 </div>
                 <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
-                    <small class="text-muted">تعداد رسته :
-                        <span>{{ 0 }}</span></small>/
-                    <small class="text-muted">تعداد خوشه :
-                        <span>{{ 0 }}</span></small>/
-                    <small class="text-muted">تعداد رشته :
-                        <span>{{ 0 }}</span></small>/
-                    <small class="text-muted">تعداد حرفه : <span id="totalRecord">0</span></small>/
-                    <small class="text-muted">تعداد سند حرفه : <span>0</span></small>
+                    <small class="py-3 text-white">1</small>
                 </div>
             </div>
 
@@ -56,7 +49,7 @@
                         <th>رشته</th>
                         <th>نام حرفه</th>
                         <th>کد استاندارد</th>
-                        <th>آرشیو</th>
+                        <th>انتشار</th>
                         <th>هزینه حضوری</th>
                         <th>هزینه مجازی</th>
                         <th>هزینه الکترونیکی</th>
@@ -122,11 +115,12 @@
     <script src="{{ asset('admin/assets/vendor/libs/nouislider/nouislider.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/js/dropdown-hover.js') }}"></script>
     <script>
+        tuitionId = {{ $tuition->id }};
         professions = $(".professions");
 
         dt_basic = professions.DataTable({
             ajax: {
-                url: "/admin2/professions",
+                url: "/admin2/tuitions/" + tuitionId + "/professions",
                 // این تابع قبل از شروع لود اجرا میشه
                 beforeSend: function() {
                     $("#DataTables_Table_0_wrapper .dataTables_empty").hide();
@@ -158,7 +152,7 @@
                 {
                     data: null,
                     title: "ردیف",
-                    width: "5%"
+                    width: "3%"
                 },
                 {
                     data: "field.cluster.category.name",
@@ -178,7 +172,7 @@
                 {
                     data: "name",
                     title: "حرفه",
-                    width: "16%"
+                    width: "14%"
                 },
                 {
                     data: "new_standard_code",
@@ -187,23 +181,23 @@
                 },
                 {
                     data: "",
-                    title: "آرشیو",
-                    width: "6%"
+                    title: "انتشار",
+                    width: "4%"
                 },
                 {
                     data: "",
                     title: "هزینه حضوری",
-                    width: "6%"
+                    width: "8%"
                 },
                 {
                     data: "",
                     title: "هرینه مجازی",
-                    width: "6%"
+                    width: "8%"
                 },
                 {
                     data: "",
                     title: "هزینه الکترونیکی",
-                    width: "6%"
+                    width: "8%"
                 },
             ],
             columnDefs: [{
@@ -231,16 +225,16 @@
                     searchable: false,
                     render: function(data, type, full, meta) {
                         if (type == 'sort') {
-                            return full.archive ? '1' : '0';
+                            return full.active ? '1' : '0';
                         }
-                        return full.archive ?
+                        return full.active ?
                             `
-                            <button data-id="${full.id}" class="btn text-success btn-icon item-archive">
+                            <button data-id="${full.id}" class="btn text-success btn-icon item-toggle">
                                 <i class="bx bx-check"></i>
                             </button>
                         ` :
                             `
-                            <button data-id="${full.id}" class="btn text-danger btn-icon item-archive">
+                            <button data-id="${full.id}" class="btn text-danger btn-icon item-toggle">
                                 <i class="bx bx-x"></i>
                             </button>
                         `;
@@ -252,9 +246,8 @@
                     searchable: false,
                     render: function(data, type, full, meta) {
                         return `
-                        <div class="custom-input-group">
-                            <input type="text" class="form-control px-1">
-                            <label for="">تومان</label>
+                        <div class="custom-input-group only-number ${full.price_in_person ? 'filled' : ''}">
+                            <input type="text" class="form-control px-1" value="${full.price_in_person}">
                             <span class="clear-btn" onclick="clearInput(this)" style="font-size: 1rem;left: -1px;">×</span>
                         </div>
                         `;
@@ -266,9 +259,8 @@
                     searchable: false,
                     render: function(data, type, full, meta) {
                         return `
-                        <div class="custom-input-group">
-                            <input type="text" class="form-control px-1">
-                            <label for="">تومان</label>
+                        <div class="custom-input-group only-number ${full.price_virtual ? 'filled' : ''}">
+                            <input type="text" class="form-control px-1" value="${full.price_virtual}">
                             <span class="clear-btn" onclick="clearInput(this)" style="font-size: 1rem;left: -1px;">×</span>
                         </div>
                         `;
@@ -280,9 +272,8 @@
                     searchable: false,
                     render: function(data, type, full, meta) {
                         return `
-                        <div class="custom-input-group">
-                            <input type="text" class="form-control px-1">
-                            <label for="">تومان</label>
+                        <div class="custom-input-group only-number ${full.price_online ? 'filled' : ''}">
+                            <input type="text" class="form-control px-1" value="${full.price_online}">
                             <span class="clear-btn" onclick="clearInput(this)" style="font-size: 1rem;left: -1px;">×</span>
                         </div>
                         `;
@@ -489,6 +480,29 @@
 
         // بعد از تعریف dt_basic
         dt_basic.on('draw', function() {
+            document.querySelectorAll("input, textarea").forEach(function(element) {
+                // اگر مقدار اولیه داشت، کلاس filled اضافه کن
+                if (element.value.trim() !== "") {
+                    element.parentElement.classList.add("filled");
+                }
+
+                // گوش دادن به رویداد input (بدون jQuery)
+                element.addEventListener("input", function(e) {
+                    const parent = e.target.parentElement;
+
+                    if (e.target.value.trim() !== "") {
+                        parent.classList.add("filled");
+                    } else {
+                        parent.classList.remove("filled");
+                    }
+
+                    if (parent.classList.contains("only-number")) {
+                        e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                    }
+                });
+            });
+
+
             var api = $(this).DataTable(); // یا استفاده از dt_basic مستقیم
 
             // تعداد رکوردهای فیلتر شده و کل
@@ -599,7 +613,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: "/admin2/professions/bulk-toggle",
+                        url: "/admin2/tuitions/" + tuitionId + "/tuitions-professions/bulk-toggle",
                         type: "POST",
                         data: {
                             _token: $('meta[name="csrf-token"]').attr("content"),
@@ -609,7 +623,6 @@
                         success: function(res) {
                             toastr.success(res.message);
 
-                            // --- شروع بخش به‌روزرسانی آیکون‌ها در جدول ---
                             // حلقه زدن روی ID های ارسال شده
                             ids.forEach(function(id) {
                                 var $button = dt_basic.rows().nodes().to$().find(
@@ -646,7 +659,7 @@
                             $(".bulk-actions .bulk-archive").prop("disabled", true);
                         },
                         error: function(err) {
-                            toastr.error("خطا در ارتباط با سرور.");
+                            toastr.error(err.responseJSON.message);
                             console.error(err);
                         },
                     });
@@ -662,7 +675,7 @@
 
             if (!id) return;
             $.ajax({
-                url: "/admin2/professions/" + id + "/toggle",
+                url: "/admin2/tuitions/" + tuitionId + "/" + id + "/toggle",
                 type: "patch",
                 data: {
                     _token: $('meta[name="csrf-token"]').attr(
@@ -682,7 +695,7 @@
                     }
                 },
                 error: function(err) {
-                    toastr.error("خطا در ارتباط با سرور.");
+                    toastr.error(err.responseJSON.message);
                     console.error(err);
                 },
             });
@@ -699,6 +712,86 @@
             // پاک کردن جستجوی آن ستون و رسم دوباره جدول
             dt_basic.column(col + 1).search('').draw();
         }
+
+
+        // فرض کنید دکمه ذخیره دارای id="save-prices" است
+        $('#save-prices').on('click', function() {
+            // آرایه‌ای برای نگهداری قیمت‌های تغییر‌یافته و معتبر
+            const changedPrices = [];
+
+            // پیمایش تمام ردیف‌های جدول (فقط ردیف‌های فیلتر شده/نمایش داده شده)
+            dt_basic.rows({
+                search: 'applied'
+            }).every(function() {
+                const rowData = this.data(); // داده اصلی ردیف از سرور (شامل price_in_person و ...)
+                const rowNode = this.node(); // عنصر DOM ردیف
+
+                // یافتن input های قیمت در این ردیف (با استفاده از کلاس یا ایندکس ستون)
+                // راه بهتر: استفاده از data-id یا کلاس مشخص، اما چون ستون‌ها مشخص‌اند از ایندکس استفاده می‌کنیم
+                const $row = $(rowNode);
+                const personInput = $row.find('td:eq(8) input'); // ستون 9: هزینه حضوری
+                const virtualInput = $row.find('td:eq(9) input'); // ستون 10: هزینه مجازی
+                const onlineInput = $row.find('td:eq(10) input'); // ستون 11: هزینه الکترونیکی
+
+                // مقادیر وارد شده توسط کاربر (پیش‌فرض 0)
+                const personVal = parseFloat(personInput.val()) || 0;
+                const virtualVal = parseFloat(virtualInput.val()) || 0;
+                const onlineVal = parseFloat(onlineInput.val()) || 0;
+
+                // مقادیر اصلی از سرور (اگر null بود 0 در نظر بگیرید)
+                const originalPerson = parseFloat(rowData.price_in_person) || 0;
+                const originalVirtual = parseFloat(rowData.price_virtual) || 0;
+                const originalOnline = parseFloat(rowData.price_online) || 0;
+
+                // آیا تغییری رخ داده است؟
+                const personChanged = personVal !== originalPerson;
+                const virtualChanged = virtualVal !== originalVirtual;
+                const onlineChanged = onlineVal !== originalOnline;
+
+                const anyChanged = personChanged || virtualChanged || onlineChanged;
+                // آیا حداقل یک قیمت بزرگتر از 0 است؟
+                const anyPositive = personVal > 0 || virtualVal > 0 || onlineVal > 0;
+
+                // فقط اگر هم تغییر داشته باشد و هم حداقل یک قیمت > 0 باشد
+                if (anyChanged && anyPositive) {
+                    changedPrices.push({
+                        profession_id: rowData.id,
+                        price_in_person: personVal,
+                        price_virtual: virtualVal,
+                        price_online: onlineVal
+                    });
+                }
+            });
+
+            if (changedPrices.length === 0) {
+                toastr.error('هیچ قیمت تغییر یافته و معتبری (بزرگتر از صفر) یافت نشد');
+                return;
+            }
+
+            // ارسال به سرور
+            $.ajax({
+                url: `/admin2/tuitions/${tuitionId}/prices`, // مسیر ذخیره قیمت‌ها
+                method: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    prices: changedPrices
+                },
+                beforeSend: function() {
+                    // می‌توانید دکمه را غیرفعال یا لودینگ نمایش دهید
+                    $('#save-prices').prop('disabled', true).text('در حال ذخیره...');
+                },
+                success: function(response) {
+                    toastr.success('قیمت‌ها با موفقیت ذخیره شدند');
+                    dt_basic.ajax.reload(); // به‌روزرسانی جدول برای نمایش مقادیر جدید
+                },
+                error: function(xhr) {
+                    toastr.error('خطا در ذخیره‌سازی: ' + (xhr.responseJSON?.message || ''));
+                },
+                complete: function() {
+                    $('#save-prices').prop('disabled', false).text('ذخیره');
+                }
+            });
+        });
     </script>
     {{-- some shit --}}
     <script>

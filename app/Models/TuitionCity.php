@@ -5,17 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProfessionTuition extends Model
+class TuitionCity extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'id',
-        'active',
         'tuition_id',
-        'profession_id',
-        'price_in_person',
-        'price_virtual',
-        'price_online',
+        'city_id',
     ];
 }

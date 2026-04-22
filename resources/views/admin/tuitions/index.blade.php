@@ -1,10 +1,38 @@
 @extends('admin.layout.master')
 @section('head')
-<style>
-    td{
-        padding: 5px 8px !important;
-    }
-</style>
+    <style>
+        td {
+            padding: 5px 8px !important;
+        }
+
+        .select2-container--default .select2-results>.select2-results__options {
+            max-height: 15.5rem !important;
+            overflow-y: auto;
+            margin-left: 5px;
+        }
+
+        /* اطمینان از نمایش dropdown بالای همه عناصر */
+        .select2-container--default .select2-dropdown,
+        .select2-container--bootstrap-5 .select2-dropdown {
+            z-index: 99999 !important;
+        }
+
+        /* اگر داخل مودال هستید */
+        .modal .select2-dropdown {
+            z-index: 1056 !important;
+            /* بالاتر از مودال بوت‌استرپ */
+        }
+
+        /* رفع مشکل overflow */
+        .modal-body {
+            overflow: visible !important;
+        }
+
+        .select2-container {
+            z-index: 99999 !important;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/select2/select2.css') }}">
 @endsection
 @section('content')
     <h5 class="breadcrumb-wrapper mb-4 pt-4" style="padding: 15px 10px !important;" id="breadcrumb-wrapper">
@@ -102,17 +130,6 @@
                             </div>
                         </div>
 
-                        {{-- انتخاب شهر --}}
-                        <div class="col-sm-12 mt-3">
-                            <label class="form-label" for="city_id">انتخاب شهر</label>
-                            <select id="city_id" name="city_id" class="form-select select2" required>
-                                <option value="" disabled selected>انتخاب کنید...</option>
-                                @foreach ($cities as $city)
-                                    <option value="{{ $city->id }}">{{ $city->title }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
                         {{-- بازه زمانی --}}
                         <div class="col-sm-6 mt-3">
                             <label class="form-label" for="start_date">تاریخ شروع</label>
@@ -122,6 +139,22 @@
                         <div class="col-sm-6 mt-3">
                             <label class="form-label" for="end_date">تاریخ پایان</label>
                             <input type="date" id="end_date" name="end_date" class="form-control">
+                        </div>
+
+                        {{-- انتخاب استان --}}
+                        <div class="col-sm-12 mt-3">
+                            <label class="form-label" for="state_id">انتخاب استان</label>
+                            <select id="state_id" name="state_id" class="form-select select2" disabled>
+                                <option value="" disabled selected>انتخاب کنید...</option>
+                            </select>
+                        </div>
+
+                        {{-- انتخاب شهر --}}
+                        <div class="col-sm-12 mt-3">
+                            <label class="form-label" for="city_id">انتخاب شهر</label>
+                            <select id="city_id" name="city_ids[]" class="form-select select2" multiple disabled
+                                required>
+                            </select>
                         </div>
 
                         {{-- دکمه ثبت --}}
@@ -138,7 +171,8 @@
 @endsection
 @section('script')
     <script src="{{ asset('admin/assets/js/validation.js') }}"></script>
-
+    <script src="{{ asset('admin/assets/vendor/libs/select2/select2.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/select2/i18n/fa.js') }}"></script>
     <script>
         tuitions = $(".tuitions");
         dt_basic = tuitions.DataTable({
@@ -183,8 +217,8 @@
                     width: "27%"
                 },
                 {
-                    data: "city.title",
-                    title: "شهر",
+                    data: "state.title",
+                    title: "استان",
                     width: "11%"
                 },
                 {
@@ -326,7 +360,7 @@
                 items: 'row' // انتخاب ردیف‌ها
             },
             initComplete: function(settings, json) {
-                let noSearchColumns = [0,6,7];
+                let noSearchColumns = [0, 6, 7];
                 // **تنظیم رویداد برای اینپوت های معمولی**
                 $('.tuitions thead tr:eq(1) th').each(function(i) {
                     $(this).removeClass('sorting');
@@ -763,11 +797,17 @@
                     required: true,
                     type: "text",
                 },
-                city_id: {
-                    label: "شهر",
+                state_id: {
+                    label: "استان",
                     required: true,
                     type: "select",
-                    options: [], // بعداً با AJAX پر میشه
+                    options: [], // گزینه‌ها پویا هستند
+                },
+                'city_ids[]': {
+                    label: "شهرها",
+                    required: true,
+                    type: "select", // باید از multiple پشتیبانی کند
+                    multiple: true,
                 },
                 start_date: {
                     label: "تاریخ شروع",
@@ -781,41 +821,198 @@
                 },
             },
             onSubmit: function(values) {
-                // تبدیل داده‌ها از رشته به تاریخ برای بررسی
+                // اعتبارسنجی تاریخ
                 const startDate = new Date(values.start_date);
                 const endDate = new Date(values.end_date);
-
-                // بررسی معتبر بودن تاریخ‌ها
-                if (
-                    isNaN(startDate.getTime()) ||
-                    isNaN(endDate.getTime())
-                ) {
-                    alert(
-                        "لطفاً تاریخ شروع و پایان را به درستی وارد کنید.",
-                    );
+                if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                    alert("لطفاً تاریخ شروع و پایان را به درستی وارد کنید.");
                     return;
                 }
-
-                // بررسی اینکه تاریخ پایان بعد از شروع باشد
                 if (endDate <= startDate) {
                     alert("تاریخ پایان باید بعد از تاریخ شروع باشد.");
                     return;
                 }
 
                 // اضافه کردن CSRF token
-                values._token = $('meta[name="csrf-token"]').attr(
-                    "content",
-                );
+                values._token = $('meta[name="csrf-token"]').attr('content');
 
                 // ارسال Ajax
                 $.post("/admin2/tuitions/store", values, function(res) {
                     if (res.success) {
                         dt_basic.ajax.reload();
-                    } else {}
+                        // بستن offcanvas یا مودال
+                    } else {
+                        alert(res.message || 'خطایی رخ داد');
+                    }
                 }).fail(function(xhr) {
                     console.error(xhr.responseText);
+                    alert('خطا در ارتباط با سرور');
                 });
-            },
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            const $startDate = $('#start_date');
+            const $endDate = $('#end_date');
+            const $stateSelect = $('#state_id');
+            const $citySelect = $('#city_id');
+
+            $citySelect.select2({
+                placeholder: 'شهرها را انتخاب کنید',
+                allowClear: true,
+                width: '100%'
+            });
+
+            // تابع غیرفعال/فعال کردن select استان
+            function toggleStateSelect(enable) {
+                $stateSelect.prop('disabled', !enable);
+                if (!enable) {
+                    $stateSelect.empty().append(
+                        '<option value="" disabled selected>ابتدا بازه زمانی را انتخاب کنید</option>');
+                    $citySelect.empty().append(
+                        '<option value="" disabled selected>ابتدا استان را انتخاب کنید</option>').prop(
+                        'disabled', true);
+                }
+            }
+
+            // بارگذاری استان‌های آزاد
+            function loadAvailableStates() {
+                const start = $startDate.val();
+                const end = $endDate.val();
+
+                if (!start || !end) {
+                    toggleStateSelect(false);
+                    return;
+                }
+
+                $.ajax({
+                    url: '{{ route('admin.tuitions.available-states') }}',
+                    data: {
+                        start_date: start,
+                        end_date: end
+                    },
+                    beforeSend: function() {
+                        $stateSelect.prop('disabled', true);
+                        $stateSelect.empty().append('<option>در حال بارگذاری...</option>');
+                    },
+                    success: function(states) {
+                        $stateSelect.empty();
+                        if (states.length === 0) {
+                            $stateSelect.append(
+                                '<option value="" disabled>هیچ استانی در این بازه آزاد نیست</option>'
+                            );
+                            $stateSelect.prop('disabled', true);
+                        } else {
+                            $stateSelect.append(
+                                '<option value="" disabled selected>انتخاب کنید...</option>');
+                            $.each(states, function(i, state) {
+                                $stateSelect.append($('<option>', {
+                                    value: state.id,
+                                    text: state.title
+                                }));
+                            });
+                            $stateSelect.prop('disabled', false);
+                        }
+                        $citySelect.empty().append(
+                            '<option value="" disabled selected>ابتدا استان را انتخاب کنید</option>'
+                        ).prop('disabled', true);
+                    },
+                    error: function() {
+                        alert('خطا در بارگذاری استان‌ها');
+                        toggleStateSelect(false);
+                    }
+                });
+            }
+
+            // بارگذاری شهرهای آزاد بر اساس استان انتخاب‌شده
+            function loadAvailableCities(stateId) {
+                const start = $startDate.val();
+                const end = $endDate.val();
+
+                if (!stateId) {
+                    $citySelect.empty().append(
+                        '<option value="" disabled selected>ابتدا استان را انتخاب کنید</option>').prop(
+                        'disabled', true);
+                    // اگر Select2 فعال است، آن را به‌روزرسانی کن
+                    if ($citySelect.hasClass('select2-hidden-accessible')) {
+                        $citySelect.trigger('change.select2');
+                    }
+                    return;
+                }
+
+                $.ajax({
+                    url: '{{ route('admin.tuitions.available-cities') }}',
+                    data: {
+                        start_date: start,
+                        end_date: end,
+                        state_id: stateId
+                    },
+                    beforeSend: function() {
+                        $citySelect.prop('disabled', true);
+                        $citySelect.empty().append('<option>در حال بارگذاری...</option>');
+                        if ($citySelect.hasClass('select2-hidden-accessible')) {
+                            $citySelect.trigger('change.select2');
+                        }
+                    },
+                    success: function(cities) {
+
+                        $citySelect.empty();
+
+                        if (cities.length === 0) {
+                            $citySelect.append(
+                                '<option value="" disabled>هیچ شهری در این بازه آزاد نیست</option>'
+                            );
+                            $citySelect.prop('disabled', true);
+                        } else {
+                            $.each(cities, function(i, city) {
+                                $citySelect.append(
+                                    $('<option>', {
+                                        value: city.id,
+                                        text: city.title
+                                    })
+                                );
+                            });
+
+                            $citySelect.prop('disabled', false);
+                        }
+
+                        // ✅ فقط این خط کافیست
+                        $citySelect.trigger('change');
+                    },
+                    error: function() {
+                        alert('خطا در بارگذاری شهرها');
+                        $citySelect.empty().append(
+                            '<option value="" disabled selected>خطا در بارگذاری</option>').prop(
+                            'disabled', true);
+                        if ($citySelect.hasClass('select2-hidden-accessible')) {
+                            $citySelect.select2('destroy');
+                            $citySelect.select2({
+                                placeholder: 'شهرها را انتخاب کنید',
+                                allowClear: true
+                            });
+                        }
+                    }
+                });
+            }
+
+            // رویداد تغییر تاریخ‌ها
+            $startDate.add($endDate).on('change', function() {
+                // اگر هر دو تاریخ انتخاب شده باشند
+                if ($startDate.val() && $endDate.val()) {
+                    loadAvailableStates();
+                } else {
+                    toggleStateSelect(false);
+                }
+            });
+
+            // رویداد تغییر استان
+            $stateSelect.on('change', function() {
+                const stateId = $(this).val();
+                loadAvailableCities(stateId);
+            });
+
+
         });
     </script>
     {{-- some shit --}}

@@ -105,14 +105,20 @@ Route::name('admin.')->group(function () {
     // ================== Tuitions ==================
     Route::prefix('/tuitions')->name('tuitions.')->group(function () {
         Route::get('/', [TuitionController::class, 'index'])->name('index');
+        Route::get('/available-states', [TuitionController::class, 'availableStates'])->name('available-states');
+        Route::get('/available-cities', [TuitionController::class, 'availableCities'])->name('available-cities');
         Route::post('/store', [TuitionController::class, 'store'])->name('store');
         Route::get('/{tuition}/edit', [TuitionController::class, 'edit'])->name('edit');
         Route::put('/{tuition}', [TuitionController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [TuitionController::class, 'delete'])->name('delete');
         Route::post('/bulk-delete', [TuitionController::class, 'bulkDelete'])->name('bulkDelete');
+
         // professions
         Route::get('{tuition}/professions', [TuitionProfessionController::class, 'index'])->name('professions.index');
+        Route::post('{tuition}/prices', [TuitionProfessionController::class, 'prices'])->name('professions.prices');
         Route::post('{tuition}/professions/update', [TuitionProfessionController::class, 'update'])->name('professions.update');
+        Route::post('{tuition}/tuitions-professions/bulk-toggle', [TuitionProfessionController::class, 'bulkToggle'])->name('professions.bulk-toggle');
+        Route::patch('{tuition}/{professionTuition}/toggle', [TuitionProfessionController::class, 'toggle'])->name('professions.toggle');
     });
     // ================== Categories ==================
     Route::prefix('/categories')->group(function () {
