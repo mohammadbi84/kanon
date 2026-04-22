@@ -57,6 +57,9 @@
                         <i class="bx bx-plus ms-2"></i>
                     </button>
                 </div>
+                <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
+                    <small class="py-3 text-white">1</small>
+                </div>
             </div>
             <table class="dt-select-table tuitions table table-hover">
                 <thead>
@@ -65,7 +68,8 @@
                         <th></th>
                         <th>ردیف</th>
                         <th>عنوان نرخ شهریه</th>
-                        <th>شهر</th>
+                        <th>استان</th>
+                        <th>شهرستان</th>
                         <th>شروع</th>
                         <th>پایان</th>
                         <th>جزئیات</th>
@@ -160,8 +164,6 @@
                         {{-- دکمه ثبت --}}
                         <div class="col-sm-12 mt-3">
                             <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1">ثبت</button>
-                            <button type="submit" class="btn btn-outline-primary data-submit me-sm-3 me-1"
-                                data-bs-dismiss="modal">ثبت و خروج</button>
                         </div>
                     </form>
                 </div>
@@ -174,6 +176,20 @@
     <script src="{{ asset('admin/assets/vendor/libs/select2/select2.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/libs/select2/i18n/fa.js') }}"></script>
     <script>
+        const start_date = document.querySelector('#start_date');
+        if (start_date) {
+            start_date.flatpickr({
+                monthSelectorType: 'static',
+                locale: 'fa',
+            });
+        }
+        const end_date = document.querySelector('#end_date');
+        if (end_date) {
+            end_date.flatpickr({
+                monthSelectorType: 'static',
+                locale: 'fa',
+            });
+        }
         tuitions = $(".tuitions");
         dt_basic = tuitions.DataTable({
             ajax: {
@@ -219,22 +235,59 @@
                 {
                     data: "state.title",
                     title: "استان",
-                    width: "11%"
+                    width: "6%"
+                },
+                {
+                    data: "cities",
+                    title: "شهرستان",
+                    width: "12%",
+                    render: function(data, type, row) {
+                        // برای نمایش در جدول
+                        if (type === 'display') {
+                            if (Array.isArray(data) && data.length > 0) {
+                                return data.map(city => city.title).join('، ');
+                            }
+                            return '—';
+                        }
+                        // برای مرتب‌سازی و جستجو: یک رشته ساده از نام شهرها
+                        if (type === 'sort' || type === 'filter') {
+                            if (Array.isArray(data)) {
+                                return data.map(city => city.title).join(' ');
+                            }
+                            return '';
+                        }
+                        // برای سایر موارد (مثلاً type === 'type')
+                        return data;
+                    },
                 },
                 {
                     data: "start_date",
                     title: "شروع",
-                    width: "11%"
+                    width: "11%",
+                    render: function(data, type, row) {
+                        if (type === 'display') {
+                            return new Date(data).toLocaleDateString('fa-IR');
+                        }
+                        // برای sort و filter مقدار عددی
+                        return parseInt(data) || 0;
+                    },
                 },
                 {
                     data: "end_date",
                     title: "پایان",
-                    width: "11%"
+                    width: "11%",
+                    render: function(data, type, row) {
+                        if (type === 'display') {
+                            return new Date(data).toLocaleDateString('fa-IR');
+                        }
+                        // برای sort و filter مقدار عددی
+                        return parseInt(data) || 0;
+                    },
                 },
                 {
                     data: "",
                     title: "جزئیات",
-                    width: "17%"
+                    width: "10%"
                 },
                 {
                     data: "",
@@ -285,11 +338,8 @@
                     render: function(data, type, full, meta) {
                         return `
                             <a href="/admin2/tuitions/${full.id}/professions" class="btn btn-sm btn-info item-details">
-                                حرفه‌ها
+                                درج شهریه
                             </a>
-                            <button class="btn btn-sm btn-warning show-certificates">
-                                سند حرفه‌ها
-                            </button>
                                 `;
                     },
                 },
@@ -300,8 +350,19 @@
                     searchable: false,
                     render: function(data, type, full, meta) {
                         return `
-                                <a href="/admin2/tuitions/${full.id}/edit" class="btn btn-sm btn-primary"><i class="bx bxs-edit"></i></a>
-                                <button class="btn btn-sm btn-danger item-delete" data-id="${full.id}"><i class="bx bxs-trash"></i></button>
+                                <div class="btn-group">
+                                <button type="button" class="btn btn-icon dropdown-toggle hide-arrow"
+                                    data-bs-toggle="dropdown" data-trigger="hover">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <button class="dropdown-item item-delete" data-id="${full.id}">
+                                            حذف
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
                                 `;
                     },
                 },
@@ -360,7 +421,7 @@
                 items: 'row' // انتخاب ردیف‌ها
             },
             initComplete: function(settings, json) {
-                let noSearchColumns = [0, 6, 7];
+                let noSearchColumns = [0, 6, 7,8];
                 // **تنظیم رویداد برای اینپوت های معمولی**
                 $('.tuitions thead tr:eq(1) th').each(function(i) {
                     $(this).removeClass('sorting');
@@ -788,68 +849,69 @@
         });
 
         // add new record-------------------------------------------------------------------------------------------------------------
-        initOffcanvasForm({
-            formId: "form-add-new-record",
-            triggerSelector: ".create-new",
-            fields: {
-                title: {
-                    label: "عنوان شهریه",
-                    required: true,
-                    type: "text",
-                },
-                state_id: {
-                    label: "استان",
-                    required: true,
-                    type: "select",
-                    options: [], // گزینه‌ها پویا هستند
-                },
-                'city_ids[]': {
-                    label: "شهرها",
-                    required: true,
-                    type: "select", // باید از multiple پشتیبانی کند
-                    multiple: true,
-                },
-                start_date: {
-                    label: "تاریخ شروع",
-                    required: true,
-                    type: "date",
-                },
-                end_date: {
-                    label: "تاریخ پایان",
-                    required: true,
-                    type: "date",
-                },
-            },
-            onSubmit: function(values) {
-                // اعتبارسنجی تاریخ
-                const startDate = new Date(values.start_date);
-                const endDate = new Date(values.end_date);
-                if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-                    alert("لطفاً تاریخ شروع و پایان را به درستی وارد کنید.");
-                    return;
-                }
-                if (endDate <= startDate) {
-                    alert("تاریخ پایان باید بعد از تاریخ شروع باشد.");
-                    return;
-                }
+        // initOffcanvasForm({
+        //     formId: "form-add-new-record",
+        //     triggerSelector: ".create-new",
+        //     fields: {
+        //         title: {
+        //             label: "عنوان شهریه",
+        //             required: true,
+        //             type: "text",
+        //         },
+        //         state_id: {
+        //             label: "استان",
+        //             required: true,
+        //             type: "select",
+        //             options: [], // گزینه‌ها پویا هستند
+        //         },
+        //         'city_ids[]': {
+        //             label: "شهرها",
+        //             required: true,
+        //             type: "select", // باید از multiple پشتیبانی کند
+        //             options: [], // گزینه‌ها پویا هستند
+        //             multiple: true,
+        //         },
+        //         start_date: {
+        //             label: "تاریخ شروع",
+        //             required: true,
+        //             type: "date",
+        //         },
+        //         end_date: {
+        //             label: "تاریخ پایان",
+        //             required: true,
+        //             type: "date",
+        //         },
+        //     },
+        //     onSubmit: function(values) {
+        //         // اعتبارسنجی تاریخ
+        //         const startDate = new Date(values.start_date);
+        //         const endDate = new Date(values.end_date);
+        //         if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        //             alert("لطفاً تاریخ شروع و پایان را به درستی وارد کنید.");
+        //             return;
+        //         }
+        //         if (endDate <= startDate) {
+        //             alert("تاریخ پایان باید بعد از تاریخ شروع باشد.");
+        //             return;
+        //         }
 
-                // اضافه کردن CSRF token
-                values._token = $('meta[name="csrf-token"]').attr('content');
+        //         // اضافه کردن CSRF token
+        //         values._token = $('meta[name="csrf-token"]').attr('content');
 
-                // ارسال Ajax
-                $.post("/admin2/tuitions/store", values, function(res) {
-                    if (res.success) {
-                        dt_basic.ajax.reload();
-                        // بستن offcanvas یا مودال
-                    } else {
-                        alert(res.message || 'خطایی رخ داد');
-                    }
-                }).fail(function(xhr) {
-                    console.error(xhr.responseText);
-                    alert('خطا در ارتباط با سرور');
-                });
-            }
-        });
+        //         // ارسال Ajax
+        //         $.post("/admin2/tuitions/store", values, function(res) {
+        //             if (res.success) {
+        //                 dt_basic.ajax.reload();
+        //                 // بستن offcanvas یا مودال
+        //             } else {
+        //                 alert(res.message || 'خطایی رخ داد');
+        //             }
+        //         }).fail(function(xhr) {
+        //             console.error(xhr.responseText);
+        //             alert('خطا در ارتباط با سرور');
+        //         });
+        //     }
+        // });
     </script>
     <script>
         $(document).ready(function() {
@@ -860,8 +922,10 @@
 
             $citySelect.select2({
                 placeholder: 'شهرها را انتخاب کنید',
-                allowClear: true,
-                width: '100%'
+                allowClear: false,
+                width: '100%',
+                multiple: true,
+                closeOnSelect: false // با این گزینه، باکس پس از انتخاب بسته نمی‌شود
             });
 
             // تابع غیرفعال/فعال کردن select استان
@@ -870,9 +934,6 @@
                 if (!enable) {
                     $stateSelect.empty().append(
                         '<option value="" disabled selected>ابتدا بازه زمانی را انتخاب کنید</option>');
-                    $citySelect.empty().append(
-                        '<option value="" disabled selected>ابتدا استان را انتخاب کنید</option>').prop(
-                        'disabled', true);
                 }
             }
 
@@ -914,9 +975,6 @@
                             });
                             $stateSelect.prop('disabled', false);
                         }
-                        $citySelect.empty().append(
-                            '<option value="" disabled selected>ابتدا استان را انتخاب کنید</option>'
-                        ).prop('disabled', true);
                     },
                     error: function() {
                         alert('خطا در بارگذاری استان‌ها');
@@ -965,6 +1023,12 @@
                             );
                             $citySelect.prop('disabled', true);
                         } else {
+                            $citySelect.append(
+                                $('<option>', {
+                                    value: '-1',
+                                    text: 'همه شهر ها'
+                                })
+                            );
                             $.each(cities, function(i, city) {
                                 $citySelect.append(
                                     $('<option>', {
@@ -1001,6 +1065,7 @@
                 // اگر هر دو تاریخ انتخاب شده باشند
                 if ($startDate.val() && $endDate.val()) {
                     loadAvailableStates();
+                    $citySelect.empty();
                 } else {
                     toggleStateSelect(false);
                 }

@@ -61,9 +61,10 @@ function initOffcanvasForm({
                 break;
 
             case "date":
-                validationFields[fieldName].validators.date = {
-                    format: "YYYY/MM/DD",
-                    message: "تاریخ معتبر نیست",
+                validationFields[fieldName].validators.regexp = {
+                    regexp: /^[1-9]\d{3}\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])$/,
+                    message:
+                        "لطفاً تاریخ را به فرمت صحیح (سال/ماه/روز) وارد کنید",
                 };
                 break;
 
@@ -335,19 +336,19 @@ function initOffcanvasForm({
         plugins: {
             trigger: new FormValidation.plugins.Trigger(),
             bootstrap5: new FormValidation.plugins.Bootstrap5({
-          // Use this for enabling/changing valid/invalid class
-          // eleInvalidClass: '',
-          eleValidClass: '',
-          rowSelector: function (field, ele) {
-            // field is the field name & ele is the field element
-            switch (field) {
-              case 'formValidationCheckbox':
-                return '.col-12';
-              default:
-                return '.row';
-            }
-          }
-        }),
+                // Use this for enabling/changing valid/invalid class
+                // eleInvalidClass: '',
+                eleValidClass: "",
+                rowSelector: function (field, ele) {
+                    // field is the field name & ele is the field element
+                    switch (field) {
+                        case "formValidationCheckbox":
+                            return ".col-12";
+                        default:
+                            return ".row";
+                    }
+                },
+            }),
             submitButton: new FormValidation.plugins.SubmitButton(),
             autoFocus: new FormValidation.plugins.AutoFocus(),
         },

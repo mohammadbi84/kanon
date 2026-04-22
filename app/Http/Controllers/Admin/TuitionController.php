@@ -15,7 +15,8 @@ class TuitionController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $tuitions = Tuition::with('state')->latest()->get();
+            $tuitions = Tuition::with('state','cities')->latest()->get();
+            Log::info($tuitions);
             return response()->json(['data' => $tuitions]);
         }
 
@@ -28,8 +29,8 @@ class TuitionController extends Controller
         $startDate = $request->query('start_date');
         $endDate = $request->query('end_date');
 
-        $gregorianDateStartString = Jalalian::fromFormat('Y/m/d', $startDate)->toCarbon();
-        $gregorianDateEndString = Jalalian::fromFormat('Y/m/d', $endDate)->toCarbon();
+        $gregorianDateStartString = Jalalian::fromFormat('Y-m-d', $startDate)->toCarbon();
+        $gregorianDateEndString = Jalalian::fromFormat('Y-m-d', $endDate)->toCarbon();
 
         if (!$startDate || !$endDate) {
             return response()->json([]);
@@ -61,8 +62,8 @@ class TuitionController extends Controller
         $endDate = $request->query('end_date');
         $stateId = $request->query('state_id');
 
-        $gregorianDateStartString = Jalalian::fromFormat('Y/m/d', $startDate)->toCarbon();
-        $gregorianDateEndString = Jalalian::fromFormat('Y/m/d', $endDate)->toCarbon();
+        $gregorianDateStartString = Jalalian::fromFormat('Y-m-d', $startDate)->toCarbon();
+        $gregorianDateEndString = Jalalian::fromFormat('Y-m-d', $endDate)->toCarbon();
 
 
         if (!$startDate || !$endDate || !$stateId) {
@@ -108,7 +109,6 @@ class TuitionController extends Controller
             'start_date'  => 'required|date',
             'end_date'    => 'required|date|after:start_date',
             'city_ids' => 'required|array',
-            'city_ids.*' => 'exists:cities,id',
         ], [
             'title.required'      => 'عنوان شهریه الزامی است.',
             'state_id.required'    => 'انتخاب شهر الزامی است.',
@@ -118,8 +118,11 @@ class TuitionController extends Controller
             'end_date.after'      => 'تاریخ پایان باید بعد از تاریخ شروع باشد.',
         ]);
 
-        $gregorianDateStartString = Jalalian::fromFormat('Y/m/d', $request->start_date)->toCarbon()->format('Y-m-d');
-        $gregorianDateEndString = Jalalian::fromFormat('Y/m/d', $request->end_date)->toCarbon()->format('Y-m-d');
+
+        $gregorianDateStartString = Jalalian::fromFormat('Y-m-d', $request->start_date)->toCarbon()->format('Y-m-d');
+        $gregorianDateEndString = Jalalian::fromFormat('Y-m-d', $request->end_date)->toCarbon()->format('Y-m-d');
+
+
 
         $tuition = Tuition::create([
             'title'       => $request->title,
@@ -128,13 +131,46 @@ class TuitionController extends Controller
             'end_date'    => $gregorianDateEndString,
         ]);
 
-        $tuition->cities()->sync($validated['city_ids']);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'شهریه با موفقیت اضافه شد.',
-            'data'    => $tuition,
-        ]);
+        if (in_array('-1', $validated['city_ids'])) {
+            $stateId = $validated['state_id'];
+
+            $conflictCityIds = Tuition::where('state_id', $stateId)
+                ->where(function ($query) use ($gregorianDateStartString, $gregorianDateEndString) {
+                    $query->whereBetween('start_date', [$gregorianDateStartString, $gregorianDateEndString])
+                        ->orWhereBetween('end_date', [$gregorianDateStartString, $gregorianDateEndString])
+                        ->orWhere(function ($q) use ($gregorianDateStartString, $gregorianDateEndString) {
+                            $q->where('start_date', '<=', $gregorianDateStartString)
+                                ->where('end_date', '>=', $gregorianDateEndString);
+                        });
+                })
+                ->with('cities') // فرض: رابطه cities در مدل Tuition
+                ->get()
+                ->pluck('cities.*.id')
+                ->flatten()
+                ->unique()
+                ->toArray();
+
+            // همه شهرهای استان به جز آنهایی که تداخل دارند
+            $availableCities = City::where('parent', $stateId)
+                ->whereNotIn('id', $conflictCityIds)
+                ->where('active', 1)
+                ->whereNotNull('parent')
+                ->orderBy('title')
+                ->pluck('id')->toArray();
+
+            $tuition->cities()->sync($availableCities);
+        } else {
+            $tuition->cities()->sync($validated['city_ids']);
+        }
+
+        return redirect()->back()->with('success','نرخ شهریه با موفقیت اضافه شد.');
+
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'شهریه با موفقیت اضافه شد.',
+        //     'data'    => $tuition,
+        // ]);
     }
 
     /**
