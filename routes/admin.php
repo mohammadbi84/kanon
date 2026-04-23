@@ -108,11 +108,12 @@ Route::name('admin.')->group(function () {
         Route::get('/available-states', [TuitionController::class, 'availableStates'])->name('available-states');
         Route::get('/available-cities', [TuitionController::class, 'availableCities'])->name('available-cities');
         Route::post('/store', [TuitionController::class, 'store'])->name('store');
-        Route::get('/{tuition}/edit', [TuitionController::class, 'edit'])->name('edit');
         Route::put('/{tuition}', [TuitionController::class, 'update'])->name('update');
         Route::patch('/{tuition}/toggle', [TuitionController::class, 'toggle'])->name('toggle');
         Route::delete('/delete/{id}', [TuitionController::class, 'delete'])->name('delete');
         Route::post('/bulk-delete', [TuitionController::class, 'bulkDelete'])->name('bulkDelete');
+        Route::get('/{tuition}/edit', [TuitionController::class, 'edit'])->name('edit');
+        Route::get('/available-cities-for-edit', [TuitionController::class, 'availableCitiesForEdit'])->name('available-cities-for-edit');
 
         // professions
         Route::get('{tuition}/professions', [TuitionProfessionController::class, 'index'])->name('professions.index');

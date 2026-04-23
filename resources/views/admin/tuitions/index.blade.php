@@ -188,11 +188,58 @@
             </div>
         </div>
     </div>
+    <!-- Modal Edit -->
+    <div class="modal fade" id="modalEdit" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title secondary-font" id="modalEditTitle">ویرایش شهریه</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post" class="add-new-record pt-0 row g-2 px-3" id="form-edit-record">
+                        @csrf
+                        <div class="col-sm-12">
+                            <input type="hidden" id="id" class="form-control" name="id">
+                        </div>
+                        {{-- عنوان شهریه --}}
+                        <div class="col-sm-12">
+                            <div class="custom-input-group">
+                                <input type="text" id="title2" class="form-control" name="title">
+                                <label class="form-label" for="title">عنوان شهریه</label>
+                                <span class="clear-btn" onclick="clearInput(this)">×</span>
+                            </div>
+                        </div>
+                        {{-- انتخاب استان --}}
+                        <div class="col-sm-12 mt-3">
+                            <label class="form-label" for="state_id">انتخاب استان</label>
+                            <select id="state_id2" name="state_id" class="form-select select2" disabled>
+                                <option value="" disabled selected>انتخاب کنید...</option>
+                            </select>
+                        </div>
+
+                        {{-- انتخاب شهر --}}
+                        <div class="col-sm-12 mt-3">
+                            <label class="form-label" for="city_id">انتخاب شهرستان</label>
+                            <select id="city_id2" name="city_ids[]" class="form-select select2" multiple disabled
+                                required>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-12 mt-3">
+                            <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1">ذخیره</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('script')
     <script src="{{ asset('admin/assets/js/validation.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/libs/select2/select2.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/libs/select2/i18n/fa.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/js/dropdown-hover.js') }}"></script>
     <script>
         const start_date = document.querySelector('#start_date');
         if (start_date) {
@@ -213,6 +260,17 @@
                 altFormat: 'Y/m/d',
                 disableMobile: true
             });
+        }
+
+        function isEndDatePassed(dateStr) {
+            if (!dateStr) return false;
+            const parts = dateStr.split('-');
+            if (parts.length !== 3) return false;
+            const endDate = new Date(parts[0], parts[1] - 1, parts[2]);
+            const today = new Date();
+            endDate.setHours(0, 0, 0, 0);
+            today.setHours(0, 0, 0, 0);
+            return endDate < today;
         }
         tuitions = $(".tuitions");
         dt_basic = tuitions.DataTable({
@@ -385,39 +443,55 @@
                     },
                 },
                 {
-                    targets: -2,
+                    targets: -2, // جزئیات
                     title: "جزئیات",
                     orderable: false,
                     searchable: false,
                     render: function(data, type, full, meta) {
-                        return `
+                        const isPast = isEndDatePassed(full.end_date);
+                        if (isPast) {
+                            return `
+                            <a href="/admin2/tuitions/${full.id}/professions" class="btn btn-sm btn-secondary px-1 item-details">
+                                مشاهده شهریه‌ها
+                            </a>`;
+                        } else {
+                            return `
                             <a href="/admin2/tuitions/${full.id}/professions" class="btn btn-sm btn-info item-details">
                                 درج شهریه
-                            </a>
-                                `;
+                            </a>`;
+                        }
                     },
                 },
                 {
-                    targets: -1,
+                    targets: -1, // عملیات
                     title: "عملیات",
                     orderable: false,
                     searchable: false,
                     render: function(data, type, full, meta) {
+                        const isPast = isEndDatePassed(full.end_date);
+                        const editButton = !isPast ?
+                            `<li>
+                                <button class="dropdown-item item-edit" data-id="${full.id}">
+                                    ویرایش
+                                </button>
+                            </li>` :
+                            '';
+
                         return `
-                                <div class="btn-group">
+                            <div class="btn-group">
                                 <button type="button" class="btn btn-icon dropdown-toggle hide-arrow"
                                     data-bs-toggle="dropdown" data-trigger="hover">
                                     <i class="bx bx-dots-vertical-rounded"></i>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
+                                    ${editButton}
                                     <li>
                                         <button class="dropdown-item item-delete" data-id="${full.id}">
                                             حذف
                                         </button>
                                     </li>
                                 </ul>
-                            </div>
-                                `;
+                            </div>`;
                     },
                 },
             ],
@@ -475,7 +549,7 @@
                 items: 'row' // انتخاب ردیف‌ها
             },
             initComplete: function(settings, json) {
-                let noSearchColumns = [0, 7, 8,9];
+                let noSearchColumns = [0, 7, 8, 9];
                 // **تنظیم رویداد برای اینپوت های معمولی**
                 $('.tuitions thead tr:eq(1) th').each(function(i) {
                     $(this).removeClass('sorting');
@@ -971,6 +1045,160 @@
                     toastr.error('خطا در ارتباط با سرور');
                 });
             }
+        });
+
+        // edit with modal -----------------------------------------------------------------------------------------------------------
+        // متغیرهای سراسری برای Select2‌های داخل مودال
+        let modalStateSelect, modalCitySelect;
+
+        // آماده‌سازی اولیه Select2‌ها (یک‌بار هنگام بارگذاری صفحه)
+        $(document).ready(function() {
+            modalStateSelect = $('#modalEdit #state_id2').select2({
+                placeholder: 'استان را انتخاب کنید',
+                allowClear: true,
+                width: '100%',
+            });
+
+            modalCitySelect = $('#modalEdit #city_id2').select2({
+                placeholder: 'شهرها را انتخاب کنید',
+                allowClear: true,
+                width: '100%',
+                multiple: true,
+                closeOnSelect: false // با این گزینه، باکس پس از انتخاب بسته نمی‌شود
+            });
+
+            // پاک‌سازی فرم هنگام بستن مودال
+            $('#modalEdit').on('hidden.bs.modal', function() {
+                $('#form-edit-record')[0].reset();
+                modalStateSelect.val(null).trigger('change');
+                modalCitySelect.val(null).trigger('change');
+                resetCityOptions();
+            });
+        });
+
+        // کمکی برای ریست کردن گزینه‌های شهر
+        function resetCityOptions() {
+            modalCitySelect.empty().append('<option value="" disabled>ابتدا استان را انتخاب کنید</option>').prop('disabled',
+                true).trigger('change');
+        }
+
+        // بارگذاری استان‌ها در Select2
+        function populateStateSelect(states, selectedId) {
+            modalStateSelect.empty();
+            modalStateSelect.append('<option value="" disabled>انتخاب کنید...</option>');
+            $.each(states, function(i, state) {
+                modalStateSelect.append(new Option(state.title, state.id));
+            });
+            modalStateSelect.val(selectedId).trigger('change');
+        }
+
+        // بارگذاری شهرها بر اساس استان انتخاب‌شده
+        function populateCitySelect(cities, selectedIds) {
+            modalCitySelect.empty();
+            if (cities.length === 0) {
+                modalCitySelect.append('<option value="" disabled>هیچ شهری موجود نیست</option>');
+            } else {
+                $.each(cities, function(i, city) {
+                    modalCitySelect.append(new Option(city.title, city.id));
+                });
+            }
+            modalCitySelect.val(selectedIds).trigger('change');
+            modalCitySelect.prop('disabled', false);
+        }
+
+        // کلیک روی دکمه ویرایش
+        $(document).on('click', '.item-edit', function() {
+            const id = $(this).data('id');
+
+            $('#modalEdit .modal-body').addClass('opacity-50');
+            $('#modalEdit').modal('show');
+
+            $.ajax({
+                url: `/admin2/tuitions/${id}/edit`,
+                method: 'GET',
+                success: function(res) {
+                    const d = res.data;
+
+                    $('#modalEdit #id').val(d.id);
+                    $('#modalEdit #title2').val(d.title).parent().addClass('filled');
+
+                    // پر کردن استان‌ها
+                    populateStateSelect(res.states, d.state_id);
+
+                    // ذخیره شهرهای انتخاب‌شده فعلی در attribute برای بارگذاری اولیه
+                    const selectedCityIds = res.cities.map(c => c.id);
+                    // بارگذاری شهرها بر اساس استان فعلی
+                    populateCitySelect(res.cities, selectedCityIds);
+
+                    // غیرفعال‌سازی استان برای جلوگیری از تغییر (می‌توانید در صورت نیاز فعال بگذارید)
+                    // چون تاریخ ثابت است، اجازه تغییر استان می‌دهیم
+                    modalStateSelect.prop('disabled', false);
+
+                    $('#modalEdit .modal-body').removeClass('opacity-50');
+                },
+                error: function() {
+                    toastr.error('خطا در بارگذاری اطلاعات');
+                    $('#modalEdit').modal('hide');
+                }
+            });
+        });
+
+        // تغییر استان -> بارگذاری شهرهای همان استان با AJAX
+        $('#state_id2').on('change', function() {
+            const stateId = $(this).val();
+            const tuitionId = $('#modalEdit #id').val();
+
+            if (!stateId) {
+                resetCityOptions();
+                return;
+            }
+
+            // غیرفعال کردن شهرها تا زمان بارگذاری
+            modalCitySelect.prop('disabled', true).empty().append('<option>در حال بارگذاری...</option>').trigger(
+                'change');
+
+            // فراخوانی مسیر مشابه available-cities اما با در نظر گرفتن tuitionId برای خروج
+            $.ajax({
+                url: '/admin2/tuitions/available-cities-for-edit',
+                data: {
+                    state_id: stateId,
+                    tuition_id: tuitionId
+                },
+                success: function(cities) {
+                    populateCitySelect(cities, []); // بدون انتخاب قبلی
+                },
+                error: function() {
+                    toastr.error('خطا در بارگذاری شهرها');
+                    resetCityOptions();
+                }
+            });
+        });
+
+        // ارسال فرم
+        $('#form-edit-record').on('submit', function(e) {
+            e.preventDefault();
+            const id = $('#modalEdit #id').val();
+            const values = {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                _method: 'PUT', // شبیه‌سازی PUT
+                title: $('#modalEdit #title2').val(),
+                state_id: modalStateSelect.val(),
+                city_ids: modalCitySelect.val()
+            };
+
+            $.ajax({
+                url: `/admin2/tuitions/${id}`,
+                method: 'POST', // با _method: PUT
+                data: values,
+                success: function(res) {
+                    toastr.success(res.message);
+                    $('#modalEdit').modal('hide');
+                    dt_basic.ajax.reload();
+                },
+                error: function(xhr) {
+                    toastr.error(xhr.responseJSON?.message || 'خطا در ذخیره‌سازی');
+                }
+            });
         });
     </script>
     <script>

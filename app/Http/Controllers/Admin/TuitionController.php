@@ -7,6 +7,7 @@ use App\Models\Tuition;
 use App\Models\City;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Morilog\Jalali\Jalalian;
 
@@ -15,7 +16,15 @@ class TuitionController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $tuitions = Tuition::with('state', 'cities', 'professions')->latest()->get();
+            $tuitions = Tuition::with('state', 'cities', 'professions')
+                ->get()
+                ->sortBy([
+                    fn($tuition) => $tuition->state->name ?? '',
+                    // مرتب‌سازی بر اساس نام اولین شهر (یا می‌توانید تمام شهرها را یک رشته کنید)
+                    fn($tuition) => $tuition->cities->sortBy('name')->pluck('name')->first() ?? '',
+                    fn($tuition) => $tuition->end_date,
+                ])
+                ->values(); // ریست کردن کلیدهای عددی
             return response()->json(['data' => $tuitions]);
         }
 
@@ -160,40 +169,92 @@ class TuitionController extends Controller
      */
     public function edit($id)
     {
-        $tuition = Tuition::findOrFail($id);
-        $cities = City::all();
+        $availableStates = City::where('active', 1)
+            ->whereNull('parent')
+            ->orderBy('title')
+            ->get(['id', 'title']);
+        if (request()->ajax()) {
+            $tuition = Tuition::findOrFail($id);
+
+            $conflictCityIds = $tuition
+                ->where(function ($query) use ($tuition) {
+                    $query->whereBetween('start_date', [$tuition->start_date, $tuition->end_date])
+                        ->orWhereBetween('end_date', [$tuition->start_date, $tuition->end_date])
+                        ->orWhere(function ($q) use ($tuition) {
+                            $q->where('start_date', '<=', $tuition->start_date)
+                                ->where('end_date', '>=', $tuition->end_date);
+                        });
+                })
+                ->with('cities') // فرض: رابطه cities در مدل Tuition
+                ->get()
+                ->pluck('cities.*.id')
+                ->flatten()
+                ->unique()
+                ->toArray();
+
+            // همه شهرهای استان به جز آنهایی که تداخل دارند
+            $availableCities = City::where('parent', $tuition->state_id)
+                ->whereNotIn('id', $conflictCityIds)
+                ->where('active', 1)
+                ->whereNotNull('parent')
+                ->orderBy('title')
+                ->get(['id', 'title']);
+
+
+            return response()->json(['data' => $tuition, 'states' => $availableStates, 'cities' => $availableCities]);
+        }
         return view('admin.tuitions.edit', compact('tuition', 'cities'));
+    }
+
+    public function availableCitiesForEdit(Request $request)
+    {
+        $stateId = $request->query('state_id');
+        $tuitionId = $request->query('tuition_id');
+        $tuition = Tuition::findOrFail($tuitionId);
+        $start = $tuition->start_date;
+        $end = $tuition->end_date;
+
+        $conflictCityIds = DB::table('tuition_cities')
+            ->join('tuitions', 'tuitions.id', '=', 'tuition_cities.tuition_id')
+            ->where('tuitions.id', '!=', $tuition->id)
+            ->where('tuitions.state_id', $stateId)
+            ->where(function ($q) use ($start, $end) {
+                $q->whereBetween('tuitions.start_date', [$start, $end])
+                    ->orWhereBetween('tuitions.end_date', [$start, $end])
+                    ->orWhere(fn($q) => $q->where('tuitions.start_date', '<=', $start)->where('tuitions.end_date', '>=', $end));
+            })->pluck('tuition_cities.city_id')->unique()->toArray();
+
+        $cities = City::where('parent', $stateId)
+            ->whereNotIn('id', $conflictCityIds)
+            ->orderBy('title')
+            ->get(['id', 'title']);
+
+        return response()->json($cities);
     }
 
     /**
      * بروزرسانی شهریه
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Tuition $tuition)
     {
-        $tuition = Tuition::findOrFail($id);
-
-        $request->validate([
-            'title'       => 'required|string|max:255',
-            'state_id'     => 'required|exists:cities,id',
-            'start_date'  => 'required|date',
-            'end_date'    => 'required|date|after:start_date',
-        ], [
-            'title.required'      => 'عنوان شهریه الزامی است.',
-            'state_id.required'    => 'انتخاب شهر الزامی است.',
-            'state_id.exists'      => 'شهر انتخاب‌شده معتبر نیست.',
-            'start_date.required' => 'تاریخ شروع الزامی است.',
-            'end_date.required'   => 'تاریخ پایان الزامی است.',
-            'end_date.after'      => 'تاریخ پایان باید بعد از تاریخ شروع باشد.',
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'state_id' => 'required|exists:cities,id',
+            'city_ids' => 'required|array',
+            'city_ids.*' => 'exists:cities,id',
         ]);
+
+        // بررسی تداخل دوباره (اختیاری اما توصیه می‌شود)
+        // ... می‌توانید بررسی کنید شهرهای انتخابی در بازه تداخل ندارند
 
         $tuition->update([
-            'title'       => $request->title,
-            'state_id'     => $request->state_id,
-            'start_date'  => $request->start_date,
-            'end_date'    => $request->end_date,
+            'title' => $validated['title'],
+            'state_id' => $validated['state_id'],
         ]);
 
-        return redirect()->route('admin.tuitions.index')->with('success', 'شهریه با موفقیت ویرایش شد.');
+        $tuition->cities()->sync($validated['city_ids']);
+
+        return response()->json(['success' => true, 'message' => 'شهریه ویرایش شد.']);
     }
 
     public function toggle(Tuition $tuition)

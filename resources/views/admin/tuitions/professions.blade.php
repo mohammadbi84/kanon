@@ -161,7 +161,7 @@
                 {
                     data: null,
                     title: "ردیف",
-                    width: "3%"
+                    width: "5%"
                 },
                 {
                     data: "field.cluster.category.name",
@@ -198,7 +198,7 @@
                         // برای sort و filter مقدار عددی
                         return parseInt(data) || 0;
                     },
-                    width: "8%"
+                    width: "6%"
                 },
                 {
                     data: "total_hour",
@@ -255,12 +255,12 @@
                         return full.active ?
                             `
                             <button data-id="${full.id}" class="btn text-success btn-icon item-toggle">
-                                <i class="bx bx-check"></i>
+                                بله
                             </button>
                         ` :
                             `
                             <button data-id="${full.id}" class="btn text-danger btn-icon item-toggle">
-                                <i class="bx bx-x"></i>
+                                خیر
                             </button>
                         `;
                     },
@@ -270,8 +270,11 @@
                     orderable: true,
                     searchable: false,
                     render: function(data, type, full, meta) {
+                        if (type == 'sort' || type == 'filter') {
+                            return full.price_in_person;
+                        }
                         return `
-                        <div class="custom-input-group only-number ${full.price_in_person ? 'filled' : ''}">
+                        <div class="custom-input-group only-number ps-2 ${full.price_in_person ? 'filled' : ''}">
                             <input type="text" class="form-control px-1"
                                    value="${full.price_in_person ?? ''}"
                                    data-field="price_in_person"
@@ -285,8 +288,11 @@
                     orderable: true,
                     searchable: false,
                     render: function(data, type, full, meta) {
+                        if (type == 'sort' || type == 'filter') {
+                            return full.price_virtual;
+                        }
                         return `
-                        <div class="custom-input-group only-number ${full.price_virtual ? 'filled' : ''}">
+                        <div class="custom-input-group only-number ps-2 ${full.price_virtual ? 'filled' : ''}">
                             <input type="text" class="form-control px-1"
                                    value="${full.price_virtual ?? ''}"
                                    data-field="price_virtual"
@@ -300,8 +306,11 @@
                     orderable: true,
                     searchable: false,
                     render: function(data, type, full, meta) {
+                        if (type == 'sort' || type == 'filter') {
+                            return full.price_online;
+                        }
                         return `
-                        <div class="custom-input-group only-number ${full.price_online ? 'filled' : ''}">
+                        <div class="custom-input-group only-number ps-2 ${full.price_online ? 'filled' : ''}">
                             <input type="text" class="form-control px-1"
                                    value="${full.price_online ?? ''}"
                                    data-field="price_online"
@@ -359,7 +368,7 @@
             },
             processing: true,
             initComplete: function(settings, json) {
-                let noSearchColumns = [0, 8, 9, 10, 11];
+                let noSearchColumns = [0,];
                 // **تنظیم رویداد برای اینپوت های معمولی**
                 $('.professions thead tr:eq(1) th').each(function(i) {
                     $(this).removeClass('sorting');
@@ -743,18 +752,17 @@
                                     `button.item-toggle[data-id="${id}"]`);
 
                                 if ($button.length) {
-                                    var $icon = $button.find('i');
 
                                     if (status) { // اگر وضعیت به 'منتشر شده' تغییر کرد
-                                        $icon.removeClass('bx-x').addClass(
-                                            'bx-check');
+
                                         $button.removeClass('text-danger').addClass(
                                             'text-success');
+                                        $button.text('بله');
                                     } else { // اگر وضعیت به 'منتشر نشده' تغییر کرد
-                                        $icon.removeClass('bx-check').addClass(
-                                            'bx-x');
+
                                         $button.removeClass('text-success')
                                             .addClass('text-danger');
+                                        $button.text('خیر');
                                     }
                                 }
                             });
