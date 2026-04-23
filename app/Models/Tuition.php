@@ -12,7 +12,8 @@ class Tuition extends Model
         'title',
         'state_id',
         'start_date',
-        'end_date'
+        'end_date',
+        'active',
     ];
 
     // شهر مربوطه

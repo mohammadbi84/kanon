@@ -28,7 +28,7 @@
                             انتخاب شده : <span id="selectedRecord">0</span> ردیف )</small>
                     </div>
                     <div class="d-flex justify-content-end align-items-center gap-3">
-                        <button type="button" id="save-prices" class="btn btn-primary">
+                        <button type="button" id="save-prices" class="btn btn-success d-none">
                             ذخیره تغییرات
                         </button>
                     </div>
@@ -49,6 +49,8 @@
                         <th>رشته</th>
                         <th>نام حرفه</th>
                         <th>کد استاندارد</th>
+                        <th>مدت ساعات</th>
+                        <th></th>
                         <th>انتشار</th>
                         <th>هزینه حضوری</th>
                         <th>هزینه مجازی</th>
@@ -115,6 +117,13 @@
     <script src="{{ asset('admin/assets/vendor/libs/nouislider/nouislider.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/js/dropdown-hover.js') }}"></script>
     <script>
+        let unsavedPrices = {};
+
+        function toggleSaveButton() {
+            // دکمه را فقط زمانی نمایش بده که حداقل یک تغییر داشته باشیم
+            $('#save-prices').toggleClass('d-none', Object.keys(unsavedPrices).length === 0);
+        }
+
         tuitionId = {{ $tuition->id }};
         professions = $(".professions");
 
@@ -179,6 +188,22 @@
                     title: "کد استاندارد",
                     width: "9%"
                 },
+                {
+                    data: "total_hour", // 8: استفاده از داده عددی
+                    title: "مدت ساعت",
+                    render: function(data, type, row) {
+                        if (type === 'display') {
+                            return row.total_minute + " : " + row.total_hour;
+                        }
+                        // برای sort و filter مقدار عددی
+                        return parseInt(data) || 0;
+                    },
+                    width: "8%"
+                },
+                {
+                    data: "total_hour",
+                    visible: false
+                }, // 2: مخفی ساعت عددی
                 {
                     data: "",
                     title: "انتشار",
@@ -247,10 +272,12 @@
                     render: function(data, type, full, meta) {
                         return `
                         <div class="custom-input-group only-number ${full.price_in_person ? 'filled' : ''}">
-                            <input type="text" class="form-control px-1" value="${full.price_in_person}">
-                            <span class="clear-btn" onclick="clearInput(this)" style="font-size: 1rem;left: -1px;">×</span>
-                        </div>
-                        `;
+                            <input type="text" class="form-control px-1"
+                                   value="${full.price_in_person ?? ''}"
+                                   data-field="price_in_person"
+                                   data-id="${full.id}">
+                            <span class="clear-btn" style="font-size: 1rem;left: -1px;">×</span>
+                        </div>`;
                     },
                 },
                 {
@@ -260,10 +287,12 @@
                     render: function(data, type, full, meta) {
                         return `
                         <div class="custom-input-group only-number ${full.price_virtual ? 'filled' : ''}">
-                            <input type="text" class="form-control px-1" value="${full.price_virtual}">
-                            <span class="clear-btn" onclick="clearInput(this)" style="font-size: 1rem;left: -1px;">×</span>
-                        </div>
-                        `;
+                            <input type="text" class="form-control px-1"
+                                   value="${full.price_virtual ?? ''}"
+                                   data-field="price_virtual"
+                                   data-id="${full.id}">
+                            <span class="clear-btn" style="font-size: 1rem;left: -1px;">×</span>
+                        </div>`;
                     },
                 },
                 {
@@ -273,10 +302,12 @@
                     render: function(data, type, full, meta) {
                         return `
                         <div class="custom-input-group only-number ${full.price_online ? 'filled' : ''}">
-                            <input type="text" class="form-control px-1" value="${full.price_online}">
-                            <span class="clear-btn" onclick="clearInput(this)" style="font-size: 1rem;left: -1px;">×</span>
-                        </div>
-                        `;
+                            <input type="text" class="form-control px-1"
+                                   value="${full.price_online ?? ''}"
+                                   data-field="price_online"
+                                   data-id="${full.id}">
+                            <span class="clear-btn" style="font-size: 1rem;left: -1px;">×</span>
+                        </div>`;
                     },
                 },
             ],
@@ -430,6 +461,8 @@
                         $selectAll.prop('indeterminate', true);
                     }
                 });
+
+                syncPriceInputs(); // همگام‌سازی ورودی‌های شهریه
             }
 
         });
@@ -525,8 +558,89 @@
             $("#totalRecord2").html(totalRecords);
             $("#filteredrecord").html(filteredRecords);
             $("#selectedRecord").html(selectedCount);
+
+
+            syncPriceInputs(); // به‌روزرسانی مقادیر نمایشی پس از هر draw
         });
 
+        function syncPriceInputs() {
+            dt_basic.rows({
+                page: 'current'
+            }).every(function() {
+                var rowData = this.data();
+                var $row = $(this.node());
+                var id = rowData.id;
+
+                syncSingleInput($row, 9, id, 'price_in_person', rowData);
+                syncSingleInput($row, 10, id, 'price_virtual', rowData);
+                syncSingleInput($row, 11, id, 'price_online', rowData);
+            });
+        }
+
+        function syncSingleInput($row, colIdx, id, field, rowData) {
+            var $input = $row.find('td:eq(' + colIdx + ') input');
+            // اگر مقدار تغییر‌یافته در حافظه باشد از آن استفاده کند، وگرنه مقدار اصلی
+            var stored = (unsavedPrices[id] && unsavedPrices[id][field] !== undefined) ?
+                unsavedPrices[id][field] :
+                (rowData[field] || '');
+            $input.val(stored);
+            // کلاس filled
+            if (stored) {
+                $input.parent().addClass('filled');
+            } else {
+                $input.parent().removeClass('filled');
+            }
+        }
+
+        // مدیریت تغییر ورودی‌های شهریه
+        $(document).on('input', '.professions .only-number input[data-field]', function() {
+            var $input = $(this);
+            var field = $input.data('field');
+            var id = $input.data('id');
+            var row = dt_basic.row($input.closest('tr'));
+            var rowData = row.data();
+            var original = parseFloat(rowData[field]) || '';
+            var newVal = parseFloat($input.val()) || '';
+
+            // اجازه فقط عدد
+            $input.val(newVal);
+
+            // کلاس filled
+            var $parent = $input.parent();
+            if (newVal) {
+                $parent.addClass('filled');
+            } else {
+                $parent.removeClass('filled');
+            }
+
+            // بروزرسانی شیء unsavedPrices
+            if (newVal !== original) {
+                if (!unsavedPrices[id]) unsavedPrices[id] = {};
+                unsavedPrices[id][field] = newVal;
+            } else {
+                if (unsavedPrices[id]) {
+                    delete unsavedPrices[id][field];
+                    if (Object.keys(unsavedPrices[id]).length === 0) {
+                        delete unsavedPrices[id];
+                    }
+                }
+            }
+
+            toggleSaveButton(); // نمایش/مخفی کردن دکمه ذخیره
+        });
+
+        // مدیریت دکمه پاک‌سازی (×) در ستون‌های شهریه
+        $(document).on('click', '.professions .only-number .clear-btn', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var $input = $(this).siblings('input');
+            var field = $input.data('field');
+            var id = $input.data('id');
+            var rowData = dt_basic.row($(this).closest('tr')).data();
+            var original = parseFloat(rowData[field]) || 0;
+
+            $input.val(original).trigger('input'); // رویداد input را صدا بزن تا هماهنگ شود
+        });
         // همچنین برای به‌روزرسانی هنگام انتخاب/لغو انتخاب ردیف‌ها
         dt_basic.on('select deselect', function() {
             var api = $(this).DataTable(); // یا استفاده از dt_basic مستقیم
@@ -729,9 +843,9 @@
                 // یافتن input های قیمت در این ردیف (با استفاده از کلاس یا ایندکس ستون)
                 // راه بهتر: استفاده از data-id یا کلاس مشخص، اما چون ستون‌ها مشخص‌اند از ایندکس استفاده می‌کنیم
                 const $row = $(rowNode);
-                const personInput = $row.find('td:eq(8) input'); // ستون 9: هزینه حضوری
-                const virtualInput = $row.find('td:eq(9) input'); // ستون 10: هزینه مجازی
-                const onlineInput = $row.find('td:eq(10) input'); // ستون 11: هزینه الکترونیکی
+                const personInput = $row.find('td:eq(9) input'); // ستون 9: هزینه حضوری
+                const virtualInput = $row.find('td:eq(10) input'); // ستون 10: هزینه مجازی
+                const onlineInput = $row.find('td:eq(11) input'); // ستون 11: هزینه الکترونیکی
 
                 // مقادیر وارد شده توسط کاربر (پیش‌فرض 0)
                 const personVal = parseFloat(personInput.val()) || 0;
@@ -782,7 +896,9 @@
                 },
                 success: function(response) {
                     toastr.success('قیمت‌ها با موفقیت ذخیره شدند');
-                    dt_basic.ajax.reload(); // به‌روزرسانی جدول برای نمایش مقادیر جدید
+                    unsavedPrices = {};
+                    toggleSaveButton();
+                    // dt_basic.ajax.reload(); // جدول رفرش می‌شود و مقادیر جدید را از سرور می‌گیرد
                 },
                 error: function(xhr) {
                     toastr.error('خطا در ذخیره‌سازی: ' + (xhr.responseJSON?.message || ''));
