@@ -13,7 +13,7 @@
         <a href="{{ route('admin.tuitions.index') }}" class="text-muted">مدیریت نرخ شهریه</a> <span
             class="text-muted">/</span>
         <span class="">{{ $tuition->title }}</span>
-        <span class="text-muted">/ حرفه ها</span>
+        <span class="text-muted">/ درج شهریه</span>
     </h5>
     <!-- DataTable with Buttons -->
     <div class="card">
@@ -252,7 +252,8 @@
                         if (type == 'sort') {
                             return full.active ? '1' : '0';
                         }
-                        return full.active ?
+                        if (type === 'display') {
+                            return full.active ?
                             `
                             <button data-id="${full.id}" class="btn text-success btn-icon item-toggle">
                                 بله
@@ -263,6 +264,10 @@
                                 خیر
                             </button>
                         `;
+                        }
+                        // برای sort و filter مقدار عددی
+                        return parseInt(full.active) || 0;
+
                     },
                 },
                 {
