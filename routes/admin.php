@@ -121,6 +121,14 @@ Route::name('admin.')->group(function () {
         Route::post('{tuition}/professions/update', [TuitionProfessionController::class, 'update'])->name('professions.update');
         Route::post('{tuition}/tuitions-professions/bulk-toggle', [TuitionProfessionController::class, 'bulkToggle'])->name('professions.bulk-toggle');
         Route::patch('{tuition}/{professionTuition}/toggle', [TuitionProfessionController::class, 'toggle'])->name('professions.toggle');
+
+        Route::post('{tuition}/uploadExcel', [TuitionProfessionController::class, 'uploadExcel'])->name('professions.uploadExcel');
+        // لیست همه آپلودها
+        Route::get('{tuition}/imports', [TuitionProfessionController::class, 'imports'])->name('professions.imports');
+        // لاگ‌های مربوط به یک آپلود خاص
+        Route::get('{tuition}/imports/{id}/logs', [TuitionProfessionController::class, 'import_log'])->name('professions.imports.logs');
+        // پرینت لاگ ها
+        Route::get('{tuition}/print/{id}', [TuitionProfessionController::class, 'print'])->name('professions.print');
     });
     // ================== Categories ==================
     Route::prefix('/categories')->group(function () {

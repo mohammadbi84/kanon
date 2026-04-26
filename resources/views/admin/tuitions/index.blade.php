@@ -189,7 +189,7 @@
         </div>
     </div>
     <!-- Modal Edit -->
-    <div class="modal fade" id="modalEdit" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="modalEdit" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -207,6 +207,22 @@
                             <div class="custom-input-group">
                                 <input type="text" id="title2" class="form-control" name="title">
                                 <label class="form-label" for="title">عنوان شهریه</label>
+                                <span class="clear-btn" onclick="clearInput(this)">×</span>
+                            </div>
+                        </div>
+                        {{-- بازه زمانی --}}
+                        <div class="col-sm-6 mt-3">
+                            <div class="custom-input-group">
+                                <input type="date" id="start_date2" name="start_date" class="form-control">
+                                <label class="form-label" for="start_date2">تاریخ شروع</label>
+                                <span class="clear-btn" onclick="clearInput(this)">×</span>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 mt-3">
+                            <div class="custom-input-group">
+                                <input type="date" id="end_date2" name="end_date" class="form-control">
+                                <label class="form-label" for="end_date2">تاریخ پایان</label>
                                 <span class="clear-btn" onclick="clearInput(this)">×</span>
                             </div>
                         </div>
@@ -241,6 +257,26 @@
     <script src="{{ asset('admin/assets/vendor/libs/select2/i18n/fa.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/js/dropdown-hover.js') }}"></script>
     <script>
+        const start_date2 = document.querySelector('#start_date2');
+        if (start_date2) {
+            start_date2.flatpickr({
+                monthSelectorType: 'static',
+                locale: 'fa',
+                altInput: true,
+                altFormat: 'Y/m/d',
+                disableMobile: true
+            });
+        }
+        const end_date2 = document.querySelector('#end_date2');
+        if (end_date2) {
+            end_date2.flatpickr({
+                monthSelectorType: 'static',
+                locale: 'fa',
+                altInput: true,
+                altFormat: 'Y/m/d',
+                disableMobile: true
+            });
+        }
         const start_date = document.querySelector('#start_date');
         if (start_date) {
             start_date.flatpickr({
@@ -312,17 +348,17 @@
                 {
                     data: "title",
                     title: "عنوان",
-                    width: "17%"
+                    width: "20%"
                 },
                 {
                     data: "state.title",
                     title: "استان",
-                    width: "6%"
+                    width: "11%"
                 },
                 {
                     data: "cities",
                     title: "شهرستان",
-                    width: "12%",
+                    width: "16%",
                     render: function(data, type, row) {
                         // برای نمایش در جدول
                         if (type === 'display') {
@@ -349,7 +385,7 @@
                 {
                     data: "start_date",
                     title: "شروع اعتبار",
-                    width: "11%",
+                    width: "7%",
                     render: function(data, type, row) {
                         if (type === 'display') {
                             return new Date(data).toLocaleDateString('fa-IR');
@@ -361,7 +397,7 @@
                 {
                     data: "end_date",
                     title: "پایان اعتبار",
-                    width: "11%",
+                    width: "7%",
                     render: function(data, type, row) {
                         if (type === 'display') {
                             return new Date(data).toLocaleDateString('fa-IR');
@@ -373,17 +409,17 @@
                 {
                     data: "",
                     title: "انتشار",
-                    width: "10%"
+                    width: "7%"
                 },
                 {
                     data: "",
                     title: "جزئیات",
-                    width: "10%"
+                    width: "15%"
                 },
                 {
                     data: "",
                     title: "عملیات",
-                    width: "10%"
+                    width: "5%"
                 },
             ],
             columnDefs: [{
@@ -457,7 +493,7 @@
                         } else {
                             return `
                             <a href="/admin2/tuitions/${full.id}/professions" class="btn btn-sm btn-info item-details">
-                                درج شهریه
+                                درج و ویرایش شهریه
                             </a>`;
                         }
                     },
@@ -1050,7 +1086,7 @@
         // edit with modal -----------------------------------------------------------------------------------------------------------
         // متغیرهای سراسری برای Select2‌های داخل مودال
         let modalStateSelect, modalCitySelect;
-
+        let selectedCities;
         // آماده‌سازی اولیه Select2‌ها (یک‌بار هنگام بارگذاری صفحه)
         $(document).ready(function() {
             modalStateSelect = $('#modalEdit #state_id2').select2({
@@ -1099,10 +1135,21 @@
                 modalCitySelect.append('<option value="" disabled>هیچ شهری موجود نیست</option>');
             } else {
                 $.each(cities, function(i, city) {
-                    modalCitySelect.append(new Option(city.title, city.id));
+                    const isSelected = selectedCities.some(function(sel) {
+                        return sel.id === city;
+                    });
+                    // console.log(selectedCities);
+                    // console.log(isSelected);
+                    // console.log(city);
+
+                    modalCitySelect.append($('<option>', {
+                        value: city,
+                        text: i,
+                        selected: isSelected
+                    }));
                 });
             }
-            modalCitySelect.val(selectedIds).trigger('change');
+            // modalCitySelect.val(selectedIds).trigger('change');
             modalCitySelect.prop('disabled', false);
         }
 
@@ -1120,15 +1167,36 @@
                     const d = res.data;
 
                     $('#modalEdit #id').val(d.id);
+                    const startPicker = $('#modalEdit #start_date2')[0]
+                        ._flatpickr; // یا .data('flatpickr')
+                    if (startPicker) {
+                        startPicker.setDate(d.startMiladi);
+                        $('#modalEdit #start_date2').closest('.custom-input-group').addClass('filled');
+                    }
+
+                    const endPicker = $('#modalEdit #end_date2')[0]._flatpickr;
+                    if (endPicker) {
+                        endPicker.setDate(d.endMiladi);
+                        $('#modalEdit #end_date2').closest('.custom-input-group').addClass('filled');
+                    }
                     $('#modalEdit #title2').val(d.title).parent().addClass('filled');
 
                     // پر کردن استان‌ها
                     populateStateSelect(res.states, d.state_id);
 
                     // ذخیره شهرهای انتخاب‌شده فعلی در attribute برای بارگذاری اولیه
-                    const selectedCityIds = res.cities.map(c => c.id);
+                    selectedCities = res.cities;
                     // بارگذاری شهرها بر اساس استان فعلی
-                    populateCitySelect(res.cities, selectedCityIds);
+
+                    $.each(res.cities, function(i, city) {
+                        modalCitySelect.append($('<option>', {
+                            value: city.id,
+                            text: city.title,
+                            selected: true,
+                        }));
+                    });
+                    modalCitySelect.val('').trigger('change');
+                    modalCitySelect.prop('disabled', false);
 
                     // غیرفعال‌سازی استان برای جلوگیری از تغییر (می‌توانید در صورت نیاز فعال بگذارید)
                     // چون تاریخ ثابت است، اجازه تغییر استان می‌دهیم
@@ -1146,6 +1214,8 @@
         // تغییر استان -> بارگذاری شهرهای همان استان با AJAX
         $('#state_id2').on('change', function() {
             const stateId = $(this).val();
+            const startDate = $('#modalEdit #start_date2').val();
+            const endDate = $('#modalEdit #end_date2').val();
             const tuitionId = $('#modalEdit #id').val();
 
             if (!stateId) {
@@ -1162,6 +1232,41 @@
                 url: '/admin2/tuitions/available-cities-for-edit',
                 data: {
                     state_id: stateId,
+                    start_date: startDate,
+                    end_date: endDate,
+                    tuition_id: tuitionId
+                },
+                success: function(cities) {
+                    populateCitySelect(cities, []); // بدون انتخاب قبلی
+                },
+                error: function() {
+                    toastr.error('خطا در بارگذاری شهرها');
+                    resetCityOptions();
+                }
+            });
+        });
+        $("#start_date2").add("#end_date2").on('change', function() {
+            const stateId = $('#modalEdit #state_id2').val();
+            const startDate = $('#modalEdit #start_date2').val();
+            const endDate = $('#modalEdit #end_date2').val();
+            const tuitionId = $('#modalEdit #id').val();
+
+            if (!stateId) {
+                resetCityOptions();
+                return;
+            }
+
+            // غیرفعال کردن شهرها تا زمان بارگذاری
+            modalCitySelect.prop('disabled', true).empty().append('<option>در حال بارگذاری...</option>').trigger(
+                'change');
+
+            // فراخوانی مسیر مشابه available-cities اما با در نظر گرفتن tuitionId برای خروج
+            $.ajax({
+                url: '/admin2/tuitions/available-cities-for-edit',
+                data: {
+                    state_id: stateId,
+                    start_date: startDate,
+                    end_date: endDate,
                     tuition_id: tuitionId
                 },
                 success: function(cities) {
@@ -1182,6 +1287,8 @@
                 _token: $('meta[name="csrf-token"]').attr('content'),
                 _method: 'PUT', // شبیه‌سازی PUT
                 title: $('#modalEdit #title2').val(),
+                start_date: $('#modalEdit #start_date2').val(),
+                end_date: $('#modalEdit #end_date2').val(),
                 state_id: modalStateSelect.val(),
                 city_ids: modalCitySelect.val()
             };

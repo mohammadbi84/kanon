@@ -175,8 +175,10 @@ class TuitionController extends Controller
             ->get(['id', 'title']);
         if (request()->ajax()) {
             $tuition = Tuition::findOrFail($id);
+            $tuition['startMiladi'] = Jalalian::forge($tuition->start_date)->format('Y-m-d');
+            $tuition['endMiladi'] = Jalalian::forge($tuition->end_date)->format('Y-m-d');
 
-            $conflictCityIds = $tuition
+            $conflictCityIds = Tuition::whereNotIn('id', [$tuition->id])
                 ->where(function ($query) use ($tuition) {
                     $query->whereBetween('start_date', [$tuition->start_date, $tuition->end_date])
                         ->orWhereBetween('end_date', [$tuition->start_date, $tuition->end_date])
@@ -193,12 +195,7 @@ class TuitionController extends Controller
                 ->toArray();
 
             // همه شهرهای استان به جز آنهایی که تداخل دارند
-            $availableCities = City::where('parent', $tuition->state_id)
-                ->whereNotIn('id', $conflictCityIds)
-                ->where('active', 1)
-                ->whereNotNull('parent')
-                ->orderBy('title')
-                ->get(['id', 'title']);
+            $availableCities = $tuition->cities()->get(['cities.id', 'cities.title']);
 
 
             return response()->json(['data' => $tuition, 'states' => $availableStates, 'cities' => $availableCities]);
@@ -211,25 +208,41 @@ class TuitionController extends Controller
         $stateId = $request->query('state_id');
         $tuitionId = $request->query('tuition_id');
         $tuition = Tuition::findOrFail($tuitionId);
-        $start = $tuition->start_date;
-        $end = $tuition->end_date;
 
-        $conflictCityIds = DB::table('tuition_cities')
-            ->join('tuitions', 'tuitions.id', '=', 'tuition_cities.tuition_id')
-            ->where('tuitions.id', '!=', $tuition->id)
-            ->where('tuitions.state_id', $stateId)
-            ->where(function ($q) use ($start, $end) {
-                $q->whereBetween('tuitions.start_date', [$start, $end])
-                    ->orWhereBetween('tuitions.end_date', [$start, $end])
-                    ->orWhere(fn($q) => $q->where('tuitions.start_date', '<=', $start)->where('tuitions.end_date', '>=', $end));
-            })->pluck('tuition_cities.city_id')->unique()->toArray();
 
-        $cities = City::where('parent', $stateId)
+        $miladi_start = Jalalian::fromFormat('Y-m-d', $request->query('start_date') ?? "1300-01-01")->toCarbon();
+        $miladi_end = Jalalian::fromFormat('Y-m-d', $request->query('end_date') ?? "1500-01-01")->toCarbon();
+
+        $start = Carbon::make($miladi_start);
+        $end = Carbon::make($miladi_end);
+
+        $conflictCityIds = Tuition::where('state_id', $stateId)->whereNotIn('id', [$tuition->id])
+            ->where(function ($query) use ($start, $end) {
+                $query->whereBetween('start_date', [$start, $end])
+                    ->orWhereBetween('end_date', [$start, $end])
+                    ->orWhere(function ($q) use ($start, $end) {
+                        $q->where('start_date', '<=', $start)
+                            ->where('end_date', '>=', $end);
+                    });
+            })
+            ->with('cities') // فرض: رابطه cities در مدل Tuition
+            ->get()
+            ->pluck('cities.*.id')
+            ->flatten()
+            ->unique()
+            ->toArray();
+
+
+
+        // همه شهرهای استان به جز آنهایی که تداخل دارند
+        $availableCities = City::where('parent', $stateId)
             ->whereNotIn('id', $conflictCityIds)
+            ->where('active', 1)
+            ->whereNotNull('parent')
             ->orderBy('title')
-            ->get(['id', 'title']);
+            ->pluck('id', 'title')->toArray();
 
-        return response()->json($cities);
+        return response()->json($availableCities);
     }
 
     /**
@@ -237,19 +250,28 @@ class TuitionController extends Controller
      */
     public function update(Request $request, Tuition $tuition)
     {
+        Log::info($request);
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'state_id' => 'required|exists:cities,id',
             'city_ids' => 'required|array',
             'city_ids.*' => 'exists:cities,id',
+            'start_date'  => 'required',
+            'end_date'    => 'required',
         ]);
 
         // بررسی تداخل دوباره (اختیاری اما توصیه می‌شود)
         // ... می‌توانید بررسی کنید شهرهای انتخابی در بازه تداخل ندارند
+        $miladi_start = Jalalian::fromFormat('Y-m-d', $request->input('start_date') ?? "1300-01-01")->toCarbon();
+        $miladi_end = Jalalian::fromFormat('Y-m-d', $request->input('end_date') ?? "1500-01-01")->toCarbon();
+        $corectStart = Carbon::make($miladi_start);
+        $corectEnd = Carbon::make($miladi_end);
 
         $tuition->update([
             'title' => $validated['title'],
             'state_id' => $validated['state_id'],
+            'start_date'  => $corectStart,
+            'end_date'    => $corectEnd,
         ]);
 
         $tuition->cities()->sync($validated['city_ids']);

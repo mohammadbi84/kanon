@@ -5,16 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProfessionImport extends Model
+class TuitionImport extends Model
 {
     use HasFactory;
+
     protected $fillable = [
+        'tuition_id',
         'batch_id',
         'file_name',
     ];
-
     public function logs()
     {
-        return $this->hasMany(ProfessionImportLog::class);
+        return $this->hasMany(TuitionImportLog::class);
     }
 }

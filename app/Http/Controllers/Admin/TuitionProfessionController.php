@@ -3,12 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Imports\TuitionImport as ImportsTuitionImport;
 use App\Models\Tuition;
 use App\Models\Profession;
 use App\Models\ProfessionTuition;
+use App\Models\TuitionImport;
+use App\Models\TuitionImportLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TuitionProfessionController extends Controller
 {
@@ -146,5 +151,71 @@ class TuitionProfessionController extends Controller
             return response()->json(['success' => true, 'message' => 'شهریه با موفقیت منتشر شد.']);
         }
         return response()->json(['success' => true, 'message' => 'شهریه با موفقیت از حالت انتشار خارج شد.']);
+    }
+
+    public function uploadExcel(Request $request, Tuition $tuition)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+        // return ('دریافت شد');
+
+        $batchId = (string)Str::uuid();
+        $import = TuitionImport::create([
+            'tuition_id' => $tuition->id,
+            'batch_id' => $batchId,
+            'file_name' => $request->file('file')->getClientOriginalName(),
+        ]);
+        session()->put('import_id', $import->id);
+        session()->put('tuition_id', $tuition->id);
+
+        try {
+            // استفاده از Excel::import بدون تعیین صریح نوع فایل
+            // پکیج خودش سعی می‌کنه نوع فایل رو تشخیص بده
+            Excel::import(new ImportsTuitionImport, $request->file('file'));
+
+            $logs = $import->logs()->where('success', true)->get();
+            return response()->json(['success' => true, 'message' => 'حرفه ها با موفقیت اضافه شد', 'logs' => $logs]);
+        } catch (\Exception $e) {
+            // لاگ کردن خطا برای اشکال‌زدایی
+            Log::error('Excel import error: ' . $e->getMessage(), ['file_path' => $request->file('file')->getPathname()]);
+            // برگرداندن پیام خطا به کاربر
+            return back()->withErrors(['file' => 'خطا در پردازش فایل اکسل: ' . $e->getMessage()]);
+        }
+        Excel::import(new ImportsTuitionImport, $request->file('file'));
+
+        return back()->with('success', 'حرفه ها با موفقیت وارد شد.');
+    }
+
+    // لیست همه آپلودها (برا نمایش در مدال)
+    public function imports(Tuition $tuition)
+    {
+        $imports = TuitionImport::where('tuition_id', $tuition->id)->with('logs')->latest()->get(['id', 'file_name', 'created_at']);
+        return response()->json($imports);
+    }
+
+    // لاگ‌های هر آپلود خاص
+    public function import_log($id,$tuition)
+    {
+        // dd('hiiiii');
+        $logs = TuitionImportLog::where('tuition_import_id',$tuition)
+            ->orderBy('success')
+            ->get(['row_number', 'error_message', 'data', 'success']);
+        return response()->json($logs);
+    }
+
+    // لیست همه آپلودها (برا نمایش در مدال)
+    public function print($id, Request $request, Tuition $tuition)
+    {
+        $import = TuitionImport::findOrFail($id);
+        if ($request->status == 'all') {
+            $logs = $import->logs;
+        } elseif ($request->status == 1) {
+            $logs = $import->logs()->where('success', true);
+        } else {
+            $logs = $import->logs()->where('success', false);
+        }
+        return $logs;
+        return view('admin.professions.printLogs', compact('logs'));
     }
 }
