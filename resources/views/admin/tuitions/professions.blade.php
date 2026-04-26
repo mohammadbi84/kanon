@@ -62,9 +62,9 @@
                         </button>
                     </div>
                 </div>
-                <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
+                {{-- <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
                     <small class="py-3 text-white">1</small>
-                </div>
+                </div> --}}
             </div>
 
             <table class="dt-select-table professions table table-hover">
@@ -471,7 +471,7 @@
             processing: true,
             initComplete: function(settings, json) {
                 let noSearchColumns = [0, ];
-                let priceHeaders = [9,10,11];
+                let priceHeaders = [9, 10, 11];
                 // **تنظیم رویداد برای اینپوت های معمولی**
                 $('.professions thead tr:eq(1) th').each(function(i) {
                     $(this).removeClass('sorting');
@@ -1341,117 +1341,81 @@
                                     return;
                                 }
 
-                                // تقسیم به موفق و خطادار
+                                // جدا کردن موفق و ناموفق
                                 const successLogs = [];
                                 const errorLogs = [];
 
                                 logs.forEach(log => {
                                     let rowData = typeof log.data === 'string' ? JSON
                                         .parse(log.data) : log.data;
-                                    if (log.success)
+                                    if (log.success) {
                                         successLogs.push({
                                             ...log,
                                             rowData
                                         });
-                                    else
+                                    } else {
                                         errorLogs.push({
                                             ...log,
                                             rowData
                                         });
+                                    }
                                 });
 
-                                // تابع گروه‌بندی بر اساس رشته
-                                function groupByReshte(arr) {
-                                    const grouped = {};
-                                    arr.forEach(item => {
-                                        let reshte = item.rowData.رشته ?? 'نامشخص';
-                                        if (!grouped[reshte]) grouped[reshte] = [];
-                                        grouped[reshte].push(item);
-                                    });
-                                    return grouped;
-                                }
+                                let logsHtml = '';
 
-                                const groupedSuccess = groupByReshte(successLogs);
-                                const groupedError = groupByReshte(errorLogs);
-
-                                // ساخت HTML خروجی
-                                let logsHtml = `
-                                `;
-                                // بخش خطادارها
+                                // 🟥 بخش خطاها
                                 if (errorLogs.length > 0) {
                                     logsHtml += `
                                         <div class="border rounded p-3 bg-white ${status == 1 ? 'd-none' : ''}">
                                             <div class="d-flex justify-content-between align-items-center">
-                                                <h6 class="text-danger mb-3">
-                                                    ثبت های ناموفق — ${errorLogs.length} مورد
-                                                </h6>
+                                                <h6 class="text-danger m-0">ثبت‌های ناموفق — ${errorLogs.length} مورد</h6>
                                                 <button class="btn btn-sm btn-outline-primary printBtn" data-target="${importId}" data-status="${status}">
-                                                پرینت نتایج
+                                                    پرینت نتایج
                                                 </button>
                                             </div>
+                                            <ul class="list-group list-group-flush">
                                     `;
 
-                                    Object.keys(groupedError).forEach(reshte => {
-                                        const group = groupedError[reshte];
+                                    errorLogs.forEach((log, i) => {
                                         logsHtml += `
-                                            <div class="mb-3 border rounded p-2 bg-light">
-                                                <strong>رسته ${group[0].rowData.رسته ?? group[1].rowData.رسته ?? 'نامشخص'} / خوشه ${group[0].rowData.خوشه ?? group[0].rowData.خوشه ?? 'نامشخص'} / رشته ${reshte} ( ${group.length} مورد )</strong>
-                                                <ul class="list-group list-group-flush mt-2">
+                                            <li class="list-group-item list-group-item-danger">
+                                                <div>${i + 1}</div>
+                                                <strong>ردیف ${log.row_number}</strong>
+                                                <div>شهریه درج نگردید.</div>
+                                                <div>دلیل: ${log.error_message || '—'}</div>
+                                            </li>
                                         `;
-                                        group.forEach((log, i) => {
-                                            logsHtml += `
-                                                <li class="list-group-item list-group-item-danger">
-                                                    <div>${i + 1}</div>
-                                                    <strong>️ردیف ${log.row_number}</strong>
-                                                    <div>
-                                                        حرفه ${log.rowData.حرفه} با کد ایسکو ${log.rowData.کد_استاندارد_ایسکو} درج نگردید.
-                                                    </div>
-                                                    <div>دلیل: ${log.error_message || '—'}</div>
-                                                </li>
-                                            `;
-                                        });
-                                        logsHtml += '</ul></div>';
                                     });
-                                    logsHtml += '</div>';
+
+                                    logsHtml += '</ul></div>';
                                 }
-                                // ✅ بخش موفق‌ها
+
+                                // 🟩 بخش موفق‌ها
                                 if (successLogs.length > 0) {
                                     logsHtml += `
                                         <div class="border rounded p-3 mb-3 bg-white ${status == 0 ? 'd-none' : ''}">
                                             <div class="d-flex justify-content-between align-items-center">
-                                                <h6 class="text-success mb-3">
-                                                    ثبت های موفق — ${successLogs.length} مورد
-                                                </h6>
+                                                <h6 class="text-success m-0">ثبت‌های موفق — ${successLogs.length} مورد</h6>
                                                 <button class="btn btn-sm btn-outline-primary printBtn" data-target="${importId}" data-status="${status}">
-                                                پرینت نتایج
+                                                    پرینت نتایج
                                                 </button>
                                             </div>
+                                            <ul class="list-group list-group-flush">
                                     `;
 
-                                    Object.keys(groupedSuccess).forEach(reshte => {
-                                        const group = groupedSuccess[reshte];
+                                    successLogs.forEach((log, i) => {
                                         logsHtml += `
-                                            <div class="mb-3 ps-3">
-                                                <strong>رسته ${group[0].rowData.رسته} / خوشه ${group[0].rowData.خوشه} / رشته ${reshte} ( ${group.length} مورد )</strong>
-                                                <ul class="list-group list-group-flush mt-2">
-                                        `;
-                                        group.forEach((log, i) => {
-                                            logsHtml += `
                                             <li class="list-group-item list-group-item-success">
-                                                    <div>${i + 1}</div>
-                                                    <strong>ردیف ${log.row_number}</strong>
-                                                    <div>
-                                                        حرفه ${log.rowData.حرفه} با کد ایسکو ${log.rowData.کد_استاندارد_ایسکو} با موفقیت درج گردید.
-                                                    </div>
-                                                </li>
-                                            `;
-                                        });
-                                        logsHtml += '</ul></div>';
+                                                <div>${i + 1}</div>
+                                                <strong>ردیف ${log.row_number}</strong>
+                                                <div>شهریه با موفقیت درج گردید.</div>
+                                            </li>
+                                        `;
                                     });
 
-                                    logsHtml += '</div>';
+                                    logsHtml += '</ul></div>';
                                 }
-                                // نمایش نهایی
+
                                 container.innerHTML = logsHtml;
                             })
                             .catch(() => {

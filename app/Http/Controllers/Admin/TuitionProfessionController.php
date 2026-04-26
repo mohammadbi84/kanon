@@ -205,9 +205,10 @@ class TuitionProfessionController extends Controller
     }
 
     // لیست همه آپلودها (برا نمایش در مدال)
-    public function print($id, Request $request, Tuition $tuition)
+    public function print($id, Request $request, $tuition)
     {
-        $import = TuitionImport::findOrFail($id);
+        // return $tuition;
+        $import = TuitionImport::findOrFail($tuition);
         if ($request->status == 'all') {
             $logs = $import->logs;
         } elseif ($request->status == 1) {
@@ -215,7 +216,6 @@ class TuitionProfessionController extends Controller
         } else {
             $logs = $import->logs()->where('success', false);
         }
-        return $logs;
-        return view('admin.professions.printLogs', compact('logs'));
+        return view('admin.tuitions.printLogs', compact('logs'));
     }
 }
