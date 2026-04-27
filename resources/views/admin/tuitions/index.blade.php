@@ -343,17 +343,17 @@
                 {
                     data: "",
                     title: "ردیف",
-                    width: "8%"
+                    width: "6%"
                 },
                 {
                     data: "title",
                     title: "عنوان",
-                    width: "20%"
+                    width: "17%"
                 },
                 {
                     data: "state.title",
                     title: "استان",
-                    width: "11%"
+                    width: "12%"
                 },
                 {
                     data: "cities",
@@ -385,7 +385,7 @@
                 {
                     data: "start_date",
                     title: "شروع اعتبار",
-                    width: "7%",
+                    width: "9%",
                     render: function(data, type, row) {
                         if (type === 'display') {
                             return new Date(data).toLocaleDateString('fa-IR');
@@ -397,7 +397,7 @@
                 {
                     data: "end_date",
                     title: "پایان اعتبار",
-                    width: "7%",
+                    width: "9%",
                     render: function(data, type, row) {
                         if (type === 'display') {
                             return new Date(data).toLocaleDateString('fa-IR');

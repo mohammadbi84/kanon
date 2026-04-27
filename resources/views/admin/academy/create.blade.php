@@ -106,7 +106,7 @@
                                         @error('export_reset')
                                     style="border:red solid 1px"
                                     @enderror>
-                                    <label for="searchInputexport_reset">تاریخ تمدید صدور</label>
+                                    <label for="searchInputexport_reset">تاریخ صدور مجدد</label>
                                     <span class="clear-btn" id="clearBtn_export_reset" onclick="clearInput('export_reset')"
                                         @if (old('export_reset')) style="display:block !important" @endif>×</span>
                                 </div>
@@ -131,53 +131,61 @@
                                 @enderror
                             </div>
                             <div class="col-md-6 mb-3">
-                                <div class="autocomplete @if (old('first_license_date')) filled @endif"
-                                    id="autocompleteBoxfirst_license_date">
-                                    <input type="text" id="searchInputfirst_license_date" name="first_license_date"
-                                        readonly value="{{ old('first_license_date') }}"
-                                        oninput="nameinput('first_license_date')"
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="row g-0">
+                                            <div class="col-1 p-1">
+                                                <input type="radio" class="form-check-input" name="license"
+                                                    id="parvane_first" {{ old('license') == 'first' ? 'checked' : '' }}
+                                                    value="first" onchange="">
+                                            </div>
+                                            <div class="col-5 p-1">
+                                                <label for="parvane_first" class="form-check-label">اولین پروانه
+                                                    کسب</label>
+                                            </div>
+                                            <div class="col-1 p-1">
+                                                <input type="radio" class="form-check-input" name="license"
+                                                    id="parvane_tamdid"
+                                                    {{ old('license') == 'extension' ? 'checked' : '' }} value="extension"
+                                                    onchange="">
+                                            </div>
+                                            <div class="col-5 p-1">
+                                                <label for="parvane_tamdid" class="form-check-label">تمدید پروانه
+                                                    کسب</label>
+                                            </div>
+                                        </div>
+                                        @error('license')
+                                            <small class="text-danger mt-2">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="autocomplete @if (old('first_license_date')) filled @endif"
+                                            id="autocompleteBoxfirst_license_date">
+                                            <input type="text" id="searchInputfirst_license_date"
+                                                name="first_license_date" readonly
+                                                value="{{ old('first_license_date') }}"
+                                                oninput="nameinput('first_license_date')"
+                                                @error('first_license_date')
+                                            style="border:red solid 1px"
+                                            @enderror>
+                                            <label for="searchInputfirst_license_date">تاریخ اولین پروانه کسب
+                                                <small>(اختیاری)</small></label>
+                                            <span class="clear-btn" id="clearBtn_first_license_date"
+                                                onclick="clearInput('first_license_date')"
+                                                @if (old('first_license_date')) style="display:block !important" @endif>×</span>
+                                        </div>
                                         @error('first_license_date')
-                                    style="border:red solid 1px"
-                                    @enderror>
-                                    <label for="searchInputfirst_license_date">تاریخ اولین پروانه کسب
-                                        <small>(اختیاری)</small></label>
-                                    <span class="clear-btn" id="clearBtn_first_license_date"
-                                        onclick="clearInput('first_license_date')"
-                                        @if (old('first_license_date')) style="display:block !important" @endif>×</span>
-                                </div>
-                                @error('first_license_date')
-                                    <small class="text-danger mt-2">{{ $message }}</small>
-                                @enderror
-                            </div>
-                            <div class="col-md-6 mb-3 align-content-center">
-                                <div class="row g-0">
-                                    <div class="col-1 p-1">
-                                        <input type="radio" class="form-check-input" name="license" id="parvane_first"
-                                            {{ old('license') == 'first' ? 'checked' : '' }} value="first"
-                                            onchange="">
-                                    </div>
-                                    <div class="col-5 p-1">
-                                        <label for="parvane_first" class="form-check-label">اولین پروانه کسب</label>
-                                    </div>
-                                    <div class="col-1 p-1">
-                                        <input type="radio" class="form-check-input" name="license"
-                                            id="parvane_tamdid" {{ old('license') == 'extension' ? 'checked' : '' }}
-                                            value="extension" onchange="">
-                                    </div>
-                                    <div class="col-5 p-1 ps-0">
-                                        <label for="parvane_tamdid" class="form-check-label">تمدید پروانه کسب</label>
+                                            <small class="text-danger mt-2">{{ $message }}</small>
+                                        @enderror
                                     </div>
                                 </div>
-                                @error('license')
-                                    <small class="text-danger mt-2">{{ $message }}</small>
-                                @enderror
                             </div>
                             <div class="col-md-12 mb-3 mt-2 pe-4">
                                 <div class="row pb-0 g-0 align-content-center">
                                     <div class="col-1 mb-0 p-0 align-content-center">
                                         <p class="p-0 m-0">جنسیت : </p>
                                     </div>
-                                    <div class="col-5 mb-0 p-0 align-content-center">
+                                    <div class="col-12 d-flex mb-0 p-0 align-content-center">
                                         <div class="d-flex flex-wrap align-content-center p-0">
                                             <div class="form-check form-check-inline ms-2 me-0" dir="rtl">
                                                 <input type="radio" class="form-check-input" name="gender"
@@ -198,10 +206,8 @@
                                                     id="mokhtalet" {{ old('gender') == 'both' ? 'checked' : '' }}
                                                     value="both" onchange="handleGenderChange()">
                                             </div>
-                                            <label for="mokhtalet" class="form-check-label">برادران،خواهران</label>
+                                            <label for="mokhtalet" class="form-check-label">برادران،خواهران <small>( دو منظوره )</small></label>
                                         </div>
-                                    </div>
-                                    <div class="col mb-0 p-0 align-content-center">
                                         <div class="d-flex flex-wrap align-content-center p-0">
                                             <div class="form-check form-check-inline ms-4 me-0" dir="rtl">
                                                 <input type="checkbox" class="form-check-input" name="tabsare_34"
@@ -1298,7 +1304,6 @@
                 ); // هر اینپوت رو داخل یک رپر میذاریم
 
                 $input.flatpickr({
-                    monthSelectorType: 'static',
                     locale: 'fa',
                     altInput: true,
                     altFormat: 'Y/m/d',
@@ -1581,6 +1586,58 @@
             } else {
                 box.classList.remove("filled");
                 clearBtn.style.display = 'none';
+            }
+        });
+
+
+
+        $(document).ready(function() {
+            const $licenseRadio = $('input[name="license"]');
+            const $dateInput = $('#searchInputfirst_license_date');
+            const picker = $dateInput[0]?._flatpickr; // نمونه flatpickr
+            const $sourceDateInput = $('#searchInputexport_start'); // منبع تاریخ (در صورت نیاز)
+
+            $licenseRadio.on('change', function() {
+                const selected = $(this).val(); // 'first' یا 'extension'
+
+                if (selected === 'first') {
+                    // دریافت مقدار از منبع (در صورت وجود) یا هشدار
+                    const dateValue = $sourceDateInput.val();
+                    if (!dateValue) {
+                        alert('لطفاً ابتدا تاریخ شروع را تکمیل کنید.');
+                        // رادیوباکس را به حالت تمدید برگردانید تا کاربر مجبور به پر کردن شود
+                        $('#parvane_tamdid').prop('checked', true).trigger('change');
+                        return;
+                    }
+
+                    // غیرفعال کردن flatpickr و readonly
+                    picker.setDate(dateValue);
+                    $("#autocompleteBoxfirst_license_date").addClass('filled');
+                    $dateInput.prop('disabled', true).prop('readonly', true);
+                    if (picker) {
+                        picker.set('clickOpens', false);
+                        picker.set('allowInput', false);
+                        picker.close(); // بستن تقویم در صورت باز بودن
+                    }
+
+                } else if (selected === 'extension') {
+                    // فعال‌سازی دوباره
+                    if (picker) {
+                        picker.set('clickOpens', true);
+                        picker.set('allowInput', true);
+                        // picker.enable();
+                    }
+                    $dateInput.prop('readonly', false);
+                    picker.clear();
+                    // (اختیاری) می‌توانید مقدار را خالی کنید
+                    // $dateInput.val('');
+                    // flatpickr را پاک کنید: picker.clear();
+                }
+            });
+
+            // اگر مقدار old('license') برابر 'first' باشد، حالت اولیه را فعال کند
+            if ($licenseRadio.filter(':checked').val() === 'first') {
+                $licenseRadio.trigger('change');
             }
         });
     </script>

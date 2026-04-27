@@ -22,7 +22,7 @@ class AcademyController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $academies = Academy::latest()->where('status', '!=', 'pending')->get();
+            $academies = Academy::with('creator')->latest()->orderBy('name')->where('status', '!=', 'pending')->get();
             foreach ($academies as $academy) {
                 if ($academy->export_end) {
                     // تبدیل تاریخ شمسی به معادل میلادی (Carbon)

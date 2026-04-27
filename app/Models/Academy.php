@@ -67,6 +67,10 @@ class Academy extends Model
         'extra_data' => 'array',
     ];
 
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'creator_id');
+    }
     public function manager()
     {
         return $this->belongsTo(User::class, 'manager_id');

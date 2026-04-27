@@ -15,12 +15,9 @@
             padding: 5px !important;
         }
 
-        .prices input{
+        .prices input {
             direction: ltr !important;
-        }
-
-        .prices .clear-btn{
-            right: 7px !important;
+            padding-left: 15px !important;
         }
     </style>
 @endsection
@@ -834,19 +831,15 @@
 
             // کلاس filled
             var $parent = $input.parent();
-            if (newVal) {
-                $parent.addClass('filled');
-                $input.closest('tr').addClass('changed');
-            } else {
-                $parent.removeClass('filled');
-                $input.closest('tr').removeClass('changed');
-            }
 
             // بروزرسانی شیء unsavedPrices
             if (newVal !== original) {
                 if (!unsavedPrices[id]) unsavedPrices[id] = {};
                 newVal = getNumericPrice($input);
                 unsavedPrices[id][field] = newVal;
+
+                $parent.addClass('filled');
+                $input.closest('tr').addClass('changed');
             } else {
                 if (unsavedPrices[id]) {
                     delete unsavedPrices[id][field];
@@ -854,6 +847,8 @@
                         delete unsavedPrices[id];
                     }
                 }
+                $parent.removeClass('filled');
+                $input.closest('tr').removeClass('changed');
             }
 
             toggleSaveButton(); // نمایش/مخفی کردن دکمه ذخیره
@@ -867,11 +862,16 @@
             var field = $input.data('field');
             var id = $input.data('id');
             var rowData = dt_basic.row($(this).closest('tr')).data();
-            var original = parseFloat(rowData[field]) || 0;
+            var original = parseFloat(rowData[field]);
 
-            formatted = new Intl.NumberFormat('en-US').format(Number(original));
+            if (original) {
+                formatted = new Intl.NumberFormat('en-US').format(Number(original));
 
-            $input.val(formatted).trigger('input'); // رویداد input را صدا بزن تا هماهنگ شود
+                $input.val(formatted).trigger('input'); // رویداد input را صدا بزن تا هماهنگ شود
+
+            } else {
+                $input.val('').trigger('input'); // رویداد input را صدا بزن تا هماهنگ شود
+            }
         });
         // همچنین برای به‌روزرسانی هنگام انتخاب/لغو انتخاب ردیف‌ها
         dt_basic.on('select deselect', function() {
@@ -967,32 +967,24 @@
                             status: status,
                         },
                         success: function(res) {
-                            toastr.success(res.message);
-
                             // حلقه زدن روی ID های ارسال شده
                             ids.forEach(function(id) {
                                 var $button = dt_basic.find(
                                     `button.item-toggle[data-id="${id}"]`);
 
                                 if ($button) {
-                                    console.log('hiii');
-
-
                                     if (status) { // اگر وضعیت به 'منتشر شده' تغییر کرد
-                                        console.log('hiii2');
-
                                         $button.removeClass('text-danger').addClass(
                                             'text-success');
                                         $button.text('بله');
                                     } else { // اگر وضعیت به 'منتشر نشده' تغییر کرد
-                                        console.log('hiii3');
-
                                         $button.removeClass('text-success').addClass(
                                             'text-danger');
                                         $button.text('خیر');
                                     }
                                 }
                             });
+                            toastr.success(res.message);
                             // پاک کردن انتخاب تمام ردیف‌ها
                             dt_basic.rows().deselect();
 
@@ -1031,7 +1023,6 @@
                     ),
                 },
                 success: function(res) {
-                    toastr.success(res.message);
                     if (button.text() == 'بله') {
                         button.removeClass('text-success').addClass(
                             'text-danger'); // مثال: تغییر رنگ دکمه
@@ -1041,6 +1032,7 @@
                             'text-success'); // مثال: بازگرداندن رنگ دکمه
                         button.text('بله');
                     }
+                    toastr.success(res.message);
                 },
                 error: function(err) {
                     toastr.error(err.responseJSON.message);

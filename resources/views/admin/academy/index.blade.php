@@ -4,13 +4,20 @@
         td {
             padding: 10px 5px !important;
         }
+
+        th {
+            line-height: 16px;
+            padding: 0 !important;
+            padding-right: 10px !important;
+            padding-bottom: 8px !important;
+        }
     </style>
 @endsection
 @section('content')
     <h5 class="breadcrumb-wrapper mb-4 pt-4" style="padding: 15px 10px !important;" id="breadcrumb-wrapper">
         <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
         <span class="text-muted">مدیریت اعضا / </span>
-        <span>آموزشگاه های آزاد</span>
+        <span>آموزشگاه های آزاد عضو</span>
     </h5>
 
     <!-- DataTable with Buttons -->
@@ -42,10 +49,14 @@
                         <th>ردیف</th>
                         <th>نام</th>
                         <th>شماره شناسایی</th>
-                        <th>پایان اعتبار</th>
+                        <th>تاریخ انقضا <br><small>( پروانه تاسیس )</small></th>
                         <th>جنسیت</th>
+                        <th>نوع</th>
                         <th>مؤسس</th>
-                        <th>شماره موبایل</th>
+                        <th>شماره موبایل <br><small>( نام کاربری )</small></th>
+                        <th>تاریخ عضویت</th>
+                        <th>پایان اعتبار <br><small>( عضویت )</small></th>
+                        <th>ثبت نام کننده</th>
                         <th>وضعیت</th>
                         <th>عملیات</th>
                     </tr>
@@ -141,19 +152,23 @@
                 },
                 {
                     data: "name",
-                    title: "نام آموزشگاه"
+                    title: "نام آموزشگاه",
+                    width: "11%",
                 },
                 {
                     data: "id_number",
                     title: "شماره شناسایی",
+                    width: "6%",
                 },
                 {
                     data: "export_end",
-                    title: "پایان اعتبار",
+                    // title: "پایان اعتبار",
+                    width: "8%",
                 },
                 {
                     data: "gender",
                     title: "جنسیت",
+                    width: "6%",
                     render: function(data, type, row) {
                         switch (data) {
                             case "both":
@@ -174,16 +189,60 @@
                     },
                 },
                 {
+                    data: "legal_company_name",
+                    title: "نوع",
+                    width: "5%",
+                    render: function(data, type, row) {
+                        if (data) {
+                            return 'حقوقی';
+                        } else {
+                            return 'حقیقی';
+                        }
+                    },
+                },
+                {
                     data: "",
                     title: "مؤسس",
+                    width: "11%",
                 },
                 {
                     data: "founder_mobile",
-                    title: "شماره موبایل",
+                    width: "9%",
+                    // title: "شماره موبایل",
+                },
+                {
+                    data: "created_at",
+                    title: "تاریخ عضویت",
+                    width: "8%",
+                    render: function(data, type, row) {
+                        return new Date(data).toLocaleDateString("fa-IR");
+                    },
+                },
+                {
+                    data: "created_at",
+                    width: "8%",
+                    // title: "تاریخ پایان اعتبار",
+                    render: function(data, type, row) {
+                        // return new Date(data).toLocaleDateString("fa-IR");
+                        return '--';
+                    },
+                },
+                {
+                    data: "creator.name",
+                    title: "ثبت نام کننده",
+                    width: "9%",
+                    render: function(data, type, row) {
+                        if (data) {
+                            return data;
+                        } else {
+                            return "آموزشگاه";
+                        }
+                    },
                 },
                 {
                     data: "status",
                     title: "وضعیت",
+                    width: "7%",
                 },
                 {
                     data: "",
@@ -232,7 +291,7 @@
                     }
                 },
                 {
-                    targets: -4,
+                    targets: -7,
                     orderable: true,
                     render: function(data, type, full) {
                         if (full.natural_name) {
@@ -273,6 +332,11 @@
                                     <li>
                                         <a href="/admin2/academy/${full.id}/show" class="dropdown-item">
                                             مشاهده پروفایل
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="dropdown-item">
+                                            بازیابی کلمه عبور
                                         </a>
                                     </li>
                                     <li>
@@ -346,7 +410,7 @@
                 items: 'row' // انتخاب ردیف‌ها
             },
             initComplete: function(settings, json) {
-                let noSearchColumns = [0, 8, 9];
+                let noSearchColumns = [0, 13];
                 // **تنظیم رویداد برای اینپوت های معمولی**
                 $('.academies thead tr:eq(1) th').each(function(i) {
                     $(this).removeClass('sorting');

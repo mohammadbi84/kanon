@@ -132,7 +132,7 @@
             <ul class="menu-sub">
                 <li class="menu-item @if (Route::currentRouteName() == 'admin.academy.index') active @endif">
                     <a href="{{ route('admin.academy.index') }}" class="menu-link">
-                        <div>آموزشگاه های آزاد</div>
+                        <div>آموزشگاه های آزاد عضو</div>
                     </a>
                 </li>
                 <li class="menu-item @if (Route::currentRouteName() == 'admin.academy.pending') active @endif">
