@@ -185,7 +185,7 @@
                                 '--'
                                 break;
                         }
-                        return data;
+                        // return data;
                     },
                 },
                 {
@@ -228,12 +228,12 @@
                     },
                 },
                 {
-                    data: "creator.name",
+                    data: "creator",
                     title: "ثبت نام کننده",
                     width: "9%",
                     render: function(data, type, row) {
                         if (data) {
-                            return data;
+                            return 'ادمین';
                         } else {
                             return "آموزشگاه";
                         }
