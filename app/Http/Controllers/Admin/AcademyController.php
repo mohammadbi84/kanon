@@ -150,7 +150,11 @@ class AcademyController extends Controller
     public function edit($id)
     {
         $academy = Academy::findOrFail($id);
-        return view('admin.academy.edit', compact('academy'));
+
+        $fields = Field::all();
+        $clusters = Cluster::all();
+        $states = City::whereNull('parent')->get();
+        return view('admin.academy.edit', compact('academy','fields', 'clusters', 'states'));
     }
 
     public function update($id, Request $request)
