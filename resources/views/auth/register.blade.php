@@ -20,6 +20,8 @@
     <link rel="stylesheet" href="https://lib.arvancloud.ir/choices.js/9.1.0/choices.min.css">
     <!-- persian-datepicker -->
     <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/flatpickr/flatpickr.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/vendor/libs/toastr/toastr.css') }}">
+
     <style>
         .flatpickr-calendar {
             background: #fff !important;
@@ -184,33 +186,25 @@
                             @enderror
                         </div>
                         <div class="col-md-6 mb-3">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="row g-0">
-                                        <div class="col-1 p-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="">
+                                    <div class="d-flex justify-content-end align-items-center gap-2">
                                             <input type="radio" class="form-check-input" name="license"
                                                 id="parvane_first" {{ old('license') == 'first' ? 'checked' : '' }}
                                                 value="first" onchange="">
-                                        </div>
-                                        <div class="col-5 p-1">
                                             <label for="parvane_first" class="form-check-label">اولین پروانه
                                                 کسب</label>
-                                        </div>
-                                        <div class="col-1 p-1">
-                                            <input type="radio" class="form-check-input" name="license"
+                                            <input type="radio" class="form-check-input me-3" name="license"
                                                 id="parvane_tamdid" {{ old('license') == 'extension' ? 'checked' : '' }}
                                                 value="extension" onchange="">
-                                        </div>
-                                        <div class="col-5 p-1">
                                             <label for="parvane_tamdid" class="form-check-label">تمدید پروانه
                                                 کسب</label>
-                                        </div>
                                     </div>
                                     @error('license')
                                         <small class="text-danger mt-2">{{ $message }}</small>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
+                                <div class="">
                                     <div class="autocomplete @if (old('first_license_date')) filled @endif"
                                         id="autocompleteBoxfirst_license_date">
                                         <input type="text" id="searchInputfirst_license_date"
@@ -232,41 +226,41 @@
                             </div>
                         </div>
                         <div class="col-md-12 mb-3 mt-2 pe-4">
-                            <div class="row pb-0 g-0 align-content-center">
-                                <div class="col-1 mb-0 p-0 align-content-center">
+                            <div class="d-flex align-items-center pb-0 g-0 align-content-center">
+                                <div class="mb-0 p-0 align-content-center">
                                     <p class="p-0 m-0">جنسیت : </p>
                                 </div>
-                                <div class="col-12 d-flex mb-0 p-0 align-content-center">
+                                <div class=" d-flex mb-0 p-0 align-content-center">
                                     <div class="d-flex flex-wrap align-content-center p-0">
-                                        <div class="form-check form-check-inline ms-2 me-0" dir="rtl">
+                                        <div class="form-check form-check-inline me-2 ms-0" dir="rtl">
                                             <input type="radio" class="form-check-input" name="gender" id="baradaran"
                                                 {{ old('gender') == 'male' ? 'checked' : '' }} value="male"
                                                 onchange="handleGenderChange()">
                                         </div>
-                                        <label for="baradaran" class="form-check-label me-3">برادران</label>
+                                        <label for="baradaran" class="form-check-label ms-3 me-2">برادران</label>
 
-                                        <div class="form-check form-check-inline ms-2 me-0" dir="rtl">
+                                        <div class="form-check form-check-inline me-2 ms-0" dir="rtl">
                                             <input type="radio" class="form-check-input" name="gender" id="khaharan"
                                                 {{ old('gender') == 'female' ? 'checked' : '' }} value="female"
                                                 onchange="handleGenderChange()">
                                         </div>
-                                        <label for="khaharan" class="form-check-label me-3">خواهران</label>
+                                        <label for="khaharan" class="form-check-label ms-3 me-2">خواهران</label>
 
-                                        <div class="form-check form-check-inline ms-2 me-0" dir="rtl">
+                                        <div class="form-check form-check-inline me-2 ms-0" dir="rtl">
                                             <input type="radio" class="form-check-input" name="gender" id="mokhtalet"
                                                 {{ old('gender') == 'both' ? 'checked' : '' }} value="both"
                                                 onchange="handleGenderChange()">
                                         </div>
-                                        <label for="mokhtalet" class="form-check-label">برادران،خواهران <small>( دو منظوره
+                                        <label for="mokhtalet" class="form-check-label me-2">برادران،خواهران <small>( دو منظوره
                                                 )</small></label>
                                     </div>
                                     <div class="d-flex flex-wrap align-content-center p-0">
-                                        <div class="form-check form-check-inline ms-4 me-0" dir="rtl">
+                                        <div class="form-check form-check-inline me-2" dir="rtl">
                                             <input type="checkbox" class="form-check-input" name="tabsare_34"
                                                 {{ old('gender') == 'both' ? 'checked' : '' }} value="1"
                                                 id="tabsare_34" disabled>
                                         </div>
-                                        <label for="tabsare_34" class="form-check-label ms-2 me-0">دارای مجوز تبصره
+                                        <label for="tabsare_34" class="form-check-label me-2 ms-0">دارای مجوز تبصره
                                             ۳۴</label>
                                     </div>
                                 </div>
@@ -1194,7 +1188,21 @@
     <script src="{{ asset('admin/assets/vendor/libs/flatpickr/flatpickr-jdate.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/libs/flatpickr/l10n/fa-jdate.js') }}"></script>
     <script src="{{ asset('admin/assets/vendor/libs/pickr/pickr.js') }}"></script>
+    <script src="{{ asset('admin/assets/vendor/libs/toastr/toastr.js') }}"></script>
 
+    <script>
+        toastr.options = {
+            "closeButton": false,
+            "progressBar": true, // نوار تایمر
+            "positionClass": "toast-top-center",
+            "timeOut": "3000", // مدت زمان نمایش (۳ ثانیه)
+            "extendedTimeOut": "1000", // زمان اضافی پس از hover
+            "showDuration": "300",
+            "hideDuration": "300",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+    </script>
     <script>
         let choices;
 
@@ -1646,9 +1654,12 @@
                     // دریافت مقدار از منبع (در صورت وجود) یا هشدار
                     const dateValue = $sourceDateInput.val();
                     if (!dateValue) {
-                        alert('لطفاً ابتدا تاریخ شروع را تکمیل کنید.');
+                        toastr.error('لطفاً ابتدا تاریخ صدور را وارد نمایید');
+
                         // رادیوباکس را به حالت تمدید برگردانید تا کاربر مجبور به پر کردن شود
+                        // $('#searchInputexport_start').focus();
                         $('#parvane_tamdid').prop('checked', true).trigger('change');
+                        $('#parvane_tamdid').focus();
                         return;
                     }
 

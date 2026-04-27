@@ -8,7 +8,7 @@
 @section('content')
     <h5 class="breadcrumb-wrapper mb-4">
         <a href="{{ route('admin.index') }}" class="text-muted">داشبورد</a> <span class="text-muted">/</span>
-        <a href="{{ route('admin.academy.index') }}" class="text-muted">آموزشگاه ها</a> <span class="text-muted">/</span>
+        <span class="text-muted">مدیریت اعضا / </span>
         <span class="">ثبت آموزشگاه جدید</span>
     </h5>
     <div class="card">
@@ -131,8 +131,8 @@
                                 @enderror
                             </div>
                             <div class="col-md-6 mb-3">
-                                <div class="row">
-                                    <div class="col-md-6">
+                                <div class="d-flex justify-content-between align-items-center gap-3">
+                                    <div class="">
                                         <div class="row g-0">
                                             <div class="col-1 p-1">
                                                 <input type="radio" class="form-check-input" name="license"
@@ -158,7 +158,7 @@
                                             <small class="text-danger mt-2">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class=" flex-grow-1">
                                         <div class="autocomplete @if (old('first_license_date')) filled @endif"
                                             id="autocompleteBoxfirst_license_date">
                                             <input type="text" id="searchInputfirst_license_date"
@@ -181,11 +181,11 @@
                                 </div>
                             </div>
                             <div class="col-md-12 mb-3 mt-2 pe-4">
-                                <div class="row pb-0 g-0 align-content-center">
-                                    <div class="col-1 mb-0 p-0 align-content-center">
+                                <div class="d-flex align-items-center pb-0 g-0 align-content-center">
+                                    <div class="mb-0 p-0 align-content-center">
                                         <p class="p-0 m-0">جنسیت : </p>
                                     </div>
-                                    <div class="col-12 d-flex mb-0 p-0 align-content-center">
+                                    <div class="d-flex mb-0 p-0 align-content-center">
                                         <div class="d-flex flex-wrap align-content-center p-0">
                                             <div class="form-check form-check-inline ms-2 me-0" dir="rtl">
                                                 <input type="radio" class="form-check-input" name="gender"
@@ -1604,9 +1604,10 @@
                     // دریافت مقدار از منبع (در صورت وجود) یا هشدار
                     const dateValue = $sourceDateInput.val();
                     if (!dateValue) {
-                        alert('لطفاً ابتدا تاریخ شروع را تکمیل کنید.');
+                        toastr.error('لطفاً ابتدا تاریخ صدور را وارد نمایید');
                         // رادیوباکس را به حالت تمدید برگردانید تا کاربر مجبور به پر کردن شود
                         $('#parvane_tamdid').prop('checked', true).trigger('change');
+                        $('#parvane_tamdid').focus();
                         return;
                     }
 
