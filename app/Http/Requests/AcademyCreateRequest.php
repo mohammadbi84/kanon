@@ -22,6 +22,7 @@ class AcademyCreateRequest extends FormRequest
             'export_number' => 'required',
             'export_start' => 'required',
             'export_end' => 'required',
+            'export_reset' => 'nullable',
             'license' => 'required|in:first,extension',
             'first_license_date' => 'nullable',
             'gender' => 'required|in:male,female,both',

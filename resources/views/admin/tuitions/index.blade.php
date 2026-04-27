@@ -2,7 +2,7 @@
 @section('head')
     <style>
         td {
-            padding: 5px 8px !important;
+            padding: 10px 8px !important;
         }
 
         .select2-container--default .select2-results>.select2-results__options {

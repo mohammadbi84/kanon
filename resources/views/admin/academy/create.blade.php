@@ -99,6 +99,22 @@
                                 @enderror
                             </div>
                             <div class="col-md-6 mb-3">
+                                <div class="autocomplete @if (old('export_reset')) filled @endif"
+                                    id="autocompleteBoxexport_reset">
+                                    <input type="text" id="searchInputexport_reset" name="export_reset" readonly
+                                        value="{{ old('export_reset') }}" oninput="nameinput('export_reset')"
+                                        @error('export_reset')
+                                    style="border:red solid 1px"
+                                    @enderror>
+                                    <label for="searchInputexport_reset">تاریخ تمدید صدور</label>
+                                    <span class="clear-btn" id="clearBtn_export_reset" onclick="clearInput('export_reset')"
+                                        @if (old('export_reset')) style="display:block !important" @endif>×</span>
+                                </div>
+                                @error('export_reset')
+                                    <small class="text-danger mt-2">{{ $message }}</small>
+                                @enderror
+                            </div>
+                            <div class="col-md-6 mb-3">
                                 <div class="autocomplete @if (old('export_end')) filled @endif"
                                     id="autocompleteBoxexport_end">
                                     <input type="text" id="searchInputexport_end" name="export_end" readonly
@@ -1053,7 +1069,8 @@
                                     <div class="col">
                                         <div class="input-group form-label-group in-border">
                                             <input type="text" class="form-control" name="captcha" id="captchatext"
-                                                aria-label="Username" value="{{ old('captcha') }}" placeholder="کد امنیتی">
+                                                aria-label="Username" value="{{ old('captcha') }}"
+                                                placeholder="کد امنیتی">
                                         </div>
                                         @error('captcha')
                                             <span class="text-danger">{{ $message }}</span>
@@ -1091,7 +1108,8 @@
                             <div class="d-flex justify-content-start align-items-center">
                                 <button type="submit" class="btn btn-primary text-white me-4 shadow px-5">ثبت
                                     درخواست</button>
-                                <a href="{{route('admin.academy.index')}}" class="btn btn-danger text-white shadow px-5">انصراف</a>
+                                <a href="{{ route('admin.academy.index') }}"
+                                    class="btn btn-danger text-white shadow px-5">انصراف</a>
                             </div>
                         </div>
                     </div>
@@ -1270,7 +1288,7 @@
             `;
 
             const dateInputs =
-                "#searchInputexport_start, #searchInputexport_end, #searchInputnatural_birth_date, #searchInputregister_date, #searchInputfirst_license_date";
+                "#searchInputexport_start, #searchInputexport_reset, #searchInputexport_end, #searchInputnatural_birth_date, #searchInputregister_date, #searchInputfirst_license_date";
 
             $(dateInputs).each(function() {
                 const $input = $(this);
@@ -1583,7 +1601,20 @@
                     box.classList.remove("filled");
                     clearBtn.style.display = 'none';
                 }
-            } else if (id == 'searchInputexport_end') {
+            } else if (id == 'export_reset') {
+                const input = document.getElementById("searchInputexport_reset");
+                const box = document.getElementById("autocompleteBoxexport_reset");
+                const clearBtn = document.getElementById("clearBtn_export_reset");
+                if (input.value.length > 0) {
+                    const $datepickerPopup = $('.datepicker-plot-area:visible');
+                    $datepickerPopup.css('display', 'none');
+                    box.classList.add("filled");
+                    clearBtn.style.display = 'block';
+                } else {
+                    box.classList.remove("filled");
+                    clearBtn.style.display = 'none';
+                }
+            } else if (id == 'searchInputfirst_license_date') {} else if (id == 'searchInputexport_end') {
                 const input = document.getElementById("searchInputexport_end");
                 const box = document.getElementById("autocompleteBoxsodor_end");
                 const clearBtn = document.getElementById("clearBtn_sodor_end");

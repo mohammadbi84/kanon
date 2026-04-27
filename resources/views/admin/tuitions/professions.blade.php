@@ -14,6 +14,14 @@
         tr td {
             padding: 5px !important;
         }
+
+        .prices input{
+            direction: ltr !important;
+        }
+
+        .prices .clear-btn{
+            right: 7px !important;
+        }
     </style>
 @endsection
 @section('content')

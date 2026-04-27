@@ -11,9 +11,11 @@ use App\Models\Field;
 use App\Models\File;
 use App\Models\Profession;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Morilog\Jalali\Jalalian;
 
 class AcademyController extends Controller
 {
@@ -21,6 +23,32 @@ class AcademyController extends Controller
     {
         if (request()->ajax()) {
             $academies = Academy::latest()->where('status', '!=', 'pending')->get();
+            foreach ($academies as $academy) {
+                if ($academy->export_end) {
+                    // تبدیل تاریخ شمسی به معادل میلادی (Carbon)
+                    $expireDate = Jalalian::fromFormat('Y-m-d', $academy->export_end)->toCarbon();
+                    $now = Carbon::now()->startOfDay();
+                    $expireDateStart = $expireDate->copy()->startOfDay();
+
+                    // اختلاف روز با علامت (مثبت: آینده، منفی: گذشته)
+                    $diffDays = $now->diffInDays($expireDateStart, false);
+
+                    // تنظیم وضعیت بر اساس مقدار $diffDays
+                    if ($diffDays < 0) {
+                        $academy->sodor_end_status = 'منقضی شده';
+                    } elseif ($diffDays == 0) {
+                        $academy->sodor_end_status = 'امروز';
+                    } else {
+                        $academy->sodor_end_status = 'فعال';
+                    }
+
+                    // تعداد روز باقی‌مانده (می‌تواند منفی باشد؛ در صورت نیاز صفر نمایش دهید)
+                    $academy->sodor_end_remain = $diffDays;
+                } else {
+                    $academy->sodor_end_status = 'نامشخص';
+                    $academy->sodor_end_remain = null;
+                }
+            }
             return response()->json(['data' => $academies]);
         }
         $academies = Academy::latest()->where('status', '!=', 'pending')->get();
@@ -146,7 +174,7 @@ class AcademyController extends Controller
             $academy->status = 'approved';
             $academy->save();
         }
-        return response()->json(['success' => 'وضعیت آموزشگاه با موفقیت تغییر کرد.']);
+        return response()->json(['success' => true, 'message' => 'وضعیت آموزشگاه با موفقیت تغییر کرد.']);
     }
 
     public function bulkToggle(Request $request)
@@ -199,10 +227,11 @@ class AcademyController extends Controller
 
 
 
-        return response()->json(['success' => 'صفحه با موفقیت حذف شد.']);
+        return response()->json(['success' => true, 'message' => 'آموزشگاه با موفقیت حذف شد.']);
     }
 
-    public function show(Academy $academy) {
-        return view("admin.academy.show",compact('academy'));
+    public function show(Academy $academy)
+    {
+        return view("admin.academy.show", compact('academy'));
     }
 }
