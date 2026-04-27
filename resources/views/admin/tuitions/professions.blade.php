@@ -62,9 +62,9 @@
                         </button>
                     </div>
                 </div>
-                {{-- <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
+                <div class="d-flex justify-content-start align-items-center gap-2 text-muted">
                     <small class="py-3 text-white">1</small>
-                </div> --}}
+                </div>
             </div>
 
             <table class="dt-select-table professions table table-hover">
@@ -218,6 +218,38 @@
     <script>
         let unsavedPrices = {};
 
+        let customFilters = {};
+
+        function setCustomPriceFilter(visibleColIndex, searchValue) {
+            // حذف فیلتر قبلی این ستون (در صورت وجود)
+            if (customFilters[visibleColIndex]) {
+                const idx = $.fn.dataTable.ext.search.indexOf(customFilters[visibleColIndex]);
+                if (idx !== -1) $.fn.dataTable.ext.search.splice(idx, 1);
+                delete customFilters[visibleColIndex];
+            }
+
+            // اگر مقدار جستجو خالی است، فقط جدول را دوباره رسم کن
+            if (!searchValue) {
+                dt_basic.draw();
+                return;
+            }
+
+            // فیلتر جدید: محتوای اینپوت ستون visibleColIndex را می‌خواند
+            const filterFn = function(settings, data, dataIndex) {
+                const tr = dt_basic.row(dataIndex).node();
+                if (!tr) return true; // ردیف پیدا نشد → نمایش بده
+                const td = tr.querySelectorAll('td')[visibleColIndex];
+                if (!td) return false;
+                const input = td.querySelector('input');
+                const val = input ? input.value : '';
+                return val.indexOf(searchValue) !== -1; // جستجوی شامل (contains)
+            };
+
+            customFilters[visibleColIndex] = filterFn;
+            $.fn.dataTable.ext.search.push(filterFn);
+            dt_basic.draw();
+        }
+
         function toggleSaveButton() {
             // دکمه را فقط زمانی نمایش بده که حداقل یک تغییر داشته باشیم
             $('#save-prices').toggleClass('d-none', Object.keys(unsavedPrices).length === 0);
@@ -344,11 +376,8 @@
                     orderable: true,
                     searchable: true,
                     render: function(data, type, full, meta) {
-                        if (type == 'sort') {
-                            return full.active ? '1' : '0';
-                        }
                         if (type === 'display') {
-                            return full.active ?
+                            return full.tuition_active ?
                                 `
                             <button data-id="${full.id}" class="btn text-success btn-icon item-toggle">
                                 بله
@@ -361,7 +390,7 @@
                         `;
                         }
                         // برای sort و filter مقدار عددی
-                        return full.active ? 'بله' : 'خیر';
+                        return full.tuition_active ? 'بله' : 'خیر';
                     },
                 },
                 {
@@ -494,14 +523,22 @@
                     </div>
                     `);
                     $('input', this).on('keyup change', function() {
-                        if (i == 1) {
+                        // ستون‌های قیمت (حضوری/مجازی/الکترونیکی) → جستجوی سفارشی روی اینپوت
+                        if (i === 9 || i === 10 || i === 11) {
+                            setCustomPriceFilter(i, this.value);
+                        }
+                        // ستون ردیف: جستجوی دقیق
+                        else if (i === 2) { // ردیف (visible index 2)
                             if (this.value.length > 0) {
                                 dt_basic.column(i + 1).search('^' + this.value + '$', true,
-                                    false).draw();
+                                        false)
+                                    .draw();
                             } else {
                                 dt_basic.column(i + 1).search('').draw();
                             }
-                        } else {
+                        }
+                        // سایر ستون‌ها
+                        else {
                             dt_basic.column(i + 1).search(this.value).draw();
                         }
                     });
@@ -926,20 +963,24 @@
 
                             // حلقه زدن روی ID های ارسال شده
                             ids.forEach(function(id) {
-                                var $button = dt_basic.rows().nodes().to$().find(
+                                var $button = dt_basic.find(
                                     `button.item-toggle[data-id="${id}"]`);
 
-                                if ($button.length) {
+                                if ($button) {
+                                    console.log('hiii');
+
 
                                     if (status) { // اگر وضعیت به 'منتشر شده' تغییر کرد
+                                        console.log('hiii2');
 
                                         $button.removeClass('text-danger').addClass(
                                             'text-success');
                                         $button.text('بله');
                                     } else { // اگر وضعیت به 'منتشر نشده' تغییر کرد
+                                        console.log('hiii3');
 
-                                        $button.removeClass('text-success')
-                                            .addClass('text-danger');
+                                        $button.removeClass('text-success').addClass(
+                                            'text-danger');
                                         $button.text('خیر');
                                     }
                                 }
@@ -971,7 +1012,6 @@
             const id = $(this).data("id");
 
             var button = $(this);
-            var icon = button.find('i');
 
             if (!id) return;
             $.ajax({
@@ -984,14 +1024,14 @@
                 },
                 success: function(res) {
                     toastr.success(res.message);
-                    if (icon.hasClass('bx-check')) {
-                        icon.removeClass('bx-check').addClass('bx-x');
+                    if (button.text() == 'بله') {
                         button.removeClass('text-success').addClass(
                             'text-danger'); // مثال: تغییر رنگ دکمه
+                        button.text('خیر');
                     } else {
-                        icon.removeClass('bx-x').addClass('bx-check');
                         button.removeClass('text-danger').addClass(
                             'text-success'); // مثال: بازگرداندن رنگ دکمه
+                        button.text('بله');
                     }
                 },
                 error: function(err) {
@@ -1002,15 +1042,24 @@
         });
 
         // تابع پاک کردن محتوا
-        function clearInput(btn, col = 1) {
+        function clearInput(btn, col) {
             const parent = btn.parentElement;
             const input = parent.querySelector("input, textarea");
             input.value = null;
             input.focus();
             parent.classList.remove("filled");
 
-            // پاک کردن جستجوی آن ستون و رسم دوباره جدول
+            // حذف فیلتر سفارشی در صورت وجود (مخصوص ستون‌های قیمت)
             dt_basic.column(col + 1).search('').draw();
+            if (customFilters[col]) {
+                const idx = $.fn.dataTable.ext.search.indexOf(customFilters[col]);
+                if (idx !== -1) $.fn.dataTable.ext.search.splice(idx, 1);
+                delete customFilters[col];
+                dt_basic.draw();
+            } else {
+                // ستون معمولی
+                dt_basic.column(col).search('').draw();
+            }
         }
 
 
@@ -1026,8 +1075,6 @@
                 const rowData = this.data(); // داده اصلی ردیف از سرور (شامل price_in_person و ...)
                 const rowNode = this.node(); // عنصر DOM ردیف
 
-                // یافتن input های قیمت در این ردیف (با استفاده از کلاس یا ایندکس ستون)
-                // راه بهتر: استفاده از data-id یا کلاس مشخص، اما چون ستون‌ها مشخص‌اند از ایندکس استفاده می‌کنیم
                 const $row = $(rowNode);
                 const personInput = $row.find('td:eq(9) input'); // ستون 9: هزینه حضوری
                 const virtualInput = $row.find('td:eq(10) input'); // ستون 10: هزینه مجازی
@@ -1084,6 +1131,27 @@
                     toastr.success('قیمت‌ها با موفقیت ذخیره شدند');
                     unsavedPrices = {};
                     toggleSaveButton();
+                    changedPrices.forEach(function(item) {
+                        // پیدا کردن ردیف بر اساس profession_id
+                        var row = dt_basic.row(function(idx, data) {
+                            return data.id == item.profession_id;
+                        });
+                        if (row) {
+                            var node = row.node();
+                            if (node) {
+                                // افزودن کلاس برای تغییر رنگ پس‌زمینه
+                                $(node).removeClass('changed');
+
+                                // 2. تغییر ستون انتشار (targets: -4) به حالت "بله" (منتشر شده)
+                                var $toggleBtn = $(node).find('button.item-toggle');
+                                if ($toggleBtn.length) {
+                                    $toggleBtn.removeClass('text-danger').addClass(
+                                        'text-success');
+                                    $toggleBtn.html('بله'); // محتوای جدید
+                                }
+                            }
+                        }
+                    });
                     // dt_basic.ajax.reload(); // جدول رفرش می‌شود و مقادیر جدید را از سرور می‌گیرد
                 },
                 error: function(xhr) {

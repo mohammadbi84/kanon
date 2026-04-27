@@ -44,6 +44,7 @@ class TuitionProfessionController extends Controller
                 ->select(
                     'professions.*',
                     // اضافه کردن فیلد نرخ شهریه (اگر null باشد 0 برگردان)
+                    DB::raw('COALESCE(profession_tuitions.active) as tuition_active'),
                     DB::raw('COALESCE(profession_tuitions.price_in_person) as price_in_person'),
                     DB::raw('COALESCE(profession_tuitions.price_virtual) as price_virtual'),
                     DB::raw('COALESCE(profession_tuitions.price_online) as price_online')
@@ -51,7 +52,7 @@ class TuitionProfessionController extends Controller
 
             $professions = $query->get();
 
-            Log::info($professions);
+            // Log::info($professions->toArray());
 
             return response()->json([
                 'data' => $professions
